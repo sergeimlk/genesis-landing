@@ -136,7 +136,7 @@ const GenesisLanding = () => {
         {/* Navigation Fitness */}
         <nav className="relative z-50 p-6 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0">
           <div className="text-2xl font-orbitron font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-white cursor-pointer" onClick={() => setIsFitnessUnlocked(false)}>
-            GENEFIT <span className="text-xs text-purple-500 ml-1 align-top">PRO</span>
+            GENEFIT <span className="text-xs text-red-500 ml-1 align-top">PRO</span>
           </div>
           <button onClick={() => setIsFitnessUnlocked(false)} className="text-gray-400 hover:text-white">
             <X className="w-6 h-6" />

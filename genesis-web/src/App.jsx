@@ -516,7 +516,7 @@ const FitnessView = () => {
           <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-red-500/20">
             <img src="/img/DarkLogo.png" alt="GeneGym Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="font-orbitron font-bold text-xl tracking-wide">GENEGYM <span className="text-purple-500 text-xs align-top">PRO</span></span>
+          <span className="font-orbitron font-bold text-xl tracking-wide">GENEGYM <span className="text-red-500 text-xs align-top">PRO</span></span>
         </div>
 
         <nav className="flex-1 space-y-2">
