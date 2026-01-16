@@ -9,6 +9,9 @@ import './App.css';
 
 const INSTAGRAM_LINK = "https://www.instagram.com/visuals.by.genesis/";
 
+import { BeforeAfter } from './components/BeforeAfter';
+
+
 const GenesisLanding = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -45,6 +48,7 @@ const GenesisLanding = () => {
       return { hours: 0, minutes: 0, seconds: 0 };
     };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
     return () => clearInterval(timer);
@@ -125,7 +129,8 @@ const GenesisLanding = () => {
                     <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 345}`} alt="User" />
                   ))}
                 </div>
-                <p>Déjà rejoint par <strong>500+ créateurs</strong> dont <span style={{ color: '#a855f7' }}>GIMS, NETFLIX...</span></p>
+                <p className="text-sm ml-6">Déjà rejoint par <strong>500+ créateurs</strong><br />dont <span style={{ color: '#a855f7' }}>GIMS, NETFLIX...</span></p>
+
               </div>
             </div>
 
@@ -175,6 +180,19 @@ const GenesisLanding = () => {
             {['WARNER', 'DEEZER', 'APPLE MUSIC', 'VOGUE', 'VICE', 'KONBINI', 'BOOSKA-P', 'SKYROCK', 'MOUV', 'GENERATIONS'].map((brand, idx) => (
               <span key={`dup-${idx}`} className="marquee-item">{brand}</span>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Transformation Demo */}
+      <section className="section-padding bg-black/50">
+        <div className="container">
+          <h2 className="section-title">LA PUISSANCE DE <span className="text-gradient">L'IA</span></h2>
+          <div className="max-w-4xl mx-auto mt-10">
+            <BeforeAfter
+              beforeImage="https://picsum.photos/id/646/1920/1080?grayscale"
+              afterImage="https://picsum.photos/id/646/1920/1080"
+            />
           </div>
         </div>
       </section>
@@ -422,8 +440,8 @@ const FitnessView = () => {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [chatInput, setChatInput] = useState('');
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([
+
     { sender: 'coach', text: "Wesh l'équipe ! Prêt à charbonner ?" }
   ]);
 
@@ -446,8 +464,9 @@ const FitnessView = () => {
 
   // Update exercises when program changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExercises(programs[activeProgram].map(e => ({ ...e, done: false })));
-  }, [activeProgram]);
+  }, [activeProgram, programs]);
 
   // Timer Logic
   useEffect(() => {
@@ -455,6 +474,7 @@ const FitnessView = () => {
     if (isTimerActive && timer > 0) {
       interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     } else if (timer === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsTimerActive(false);
       setTimer(120);
     }
@@ -485,15 +505,7 @@ const FitnessView = () => {
 
   // --- UI COMPONENTS ---
 
-  const StatCard = ({ icon: Icon, label, value, color }) => (
-    <div className="bg-[#0a0a0a] p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:border-white/10 transition-colors">
-      <div className={`p-2 rounded-xl bg-opacity-10 ${color.replace('text-', 'bg-')} ${color}`}>
-        <Icon size={20} />
-      </div>
-      <div className="font-bold text-xl text-white">{value}</div>
-      <div className="text-xs text-gray-400 font-medium uppercase">{label}</div>
-    </div>
-  );
+
 
   return (
     <div className="fixed inset-0 z-[2000] bg-[#050505] text-white font-inter flex flex-col md:flex-row overflow-hidden">
@@ -709,6 +721,18 @@ const FitnessView = () => {
 };
 
 // UI Helpers
+// eslint-disable-next-line no-unused-vars
+const StatCard = ({ icon: Icon, label, value, color }) => (
+  <div className="bg-[#0a0a0a] p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:border-white/10 transition-colors">
+    <div className={`p-2 rounded-xl bg-opacity-10 ${color.replace('text-', 'bg-')} ${color}`}>
+      <Icon size={20} />
+    </div>
+    <div className="font-bold text-xl text-white">{value}</div>
+    <div className="text-xs text-gray-400 font-medium uppercase">{label}</div>
+  </div>
+);
+
+// eslint-disable-next-line no-unused-vars
 const NavIcon = ({ icon: Icon, active, onClick }) => (
   <button onClick={onClick} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors ${active ? 'text-red-500' : 'text-gray-500 hover:text-white'}`}>
     <Icon size={24} strokeWidth={active ? 2.5 : 2} />
