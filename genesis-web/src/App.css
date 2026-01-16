@@ -263,7 +263,14 @@ body {
 }
 
 .btn-join-main {
-  width: 100%;
+  width: auto;
+  /* Reduced from 100% */
+  min-width: 300px;
+  /* Ensure it's not too small */
+  max-width: 80%;
+  /* Ensure it doesn't touch edges on small screens */
+  margin: 0 auto;
+  /* Center it */
   justify-content: center;
   font-size: 1.2rem;
   padding: 20px;
@@ -1136,7 +1143,8 @@ h2.section-title {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 3px;
-  color: var(--text-muted);
+  color: white;
+  /* Changed from var(--text-muted) to white for better visibility */
   margin-bottom: 40px;
   text-align: center;
 }

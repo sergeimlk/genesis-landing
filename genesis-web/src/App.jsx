@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import {
   Play, Check, Star, ChevronDown, ChevronUp, Instagram, ArrowRight, Zap,
   Monitor, Film, Users, ShieldCheck, Clock, Quote, Lock, X, Dumbbell,
-  Activity, Timer, Repeat
+  Activity, Timer, Repeat, Home
 } from 'lucide-react';
 import './App.css';
 
@@ -13,9 +14,10 @@ const GenesisLanding = () => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
-  const [isFitnessUnlocked, setIsFitnessUnlocked] = useState(false);
+  // const [isFitnessUnlocked, setIsFitnessUnlocked] = useState(false); // Removed state
   const [errorMsg, setErrorMsg] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
+  const navigate = useNavigate(); // Added hook
 
   // Scroll Handler
   useEffect(() => {
@@ -50,18 +52,16 @@ const GenesisLanding = () => {
 
   const verifyCode = () => {
     if (secretCode.toUpperCase() === 'GENEGYM') {
-      setIsFitnessUnlocked(true);
+      localStorage.setItem('genegym_access', 'true');
       setIsSecretModalOpen(false);
-      window.scrollTo(0, 0);
+      navigate('/genegym');
     } else {
       setErrorMsg('Code invalide. Accès refusé.');
       setTimeout(() => setErrorMsg(''), 2000);
     }
   };
 
-  if (isFitnessUnlocked) {
-    return <FitnessView onClose={() => setIsFitnessUnlocked(false)} />;
-  }
+  // Removed conditional return for FitnessView here. It will be handled by Router.
 
   return (
     <div className="app">
@@ -132,7 +132,7 @@ const GenesisLanding = () => {
             {/* Right Video (Bigger) */}
             <div className="video-card-wrapper animate-float">
               <div className="video-card">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-600 to-pink-600 opacity-20 z-10 pointer-events-none"></div>
+
                 {/* Using iframe wrapper for responsiveness */}
                 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
                   <iframe
@@ -409,82 +409,45 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
   </div>
 );
 
-// --- GENEGYM PRO (FITNESS APP) ---
-const FitnessView = ({ onClose }) => {
-  // Programs Data
+// --- GENEGYM PRO (DASHBOARD APP) ---
+const FitnessView = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('genegym_access');
+    navigate('/');
+  };
+
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [timer, setTimer] = useState(120);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'coach', text: "Wesh l'équipe ! Prêt à charbonner ?" }
+  ]);
+
+  // Mock Programs Data
   const programs = {
-    'Superset Bodyweight': [
-      { id: 1, title: 'Pompes Explosives', sets: '4 Séries', reps: '12 Reps', done: false },
-      { id: 2, title: 'Tractions Pronation', sets: '4 Séries', reps: 'Max Reps', done: false },
-      { id: 3, title: 'Dips aux Barres', sets: '3 Séries', reps: '15 Reps', done: false },
-      { id: 4, title: 'Squats Sautés', sets: '4 Séries', reps: '20 Reps', done: false },
-      { id: 5, title: 'Gainage Commando', sets: '3 Séries', reps: '1 Min', done: false }
+    'Superset': [
+      { id: 1, title: 'Pompes Explosives', sets: '4x12', cat: 'Push' },
+      { id: 2, title: 'Tractions', sets: '4xMax', cat: 'Pull' },
+      { id: 3, title: 'Dips', sets: '3x15', cat: 'Push' },
     ],
-    'Full Body': [
-      { id: 10, title: 'Squat', sets: '4 Séries', reps: '8-10 Reps', done: false },
-      { id: 11, title: 'Développé Couché', sets: '4 Séries', reps: '8-10 Reps', done: false },
-      { id: 12, title: 'Rowing Barre', sets: '4 Séries', reps: '10 Reps', done: false },
-      { id: 13, title: 'Overhead Press', sets: '3 Séries', reps: '12 Reps', done: false },
-      { id: 14, title: 'Soulevé de Terre', sets: '3 Séries', reps: '5 Reps', done: false }
-    ],
-    'Split': [
-      { id: 20, title: 'Développé Incliné', sets: '4 Séries', reps: '10 Reps', done: false },
-      { id: 21, title: 'Écartés Couché', sets: '3 Séries', reps: '15 Reps', done: false },
-      { id: 22, title: 'Barre au Front', sets: '4 Séries', reps: '12 Reps', done: false },
-      { id: 23, title: 'Extensions Poulie', sets: '3 Séries', reps: '15 Reps', done: false }
-    ],
-    'PPL': [
-      { id: 30, title: 'Push Ups', sets: '3 Séries', reps: 'Max', done: false },
-      { id: 31, title: 'Pull Ups', sets: '3 Séries', reps: 'Max', done: false },
-      { id: 32, title: 'Lunges', sets: '3 Séries', reps: '20 Reps', done: false }
-    ],
-    'Upper Lower': [
-      { id: 40, title: 'Bench Press', sets: '4 Séries', reps: '8 Reps', done: false },
-      { id: 41, title: 'Pull Downs', sets: '4 Séries', reps: '10 Reps', done: false },
-      { id: 42, title: 'Shoulder Press', sets: '3 Séries', reps: '12 Reps', done: false }
+    'FullBody': [
+      { id: 10, title: 'Squat', sets: '4x8', cat: 'Legs' },
+      { id: 11, title: 'Bench Press', sets: '4x10', cat: 'Push' },
+      { id: 12, title: 'Rowing', sets: '4x10', cat: 'Pull' },
     ]
   };
 
-  const [activeProgram, setActiveProgram] = useState('Superset Bodyweight');
-  const [exercises, setExercises] = useState(programs['Superset Bodyweight']);
+  const [activeProgram, setActiveProgram] = useState('Superset');
+  const [exercises, setExercises] = useState(programs['Superset'].map(e => ({ ...e, done: false })));
 
   // Update exercises when program changes
   useEffect(() => {
-    setExercises(programs[activeProgram]);
+    setExercises(programs[activeProgram].map(e => ({ ...e, done: false })));
   }, [activeProgram]);
-
-  const [timer, setTimer] = useState(120); // 2 minutes default
-  const [isTimerActive, setIsTimerActive] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [introMessage, setIntroMessage] = useState('');
-
-  // AI Coach Chat State
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState([
-    { sender: 'coach', text: "Wesh l'équipe ! Prêt à charbonner ? C'est le moment de se transformer en machine." }
-  ]);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  // Init Intro Message
-  useEffect(() => {
-    const intros = [
-      "Yo les gars ! Aujourd'hui on se fait un entraînement du turfu, créé par Mily ! Est-ce que vous êtes chauds ?",
-      "Wesh l'équipe ! C'est l'heure de la séance de zinzin. On lâche rien, ok ?",
-      "Salut les frères ! Grosse séance aujourd'hui. On va tout casser !",
-      "Yo la famille ! Prêts à souffrir un peu pour devenir des monstres ?"
-    ];
-    setIntroMessage(intros[Math.floor(Math.random() * intros.length)]);
-    setChatMessages([{ sender: 'coach', text: intros[Math.floor(Math.random() * intros.length)] }]);
-  }, []);
-
-  // Check Completion
-  useEffect(() => {
-    const allDone = exercises.every(ex => ex.done);
-    if (allDone && exercises.length > 0) {
-      setShowCelebration(true);
-      addCoachMessage("Incroyable ! Bien joué Alexis & Valentin ! Vous avez tué la séance. Reposez-vous bien !");
-    }
-  }, [exercises]);
 
   // Timer Logic
   useEffect(() => {
@@ -493,15 +456,15 @@ const FitnessView = ({ onClose }) => {
       interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     } else if (timer === 0) {
       setIsTimerActive(false);
-      setTimer(120); // Reset
+      setTimer(120);
     }
     return () => clearInterval(interval);
   }, [isTimerActive, timer]);
 
   const toggleExercise = (id) => {
-    setExercises(exercises.map(ex =>
-      ex.id === id ? { ...ex, done: !ex.done } : ex
-    ));
+    const newExercises = exercises.map(ex => ex.id === id ? { ...ex, done: !ex.done } : ex);
+    setExercises(newExercises);
+    if (newExercises.every(e => e.done)) setShowCelebration(true);
   };
 
   const formatTime = (seconds) => {
@@ -510,190 +473,272 @@ const FitnessView = ({ onClose }) => {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const addCoachMessage = (text) => {
-    setChatMessages(prev => [...prev, { sender: 'coach', text }]);
-  };
-
   const handleChatSubmit = (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
-
-    setChatMessages(prev => [...prev, { sender: 'user', text: chatInput }]);
-
+    setChatMessages([...chatMessages, { sender: 'user', text: chatInput }]);
     setTimeout(() => {
-      const userText = chatInput.toLowerCase();
-      let response = "T'inquiète paupiette, continue comme ça !";
-      const randomReplies = [
-        "C'est ça qu'on veut voir ! Lâche rien bro !",
-        "Tkt frère, t'es une machine. Continue.",
-        "C'est une séance de zinzin j'avoue, mais t'es au niveau.",
-        "Allez on focus ! La douleur c'est l'information qui rentre dans le muscle."
-      ];
-      response = randomReplies[Math.floor(Math.random() * randomReplies.length)];
-      addCoachMessage(response);
+      setChatMessages(prev => [...prev, { sender: 'coach', text: "Ça marche ! Continue comme ça champion." }]);
     }, 1000);
-
     setChatInput('');
   };
 
+  // --- UI COMPONENTS ---
+
+  const StatCard = ({ icon: Icon, label, value, color }) => (
+    <div className="bg-[#0a0a0a] p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:border-white/10 transition-colors">
+      <div className={`p-2 rounded-xl bg-opacity-10 ${color.replace('text-', 'bg-')} ${color}`}>
+        <Icon size={20} />
+      </div>
+      <div className="font-bold text-xl text-white">{value}</div>
+      <div className="text-xs text-gray-400 font-medium uppercase">{label}</div>
+    </div>
+  );
+
   return (
-    <div className="fitness-app">
-      <div className="fit-bg-gradient"></div>
+    <div className="fixed inset-0 z-[2000] bg-[#050505] text-white font-inter flex flex-col md:flex-row overflow-hidden">
 
-      {/* Navbar */}
-      <nav className="fit-navbar">
-        <div className="fit-logo">
-          <Activity className="text-purple-500 animate-pulse" />
-          <span>GENEGYM <span className="text-purple-500 text-xs align-top">PRO</span></span>
-        </div>
-        <button onClick={onClose} className="fit-close-btn"><X /></button>
-      </nav>
-
-      <div className="container" style={{ maxWidth: '800px', paddingTop: '100px', paddingBottom: '100px' }}>
-
-        {/* Header Section */}
-        <div className="text-center mb-8">
-          <h1 className="fit-title">{activeProgram.toUpperCase()}</h1>
-          <p className="text-purple-400 mt-2 font-bold tracking-widest">SÉLECTIONNEZ VOTRE PROGRAMME</p>
+      {/* DESKTOP SIDEBAR */}
+      <aside className="hidden md:flex flex-col w-72 bg-[#0a0a0a] border-r border-white/5 p-6 h-screen overflow-y-auto">
+        <div className="flex items-center gap-3 mb-10 px-2">
+          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-red-500/20">
+            <img src="/img/DarkLogo.png" alt="GeneGym Logo" className="w-full h-full object-cover" />
+          </div>
+          <span className="font-orbitron font-bold text-xl tracking-wide">GENEGYM <span className="text-purple-500 text-xs align-top">PRO</span></span>
         </div>
 
-        {/* Program Tabs */}
-        <div className="program-tabs">
-          {Object.keys(programs).map(prog => (
+        <nav className="flex-1 space-y-2">
+          {[
+            { id: 'dashboard', icon: Home, label: 'Tableau de bord' },
+            { id: 'workout', icon: Dumbbell, label: 'Programme' },
+            { id: 'calendar', icon: Repeat, label: 'Historique' },
+            { id: 'stats', icon: Activity, label: 'Performances' }
+          ].map((item) => (
             <button
-              key={prog}
-              onClick={() => setActiveProgram(prog)}
-              className={`tab-item ${activeProgram === prog ? 'active' : ''}`}
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all ${activeTab === item.id ? 'bg-red-600 text-white shadow-lg shadow-red-900/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
             >
-              {prog}
+              <item.icon size={20} />
+              <span className="font-medium">{item.label}</span>
             </button>
           ))}
+        </nav>
+
+        <div className="mt-auto border-t border-white/5 pt-6">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+            <X size={20} />
+            Déconnexion
+          </button>
         </div>
+      </aside>
 
-        {/* Roadmap Roadmap */}
-        <div className="fit-roadmap">
-          {exercises.map((ex, index) => (
-            <div key={ex.id} className={`roadmap-step ${ex.done ? 'completed' : ''}`}>
-              <div
-                className="step-checkbox"
-                onClick={() => toggleExercise(ex.id)}
-              >
-                {ex.done && <Check size={20} color="black" strokeWidth={4} />}
-              </div>
-
-              <div className="step-content">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className={`font-orbitron font-bold text-lg ${ex.done ? 'text-gray-500 line-through' : 'text-white'}`}>
-                    {ex.title}
-                  </h3>
-                  <span className="text-xs font-bold bg-white/10 px-2 py-1 rounded text-purple-400 border border-purple-500/20">
-                    {ex.sets}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-400">{ex.reps} • Repos recommandé 2 min</p>
-              </div>
-
-              {!isTimerActive && !ex.done && (
-                <button onClick={() => setIsTimerActive(true)} className="step-timer-btn">
-                  <Clock size={16} /> Repos
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Floating Timer Widget */}
-        {isTimerActive && (
-          <div className="fit-timer-float animate-float">
-            <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Repos</div>
-            <div className="font-orbitron text-4xl font-black text-white tabular-nums">
-              {formatTime(timer)}
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => setIsTimerActive(false)}
-                className="bg-purple-500/20 hover:bg-purple-500/40 text-purple-500 p-2 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
-              <button
-                onClick={() => setTimer(prev => prev + 30)}
-                className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
-              >
-                +30s
-              </button>
-            </div>
+      {/* MOBILE HEADER */}
+      <div className="md:hidden flex items-center justify-between p-4 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-30 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg overflow-hidden">
+            <img src="/img/DarkLogo.png" alt="GeneGym Logo" className="w-full h-full object-cover" />
           </div>
-        )}
+          <span className="font-orbitron font-bold text-lg">GENEGYM</span>
+        </div>
+        <button onClick={handleLogout} className="p-2 bg-white/5 rounded-full text-gray-400"><X size={20} /></button>
       </div>
 
-      {/* AI Coach Widget */}
-      <div className={`coach-widget ${isChatOpen ? 'open' : ''}`}>
-        {!isChatOpen && (
-          <button onClick={() => setIsChatOpen(true)} className="coach-toggle-btn animate-bounce-slow">
-            <div className="relative">
-              <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center border-2 border-white shadow-lg overflow-hidden">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=CoachMily&gender=male" alt="Coach" />
-              </div>
-            </div>
-          </button>
-        )}
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 h-full overflow-y-auto bg-[#050505] relative scroll-smooth pb-24 md:pb-0">
 
-        {isChatOpen && (
-          <div className="coach-chat-window">
-            <div className="coach-header">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-purple-600 border border-white overflow-hidden">
-                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=CoachMily&gender=male" alt="Coach" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm">Coach Mily Bot</h4>
-                </div>
-              </div>
-              <button onClick={() => setIsChatOpen(false)} className="text-gray-400 hover:text-white"><ChevronDown /></button>
-            </div>
+        <div className="max-w-5xl mx-auto p-6 md:p-10">
 
-            <div className="coach-messages">
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={`message ${msg.sender === 'coach' ? 'coach' : 'user'}`}>
-                  {msg.text}
-                </div>
+          {/* HEADER SECTION */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+              <p className="text-gray-400 text-sm font-medium mb-1 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> En ligne</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-white">Salut, <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500">La Team!</span></h1>
+            </div>
+            <div className="flex gap-2">
+              {Object.keys(programs).map(prog => (
+                <button
+                  key={prog}
+                  onClick={() => setActiveProgram(prog)}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${activeProgram === prog ? 'bg-white text-[#0f172a] border-white' : 'bg-transparent text-gray-400 border-white/10 hover:border-white/30'}`}
+                >
+                  {prog}
+                </button>
               ))}
             </div>
-
-            <form onSubmit={handleChatSubmit} className="coach-input-area">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Pose une question..."
-              />
-              <button type="submit"><ArrowRight size={16} /></button>
-            </form>
           </div>
-        )}
-      </div>
 
-      {/* Celebration Overlay */}
+          {/* DASHBOARD GRID */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <StatCard icon={Zap} label="Calories" value="840" color="text-orange-500" />
+            <StatCard icon={Timer} label="Temps" value="45m" color="text-red-500" />
+            <StatCard icon={Dumbbell} label="Volume" value="2.4T" color="text-purple-500" />
+            <StatCard icon={Activity} label="Série" value="12 J" color="text-green-500" />
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* WORKOUT LIST */}
+            <div className="lg:col-span-2 space-y-4">
+              <h2 className="text-xl font-bold font-orbitron mb-4 text-white flex items-center gap-2">
+                <Dumbbell className="text-red-500" /> Séance du jour
+              </h2>
+
+              <div className="space-y-3">
+                {exercises.map((ex) => (
+                  <div
+                    key={ex.id}
+                    onClick={() => toggleExercise(ex.id)}
+                    className={`group relative overflow-hidden p-4 rounded-2xl border transition-all cursor-pointer flex items-center gap-4 ${ex.done ? 'bg-green-500/10 border-green-500/30' : 'bg-[#0a0a0a] border-white/5 hover:border-red-500/50'}`}
+                  >
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${ex.done ? 'bg-green-500 text-white' : 'bg-white/5 text-gray-400 group-hover:bg-red-600 group-hover:text-white'}`}>
+                      {ex.done ? <Check size={24} strokeWidth={3} /> : <Dumbbell size={24} />}
+                    </div>
+
+                    <div className="flex-1">
+                      <h3 className={`font-semibold text-lg ${ex.done ? 'text-gray-400 line-through' : 'text-white'}`}>{ex.title}</h3>
+                      <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
+                        <span className="bg-white/5 px-2 py-0.5 rounded text-xs">{ex.cat}</span>
+                        <span>{ex.sets}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SIDE WIDGETS */}
+            <div className="space-y-6">
+              {/* TIMER WIDGET */}
+              <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 to-purple-500"></div>
+                <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4">Repos</div>
+                <div className="text-6xl font-mono font-bold text-white mb-6 tabular-nums tracking-tighter">
+                  {formatTime(timer)}
+                </div>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => setIsTimerActive(!isTimerActive)}
+                    className={`h-14 w-14 rounded-full flex items-center justify-center transition-all shadow-lg ${isTimerActive ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' : 'bg-red-600 text-white hover:scale-105 shadow-red-600/30'}`}
+                  >
+                    {isTimerActive ? <span className="w-4 h-4 rounded-sm bg-current" /> : <Play size={24} fill="white" className="ml-1" />}
+                  </button>
+                  <button
+                    onClick={() => setTimer(120)}
+                    className="h-14 w-14 rounded-full bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+                  >
+                    <span className="font-bold text-xs">+30s</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* COACH CHAT MINI */}
+              <div className="bg-gradient-to-br from-red-800 to-purple-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl">
+                <div className="flex items-center gap-3 mb-4 relative z-10">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
+                    <Zap size={20} fill="currentColor" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg">Coach IA</h4>
+                    <p className="text-xs text-red-100 opacity-80">Toujours disponible</p>
+                  </div>
+                </div>
+
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 mb-4 border border-white/10 text-sm leading-relaxed">
+                  "N'oublie pas de bien respirer pendant les squats. Tu es une machine !"
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Posez une question..."
+                    className="w-full bg-black/20 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-sm text-white placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleChatSubmit(e)}
+                  />
+                  <button onClick={handleChatSubmit} className="absolute right-1 top-1 p-1 bg-white/20 rounded hover:bg-white/40 transition-colors">
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      {/* MOBILE BOTTOM NAV */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/5 pb-safe z-50">
+        <div className="flex justify-around items-center p-2">
+          <NavIcon icon={Home} label="Accueil" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+          <NavIcon icon={Repeat} label="Programme" active={activeTab === 'workout'} onClick={() => setActiveTab('workout')} />
+
+          <div className="relative -top-5">
+            <button className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/40 border-4 border-[#050505]">
+              <Play size={24} fill="white" className="ml-1 text-white" />
+            </button>
+          </div>
+
+          <NavIcon icon={Activity} label="Stats" active={activeTab === 'stats'} onClick={() => setActiveTab('stats')} />
+          <NavIcon icon={Users} label="Profil" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+        </div>
+      </nav>
+
+      {/* CELEBRATION OVERLAY */}
       {showCelebration && (
-        <div className="celebration-overlay">
-          <div className="congrats-card animate-fade-up">
-            <Star className="w-20 h-20 text-yellow-400 mx-auto mb-6 animate-spin-slow" fill="currentColor" />
-            <h2 className="text-4xl font-orbitron font-black mb-4">FÉLICITATIONS !</h2>
-            <p className="text-xl text-gray-300 mb-8">Bravo <span className="text-purple-500 font-bold">Alexis & Valentin</span> !</p>
-            <p className="text-gray-400 text-sm mb-8">Séance terminée.</p>
+        <div className="fixed inset-0 z-[2001] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-up">
+          <div className="bg-[#0a0a0a] border border-green-500/50 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute inset-x-0 top-0 h-1 bg-green-500"></div>
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500">
+              <Star size={40} fill="currentColor" className="animate-spin-slow" />
+            </div>
+            <h2 className="text-3xl font-black text-white mb-2 font-orbitron">VICTOIRE !</h2>
+            <p className="text-gray-400 mb-8">Séance terminée. Tu es un monstre.<br />Repose-toi bien.</p>
             <button
-              onClick={() => { setShowCelebration(false); onClose(); }}
-              className="btn-primary"
-              style={{ padding: '16px 40px', fontSize: '1.1rem', borderRadius: '50px' }}
+              onClick={() => { setShowCelebration(false); handleLogout(); }}
+              className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all hover:scale-105"
             >
-              RETOURNER À L'ACCUEIL
+              RETOUR ACCUEIL
             </button>
           </div>
         </div>
       )}
+
     </div>
   );
 };
 
-export default GenesisLanding;
+// UI Helpers
+const NavIcon = ({ icon: Icon, active, onClick }) => (
+  <button onClick={onClick} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors ${active ? 'text-red-500' : 'text-gray-500 hover:text-white'}`}>
+    <Icon size={24} strokeWidth={active ? 2.5 : 2} />
+  </button>
+);
+
+// --- ROUTING & PROTECTION ---
+
+const ProtectedRoute = ({ children }) => {
+  const isAllowed = localStorage.getItem('genegym_access') === 'true';
+  return isAllowed ? children : <Navigate to="/" replace />;
+};
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<GenesisLanding />} />
+        <Route
+          path="/genegym"
+          element={
+            <ProtectedRoute>
+              <FitnessView />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
