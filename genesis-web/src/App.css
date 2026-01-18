@@ -568,6 +568,7 @@ h2.section-title {
   margin-right: 15px;
 }
 
+
 .countdown {
   color: #f87171;
   font-weight: 700;
@@ -578,6 +579,39 @@ h2.section-title {
   margin-bottom: 30px;
   font-size: 1.2rem;
   letter-spacing: 0.5px;
+}
+
+.fomo-urgency-tag {
+  display: inline-block;
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  color: #f87171;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-fast {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: .8;
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+  }
 }
 
 /* Footer & FAQ */
