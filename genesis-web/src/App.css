@@ -213,7 +213,7 @@ body {
   background: var(--primary);
   color: white;
   padding: 16px 32px;
-  border-radius: 8px;
+  border-radius: 16px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@ body {
   text-transform: uppercase;
   background: var(--primary);
   color: white;
-  border-radius: 12px;
+  border-radius: 20px;
   font-weight: 900;
   box-shadow: 0 0 30px rgba(147, 51, 234, 0.4);
   transition: all 0.3s;
@@ -297,7 +297,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   padding: 16px 32px;
-  border-radius: 8px;
+  border-radius: 16px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -952,7 +952,8 @@ h2.section-title {
   }
 
   .section-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    white-space: nowrap;
   }
 
   .card {

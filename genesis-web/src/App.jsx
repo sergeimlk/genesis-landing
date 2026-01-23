@@ -7,14 +7,18 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const INSTAGRAM_LINK = "https://www.instagram.com/visuals.by.genesis/";
+const CONTACT_LINK = "https://boiled-gondola-ea5.notion.site/2837b3ecdb188150bacef0d0c737d637";
+const INSTAGRAM_URL = "https://www.instagram.com/visuals.by.genesis/";
+const TIKTOK_URL = "https://www.tiktok.com/@visuals.by.genesis";
 
+import YouTube from 'react-youtube';
 import { BeforeAfter } from './components/BeforeAfter';
+import PromptArchitect from './pages/PromptArchitect';
 
 
 const VIDEOS = [
-  "https://www.youtube.com/embed/mVfM2ogLpwc?rel=0&modestbranding=1&controls=0&autoplay=1&mute=0&loop=1&playlist=mVfM2ogLpwc",
-  "https://www.youtube.com/embed/piJ78nUKtgI?rel=0&modestbranding=1&controls=0&autoplay=1&mute=0&loop=1&playlist=piJ78nUKtgI"
+  "mVfM2ogLpwc",
+  "piJ78nUKtgI"
 ];
 
 const GenesisLanding = () => {
@@ -124,12 +128,12 @@ const GenesisLanding = () => {
         <div className="container nav-container">
           <div className="logo-container" onClick={() => setIsSecretModalOpen(true)}>
             <img src="/img/Glogo.png" alt="Genesis Logo" className="t-logo" />
-            <span className="logo-text text-gradient">GENESIS</span>
+            <img src="/img/GENESIS.png" alt="GENESIS" style={{ height: '45px', borderRadius: '10px', objectFit: 'cover' }} />
           </div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <a href="#programme" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }}>Programme</a>
-            <a href="#reviews" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }}>Avis</a>
-            <a href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" className="btn-cta-nav">
+            <a href="#reviews" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }} onClick={(e) => { e.preventDefault(); document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' }); }}>Avis</a>
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-cta-nav">
               <span className="btn-cta-nav-content">Rejoindre</span>
             </a>
           </div>
@@ -151,8 +155,8 @@ const GenesisLanding = () => {
               Formation Disponible • Accès exclusif
             </div>
             <h1 className="hero-title-main">
-              CRÉEZ DES <span className="text-gradient">CLIPS VIDÉO IA</span><br />
-              DE NIVEAU CINÉMA EN 7 JOURS
+              CRÉEZ DES <span className="text-gradient">VISUELS</span><br />
+              DE NIVEAU <span className="text-gradient">CINÉMA</span> EN 7 JOURS
             </h1>
           </div>
 
@@ -163,7 +167,7 @@ const GenesisLanding = () => {
                 Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium. Même sans compétences techniques.
               </p>
               <div className="hero-actions">
-                <a href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
+                <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
                   Rejoindre l'Élite <ArrowRight size={20} />
                 </a>
                 <a href="#programme" className="btn-secondary">
@@ -171,7 +175,7 @@ const GenesisLanding = () => {
                 </a>
               </div>
 
-              <div className="social-proof">
+              <div className="social-proof" onClick={() => document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' })}>
                 <div className="avatar-stack">
                   {[1, 2, 3, 4].map((i) => (
                     <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 345}`} alt="User" />
@@ -185,15 +189,27 @@ const GenesisLanding = () => {
             <div className="video-card-wrapper animate-float relative group">
               <div className="video-card">
                 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-                  <iframe
-                    key={currentVideoIndex} // Force reload on change
-                    src={VIDEOS[currentVideoIndex]}
-                    title="Demo Video"
+                  <YouTube
+                    key={currentVideoIndex}
+                    videoId={VIDEOS[currentVideoIndex]}
+                    opts={{
+                      height: '100%',
+                      width: '100%',
+                      playerVars: {
+                        autoplay: 1,
+                        controls: 0,
+                        rel: 0,
+                        modestbranding: 1,
+                        loop: 1,
+                        playlist: VIDEOS[currentVideoIndex],
+                      },
+                    }}
+                    onReady={(event) => {
+                      event.target.setVolume(20);
+                      event.target.playVideo();
+                    }}
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                  />
                 </div>
                 <div className="video-glow"></div>
               </div>
@@ -216,15 +232,17 @@ const GenesisLanding = () => {
         <p className="trust-title">Ils nous font confiance</p>
         <div className="marquee-container">
           <div className="marquee-track marquee-normal">
-            {['KOZI', 'GENEZIO', 'GUY2BEZBAR', 'MAYO', 'SONYMUSIC', 'NETFLIX', 'UNIVERSAL', 'CANAL+', 'M6', 'SPOTIFY'].map((brand, idx) => (
+            {['KOZI', 'GUY2BEZBAR', 'GENEZIO', 'MAYO', 'KABBSKY', 'DMG', 'R2', '360 OTG', 'ERON', 'BELIEVE'].map((brand, idx) => (
               <span key={idx} className="marquee-item">{brand}</span>
             ))}
-            {['KOZI', 'GENEZIO', 'GUY2BEZBAR', 'MAYO', 'SONYMUSIC', 'NETFLIX', 'UNIVERSAL', 'CANAL+', 'M6', 'SPOTIFY'].map((brand, idx) => (
+            {['KOZI', 'GUY2BEZBAR', 'GENEZIO', 'MAYO', 'KABBSKY', 'DMG', 'R2', '360 OTG', 'ERON', 'BELIEVE'].map((brand, idx) => (
               <span key={`dup-${idx}`} className="marquee-item">{brand}</span>
             ))}
           </div>
         </div>
       </section>
+
+
 
       {/* AI PLAYGROUND SECTION (NEW) */}
       <section className="py-24 relative z-10 border-b border-white/5 bg-black/40">
@@ -264,6 +282,13 @@ const GenesisLanding = () => {
                 >
                   {isAiLoading ? <span className="animate-spin">⚡</span> : <Sparkles className="w-5 h-5" />}
                   GÉNÉRER
+                </button>
+                <button
+                  onClick={() => navigate('/prompt')}
+                  className="bg-transparent border border-white/20 hover:bg-white/10 text-white px-6 py-3 rounded-lg font-bold font-orbitron flex items-center justify-center gap-2 transition-all"
+                >
+                  <Monitor className="w-5 h-5" />
+                  MODE PRO
                 </button>
               </div>
 
@@ -327,11 +352,14 @@ const GenesisLanding = () => {
       <section className="section-padding">
         <div className="container">
           <h2 className="section-title">L'IA NE DOIT PAS ÊTRE <span className="text-gradient">COMPLIQUÉE</span></h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-center mb-12">
+            Un workflow de réalisateurs pensé pour créer des vidéos IA exploitables et vendables
+          </p>
           <div className="comparison-grid">
             {/* Old Way */}
             <div className="card bad">
               <h3 className="card-title text-red-400" style={{ color: '#f87171' }}>
-                <span className="p-2 bg-red-500/10 rounded">❌</span> Sans la formation
+                <span className="p-2 bg-red-500/10 rounded">❌</span> Sans l'accompagnement ou coaching
               </h3>
               <ul>
                 <li className="list-item"><span style={{ color: '#f87171' }}>•</span> Rendu amateur et glitchs</li>
@@ -391,7 +419,7 @@ const GenesisLanding = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">Vous voulez monétiser</h4>
-                    <p className="text-gray-400 text-sm">Vous cherchez une compétence rare et demandée pour vendre des clips ou des publicités.</p>
+                    <p className="text-gray-400 text-sm">Vous cherchez une compétence rare et demandée pour vendre des visuels bluffants.</p>
                   </div>
                 </div>
               </div>
@@ -476,8 +504,8 @@ const GenesisLanding = () => {
             </div>
             <div className="p-8 text-center">
               <div className="flex-center mb-4">
-                <span className="old-price">500€</span>
-                <span className="price">299€</span>
+                <span className="old-price">800€</span>
+                <span className="price">499€</span>
               </div>
 
               <div className="text-left space-y-4 mb-8" style={{ maxWidth: '320px', margin: '0 auto 30px' }}>
@@ -486,10 +514,10 @@ const GenesisLanding = () => {
                 <li className="list-item"><Check size={20} color="#a855f7" /> Accès outils IA privés</li>
                 <li className="list-item"><Check size={20} color="#a855f7" /> Workflow "Visuals by Genesis"</li>
                 <li className="list-item"><Check size={20} color="#a855f7" /> Support Communautaire</li>
-                <li className="list-item font-bold text-white"><ShieldCheck size={20} color="#22d3ee" /> Garantie 14 jours Satisfait ou Remboursé</li>
+                <li className="list-item font-bold text-white"><ShieldCheck size={20} color="#22d3ee" /> On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!</li>
               </div>
 
-              <a href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main">
+              <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main">
                 CHOISIR MON MODULE
               </a>
               <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
@@ -497,6 +525,20 @@ const GenesisLanding = () => {
           </div>
         </div>
       </section >
+
+      {/* Notion Embed Section (Responsive) */}
+      <section className="section-padding">
+        <div className="container" style={{ maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+          <div style={{ position: 'relative', width: '100%', height: '600px', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <iframe
+              src="https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637"
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+              allowFullScreen
+              title="Genesis Notion Embed"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* FAQ */}
       < section className="section-padding" >
@@ -536,15 +578,19 @@ const GenesisLanding = () => {
         <div className="container">
           <h2 style={{ fontFamily: 'var(--font-orbitron)', fontWeight: 900, fontSize: '1.5rem', marginBottom: '20px' }}>GENESIS</h2>
           <div className="flex justify-center gap-6 mb-8">
-            <a href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-purple-600 transition-colors">
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-purple-600 transition-colors">
               <Instagram size={24} />
+            </a>
+            <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-purple-600 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tiktok"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
             </a>
           </div>
           <p className="text-muted text-sm mb-8">© 2024 Visuals by Genesis. All rights reserved.</p>
           <div className="flex-center gap-6 text-sm text-muted">
-            <a href={INSTAGRAM_LINK} target="_blank">Mentions Légales</a>
-            <a href={INSTAGRAM_LINK} target="_blank">CGV</a>
-            <a href={INSTAGRAM_LINK} target="_blank">Contact</a>
+            <a href={CONTACT_LINK} target="_blank">Mentions Légales</a>
+            <a href={CONTACT_LINK} target="_blank">CGV</a>
+            <a href={CONTACT_LINK} target="_blank">RGPD</a>
+            <a href={CONTACT_LINK} target="_blank">Contact</a>
           </div>
         </div>
       </footer >
@@ -948,6 +994,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<GenesisLanding />} />
+        <Route path="/prompt" element={<PromptArchitect />} />
         <Route
           path="/genegym"
           element={
