@@ -1,7 +1,8 @@
 import { useState, useEffect, useReducer } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Sparkles, Monitor, Camera, Zap, User, X,
-    Terminal, Copy, Check, ChevronDown, Lock, Play
+    Terminal, Copy, Check, ChevronDown, Lock, Play, Image, Film, Aperture, Sun
 } from 'lucide-react';
 
 const STORAGE_KEY = 'promptArchitect';
@@ -14,17 +15,99 @@ const FREE_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free"
 ];
 
+// --- AI GENERATION MODELS ---
+const AI_MODELS = {
+    video: [
+        { id: 'veo3', name: 'Google Veo 3', image: '/ui/perso/GenModels/video/Google-Veo-3.jpg' },
+        { id: 'kling', name: 'Kling AI', image: '/ui/perso/GenModels/video/kling_ai_logo.png' },
+        { id: 'runway', name: 'Runway Gen-3', image: '/ui/perso/GenModels/video/runway_gen3_logo.png' },
+        { id: 'sora', name: 'OpenAI Sora', image: '/ui/perso/GenModels/video/openai_sora_logo.png' },
+    ],
+    image: [
+        { id: 'midjourney', name: 'Midjourney', image: '/ui/perso/GenModels/image/midjourney_logo.png' },
+        { id: 'dalle3', name: 'DALL-E 3', image: '/ui/perso/GenModels/image/dalle_3_logo.png' },
+        { id: 'flux', name: 'Flux AI', image: '/ui/perso/GenModels/image/flux_ai_logo.png' },
+        { id: 'seedream', name: 'Seedream', image: '/ui/perso/GenModels/image/seedream_logo.jpg' },
+        { id: 'nanobanana', name: 'Nano Banana', image: '/ui/perso/GenModels/image/nano_banana_logo.png' },
+    ]
+};
+
+const GEN_STYLES = [
+    { id: 'genesis-cinematic', name: 'Cinematic', image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200&auto=format&fit=crop' },
+    { id: 'cyberpunk', name: 'Cyberpunk', image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200&auto=format&fit=crop' },
+    { id: 'simpsons', name: 'Simpsons', image: 'https://wallpapers.com/images/hd/the-simpsons-house-background-1920-x-1080-b747j52y43292440.jpg' },
+    { id: 'minecraft', name: 'Minecraft', image: 'https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=200&auto=format&fit=crop' },
+    { id: 'disney-pixar', name: 'Disney Pixar', image: 'https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=200&auto=format&fit=crop' },
+    { id: 'studio-ghibli', name: 'Studio Ghibli', image: 'https://wallpapers.com/images/featured/spirited-away-background-02s3090740924009.jpg' },
+    { id: 'vaporwave', name: 'Vaporwave', image: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?q=80&w=200&auto=format&fit=crop' },
+    { id: 'realistic', name: 'Realistic Photo', image: 'https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=200&auto=format&fit=crop' },
+    { id: 'anime', name: 'Anime Shinkai', image: 'https://images.unsplash.com/photo-1560972550-aba3456b5564?q=80&w=200&auto=format&fit=crop' },
+    { id: 'oil-painting', name: 'Van Gogh Oil', image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=200&auto=format&fit=crop' },
+];
+
+// --- CAMERA & AI CONFIGURATION ---
+const SHOT_TYPES = [
+    'Extreme Close-up', 'Close-up', 'Medium Shot', 'Cowboy Shot', 'Full Shot',
+    'Wide Shot', 'Extreme Wide Shot', 'Top View', 'Low Angle', 'High Angle',
+    'Dutch Angle', 'Over-the-Shoulder', 'First Person POV', 'Drone View'
+];
+
+const CAMERA_MOVES = [
+    // Standard
+    { id: 'Static', label: 'Static', anim: '' },
+    { id: 'Dolly In', label: 'Dolly In', anim: 'anim-dolly-in' },
+    { id: 'Dolly Out', label: 'Dolly Out', anim: 'anim-dolly-out' },
+    { id: 'Dolly Zoom', label: 'Dolly Zoom', anim: 'anim-dolly-in' }, // Simulating with dolly in for now
+    { id: 'Truck Left', label: 'Truck Left', anim: 'anim-pan-left' },
+    { id: 'Truck Right', label: 'Truck Right', anim: 'anim-pan-right' },
+    { id: 'Pan Left', label: 'Pan Left', anim: 'anim-pan-left' },
+    { id: 'Pan Right', label: 'Pan Right', anim: 'anim-pan-right' },
+    { id: 'Tilt Up', label: 'Tilt Up', anim: 'anim-tilt-up' },
+    { id: 'Tilt Down', label: 'Tilt Down', anim: 'anim-tilt-down' },
+    { id: 'Orbit 360', label: 'Orbit 360', anim: 'anim-orbit' },
+    { id: 'Handheld Shake', label: 'Handheld Shake', anim: 'anim-shake' },
+    { id: 'Barrel Roll', label: 'Barrel Roll', anim: 'anim-roll' },
+    // FPV & Others (Default static or simple scale)
+    { id: 'FPV Dive', label: 'FPV Dive', anim: 'anim-tilt-down' },
+    { id: 'FPV Rise', label: 'FPV Rise', anim: 'anim-tilt-up' },
+    { id: 'FPV Chase', label: 'FPV Chase', anim: 'anim-dolly-in' },
+    { id: 'Tracking Shot', label: 'Tracking Shot', anim: 'anim-pan-right' },
+    { id: 'Crane Up', label: 'Crane Up', anim: 'anim-tilt-up' },
+    { id: 'Crane Down', label: 'Crane Down', anim: 'anim-tilt-down' },
+    { id: 'Whip Pan', label: 'Whip Pan', anim: 'anim-pan-left duration-75' }, // Fast pan?
+];
+
+const CAMERA_FX = [
+    'None', 'Motion Blur', 'Chromatic Aberration', 'Film Grain', 'Light Leaks',
+    'Lens Flare', 'Vignette', 'Bokeh', 'Double Exposure', 'Glitch Effect',
+    'VHS Distortion', 'Bloom Neon', 'Camera Shockwave'
+];
+
+const LIGHTING_STYLES = [
+    { id: 'natural', name: 'Natural', image: '/ui/icons/lighting/natural.png' },
+    { id: 'cinematic', name: 'Cinematic', image: '/ui/icons/lighting/cinematic.png' },
+    { id: 'studio', name: 'Studio', image: '/ui/icons/lighting/studio.png' },
+    { id: 'neon-noir', name: 'Neon Noir', image: '/ui/icons/lighting/neon_noir.png' },
+    { id: 'golden-hour', name: 'Golden Hour', image: '/ui/icons/lighting/golden_hour.png' },
+    { id: 'blue-hour', name: 'Blue Hour', image: '/ui/icons/lighting/blue_hour.png' },
+    { id: 'rembrandt', name: 'Rembrandt', image: '/ui/icons/lighting/rembrandt.png' },
+    { id: 'volumetric-fog', name: 'Volumetric Fog', image: '/ui/icons/lighting/volumetric_fog.png' },
+    { id: 'bioluminescent', name: 'Bioluminescent', image: '/ui/icons/lighting/bioluminescent.png' },
+    { id: 'cyberpunk-neon', name: 'Cyberpunk Neon', image: '/ui/icons/lighting/cyberpunk_neon.png' },
+];
+
 // --- INITIAL STATE ---
 const initialState = {
     generationType: 'video',
     aiModel: 'veo3',
-    shotType: 'medium',
     style: 'genesis-cinematic',
+    shotType: 'Wide Shot',
     duration: '5s',
     aspectRatio: '16:9',
+    cameraMovement: 'Static',
+    cameraFX: 'None',
+    lighting: 'cinematic',
     subject: '',
-    cameraMovement: 'static',
-    lighting: 'neon-noir',
     fps: '24'
 };
 
@@ -33,7 +116,8 @@ function reducer(state, action) {
 }
 
 // --- MAIN COMPONENT ---
-export default function PromptArchitect() {
+export default function PromptArchitect({ embedded = false }) {
+    const navigate = useNavigate();
     const [state, dispatch] = useReducer(reducer, initialState);
     const [uses, setUses] = useState(0);
     const [unlocked, setUnlocked] = useState(false);
@@ -41,21 +125,40 @@ export default function PromptArchitect() {
     const [generating, setGenerating] = useState(false);
     const [result, setResult] = useState(null);
     const [copied, setCopied] = useState(false);
+    const [countdown, setCountdown] = useState(0);
+    const [showIntro, setShowIntro] = useState(!embedded);
+
+    // Countdown logic
+    useEffect(() => {
+        let timer;
+        if (generating && countdown > 0) {
+            timer = setInterval(() => {
+                setCountdown(prev => prev > 0 ? prev - 1 : 0);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [generating, countdown]);
 
     // Load uses and check 24h reset
     useEffect(() => {
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        const lastUseTime = data.lastUseTime || 0;
-        const hoursSinceLastUse = (Date.now() - lastUseTime) / (1000 * 60 * 60);
-
-        // Reset uses if more than 24 hours have passed
-        if (hoursSinceLastUse >= 24) {
-            setUses(0);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, demoUses: 0, lastUseTime: Date.now() }));
-        } else {
-            setUses(data.demoUses || 0);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            const data = JSON.parse(stored);
+            const now = Date.now();
+            if (now - data.timestamp > 24 * 60 * 60 * 1000) {
+                // Reset after 24h
+                setUses(0);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ uses: 0, timestamp: now }));
+            } else {
+                setUses(data.uses);
+            }
         }
-        setUnlocked(data.valexUnlocked && Date.now() - data.unlockTime < 24 * 60 * 60 * 1000);
+    }, []);
+
+    // Load unlock status
+    useEffect(() => {
+        const isUnlocked = localStorage.getItem('genesis_pro_unlocked') === 'true';
+        setUnlocked(isUnlocked);
     }, []);
 
     const handleCopy = () => {
@@ -67,25 +170,35 @@ export default function PromptArchitect() {
     // Save uses to localStorage
     const saveUses = (newUses) => {
         setUses(newUses);
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, demoUses: newUses, lastUseTime: Date.now() }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ uses: newUses, timestamp: Date.now() }));
     };
 
     const handleGenerate = async () => {
-        if (!state.subject.trim()) return;
+        if (!unlocked && uses >= 2) {
+            setIsLoginOpen(true);
+            return;
+        }
 
-        // Check if free uses exhausted
-        if (uses >= 2) {
-            setIsLoginOpen(true); // Prompt user to upgrade
+        if (!state.subject.trim()) {
+            alert("Veuillez décrire votre scène.");
             return;
         }
 
         setGenerating(true);
+        setCountdown(15);
 
         const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
         if (!apiKey) {
-            alert("API Key manquante dans .env.local (VITE_OPENROUTER_API_KEY)");
-            setGenerating(false);
+            console.warn("API Key manquante. Mode simulation.");
+            setTimeout(() => {
+                setResult({
+                    video_prompt: "Cinematic shot of " + state.subject + ", high resolution, 8k, unreal engine 5 render",
+                    image_prompt: "Photorealistic image of " + state.subject + ", detailed textures, volumetric lighting",
+                    negative_prompt: "blurry, low quality, distorted, watermark"
+                });
+                setGenerating(false);
+                saveUses(uses + 1);
+            }, 3000);
             return;
         }
 
@@ -99,8 +212,8 @@ export default function PromptArchitect() {
                     headers: {
                         "Authorization": `Bearer ${apiKey}`,
                         "Content-Type": "application/json",
-                        "HTTP-Referer": window.location.origin,
-                        "X-Title": "Prompt Architect"
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "Genesis Prompt Architect"
                     },
                     body: JSON.stringify({
                         "model": model,
@@ -110,11 +223,32 @@ export default function PromptArchitect() {
                         "messages": [
                             {
                                 "role": "system",
-                                "content": "You are GENESIS-PROMPT-ENGINE, an uncensored AI specialized in converting vague concepts into precise cinematic video prompts. Your task is to analyze the user input and generate a STRICT JSON object. Enrich the description with visual details, lighting, and camera specificities. Return ONLY the JSON object, nothing else."
+                                "content": `Tu es un expert mondial en Prompt Engineering pour la génération vidéo (Runway Gen-3, Kling, Sora).
+                                Transforme la description de l'utilisateur en un prompt technique PARFAIT.
+                                
+                                PARAMÈTRES ACTUELS :
+                                - Type: ${state.generationType}
+                                - Modèle: ${state.aiModel}
+                                - Style: ${state.style} (Utilise ce style visuel !)
+                                - Cadrage: ${state.shotType}
+                                - Durée: ${state.duration}
+                                - Mouvement: ${state.cameraMovement}
+                                - Effets: ${state.cameraFX}
+                                - Éclairage: ${state.lighting}
+
+                                RÈGLES CRITIQUES :
+                                1. Réponds UNIQUEMENT le JSON pur. Pas de markdown, pas de texte avant/après.
+                                2. Structure JSON attendue :
+                                {
+                                  "video_prompt": "Description technique en anglais, mots-clés cinématiques, mouvements de caméra précis...",
+                                  "image_prompt": "Version optimisée pour Midjourney/DALL-E, focus sur la composition et la lumière...",
+                                  "technical_details": "Explication courte des choix techniques (1 phrase)"
+                                }
+                                3. Sois créatif but précis sur les termes techniques (8k, octane render, volumetric fog, etc...).`
                             },
                             {
                                 "role": "user",
-                                "content": `Transform this concept: "${state.subject}". Enforced settings: ${JSON.stringify({ aspectRatio: state.aspectRatio, duration: state.duration, cameraMovement: state.cameraMovement })}. \n\nEXPECTED JSON STRUCTURE:\n{\n  "prompt_runway": "Detailed cinematic prompt string with all keywords...",\n  "camera": "Camera model",\n  "focal_length": "Lens mm",\n  "lighting": "Lighting description",\n  "movement": "Camera movement description",\n  "style_tags": ["tag1", "tag2"]\n}`
+                                "content": `Sujet de la scène : "${state.subject}"`
                             }
                         ]
                     })
@@ -161,23 +295,32 @@ export default function PromptArchitect() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
+        <div className={embedded ? "w-full text-white font-sans relative" : "min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative"}>
+
+            {/* INTRO OVERLAY */}
+            {showIntro && !embedded && (
+                <IntroOverlay onComplete={() => setShowIntro(false)} />
+            )}
 
             {/* BACKGROUND AMBIANCE */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse-slower"></div>
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-150 contrast-150"></div>
-            </div>
+            {!embedded && (
+                <div className="fixed inset-0 pointer-events-none">
+                    <div className="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+                    <div className="absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse-slower"></div>
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-150 contrast-150"></div>
+                </div>
+            )}
 
             {/* NAVBAR */}
-            <NavBar
-                onProfileClick={() => setIsLoginOpen(true)}
-                unlocked={unlocked}
-            />
+            {!embedded && (
+                <NavBar
+                    onProfileClick={() => setIsLoginOpen(true)}
+                    unlocked={unlocked}
+                />
+            )}
 
             {/* MAIN CONTENT */}
-            <main className="relative z-10 container mx-auto px-6 pt-48 pb-24 flex flex-col items-center min-h-[calc(100vh-80px)]">
+            <main className={`relative z-10 container mx-auto px-6 ${embedded ? 'py-0' : 'pt-48 pb-24'} flex flex-col items-center min-h-[calc(100vh-80px)]`}>
 
                 {/* HERO HEADER */}
                 <div className="text-center mb-5 mt-24 space-y-4 animate-fade-in-up">
@@ -185,7 +328,7 @@ export default function PromptArchitect() {
                         <Sparkles className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-bold font-orbitron text-purple-300 tracking-wider">PROMPT ARCHITECT v2.0</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
+                    <h1 className="text-5xl md:text-5xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
                         CRAFT YOUR <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">VISION!</span>
                     </h1>
                     <p className="text-gray-400 max-w-lg mx-auto text-lg">
@@ -203,17 +346,28 @@ export default function PromptArchitect() {
                         <div className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-[30px] p-1 transition-all hover:border-purple-500/30 hover:shadow-[0_0_40px_rgba(139,92,246,0.15)]">
                             <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-6 h-full min-h-[300px] flex flex-col">
-                                <div className="flex items-center gap-3 mb-4 text-gray-400">
-                                    <Terminal className="w-5 h-5" />
-                                    <span className="text-sm font-bold tracking-widest uppercase">Décrivez votre scène</span>
+                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-6 h-full min-h-[300px] flex flex-col relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3 text-gray-400">
+                                        <Terminal className="w-5 h-5" />
+                                        <span className="text-sm font-bold tracking-widest uppercase">Décrivez votre scène</span>
+                                    </div>
+                                    {embedded && (
+                                        <button
+                                            onClick={() => navigate('/prompt')}
+                                            className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-black text-xs font-black font-orbitron rounded-full shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] transition-all transform hover:scale-105 active:scale-95 border border-yellow-300/50"
+                                        >
+                                            <Sparkles size={12} className="fill-black/50" />
+                                            ACCÈS PRO
+                                        </button>
+                                    )}
                                 </div>
 
                                 <textarea
                                     value={state.subject}
                                     onChange={(e) => dispatch({ type: 'subject', value: e.target.value })}
                                     placeholder="Décrivez votre scène: Un samouraï cyberpunk marchant sous la pluie à néo-tokyo..."
-                                    className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed"
+                                    className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed pb-24"
                                 />
 
                                 {/* CHARACTER COUNT */}
@@ -222,41 +376,70 @@ export default function PromptArchitect() {
                                 </div>
 
                                 {/* FLOATING ACTION BAR */}
-                                <div className="mt-4 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
-                                    <div className="flex flex-wrap gap-2">
-                                        <PillSelect
-                                            icon={Monitor}
-                                            value={state.aspectRatio}
-                                            options={['16:9', '9:16', '1:1', '21:9']}
-                                            onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
-                                        />
-                                        <PillSelect
-                                            icon={Play}
-                                            value={state.duration}
-                                            options={['5s', '10s', '15s']}
-                                            onChange={(v) => dispatch({ type: 'duration', value: v })}
-                                        />
-                                        <PillSelect
-                                            icon={Camera}
-                                            value={state.cameraMovement}
-                                            options={['Static', 'Dolly Zoom', 'Pan Right', 'Tilt Up', 'FPV']}
-                                            onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
-                                        />
-                                    </div>
+                                <div className="mt-4 flex flex-wrap items-center gap-2 pt-4 border-t border-white/5 pb-16">
+                                    <PillSelect
+                                        icon={Monitor}
+                                        value={state.aspectRatio}
+                                        options={['16:9', '9:16', '1:1', '21:9']}
+                                        onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
+                                    />
+                                    <PillSelect
+                                        icon={Play}
+                                        value={state.duration}
+                                        options={['5s', '10s', '15s']}
+                                        onChange={(v) => dispatch({ type: 'duration', value: v })}
+                                    />
+                                    <PillSelect
+                                        icon={Aperture}
+                                        value={state.shotType}
+                                        options={SHOT_TYPES}
+                                        onChange={(v) => dispatch({ type: 'shotType', value: v })}
+                                    />
+                                    <LightingSelect
+                                        value={state.lighting}
+                                        onChange={(v) => dispatch({ type: 'lighting', value: v })}
+                                    />
+                                    <MotionSelect
+                                        value={state.cameraMovement}
+                                        onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
+                                    />
+                                    <PillSelect
+                                        icon={Zap}
+                                        value={state.cameraFX}
+                                        options={CAMERA_FX}
+                                        onChange={(v) => dispatch({ type: 'cameraFX', value: v })}
+                                    />
+                                    <ModelSelect
+                                        generationType={state.generationType}
+                                        value={state.aiModel}
+                                        onChange={(v) => dispatch({ type: 'aiModel', value: v })}
+                                        onTypeChange={(v) => dispatch({ type: 'generationType', value: v })}
+                                    />
+                                    <StyleSelect
+                                        value={state.style}
+                                        onChange={(v) => dispatch({ type: 'style', value: v })}
+                                    />
+                                </div>
 
-                                    {/* GENERATE BUTTON & COUNTER - Bottom Right */}
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-xs text-gray-500">
-                                            {uses >= 2 ? '0 essai (reset 24h)' : `${2 - uses} essais gratuits`}
-                                        </span>
-                                        <button
-                                            onClick={handleGenerate}
-                                            disabled={generating}
-                                            className={`relative group bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-6 py-3 rounded-[16px] shadow-lg shadow-purple-600/30 transition-all hover:scale-105 hover:shadow-purple-600/50 active:scale-95 flex items-center gap-2 overflow-hidden ${generating ? 'opacity-70 cursor-wait' : ''}`}
-                                        >
-                                            <Sparkles className={`w-4 h-4 fill-current ${generating ? 'animate-spin' : 'animate-pulse'}`} />
-                                            {generating ? 'CRAFTING...' : 'GENERATE'}
-                                        </button>
+                                {/* GENERATE BUTTON - Fixed Bottom Right */}
+                                <div className="absolute bottom-6 right-6 z-10">
+                                    <button
+                                        onClick={handleGenerate}
+                                        disabled={generating}
+                                        className={`relative group bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-6 py-3 rounded-[16px] shadow-lg shadow-purple-600/30 transition-all hover:scale-105 hover:shadow-purple-600/50 active:scale-95 flex items-center gap-2 overflow-hidden ${generating ? 'cursor-wait ring-2 ring-purple-500/50' : ''}`}
+                                    >
+                                        {/* Futuristic Scanner Effect */}
+                                        {generating && (
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-full h-full -translate-x-full animate-[shimmer_1.5s_infinite]"></div>
+                                        )}
+
+                                        <Sparkles className={`w-4 h-4 fill-current ${generating ? 'animate-spin' : 'animate-pulse'}`} />
+                                        {generating ? 'PROCESSING...' : 'GENERATE'}
+                                    </button>
+
+                                    {/* Usage Badge */}
+                                    <div className="absolute -top-3 -right-2 z-[100] bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md border border-red-400 animate-bounce pointer-events-none">
+                                        {uses >= 2 ? '0 ESSAI' : `${2 - uses} FREE`}
                                     </div>
                                 </div>
                             </div>
@@ -266,6 +449,25 @@ export default function PromptArchitect() {
                     {/* RIGHT: JSON PREVIEW */}
                     <div className="lg:col-span-4">
                         <div className="h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[30px] p-6 flex flex-col relative overflow-hidden group">
+
+                            {/* LOADING OVERLAY */}
+                            {generating && (
+                                <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+                                    <div className="relative w-24 h-24 mb-4">
+                                        <div className="absolute inset-0 rounded-full border-t-2 border-purple-500 animate-spin"></div>
+                                        <div className="absolute inset-2 rounded-full border-r-2 border-indigo-500 animate-spin-reverse"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center font-mono text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                                            {countdown}
+                                        </div>
+                                    </div>
+                                    <p className="text-purple-300 font-mono text-sm animate-pulse tracking-widest">
+                                        GENERATING PROMPT...
+                                    </p>
+                                    <div className="mt-2 text-xs text-gray-500 font-mono">
+                                        Optimization w/ {state.aiModel}
+                                    </div>
+                                </div>
+                            )}
                             {/* Header */}
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
@@ -363,12 +565,12 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-40 bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-20 flex flex-col p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-56 max-h-60 overflow-y-auto custom-scrollbar bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-20 flex flex-col p-1 animate-in fade-in zoom-in-95 duration-200">
                         {options.map(opt => (
                             <button
                                 key={opt}
-                                onClick={() => { onChange(opt.toLowerCase()); setIsOpen(false); }}
-                                className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors ${value.toLowerCase() === opt.toLowerCase() ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                                onClick={() => { onChange(opt); setIsOpen(false); }}
+                                className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${value === opt ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
                             >
                                 {opt}
                             </button>
@@ -376,6 +578,252 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
                     </div>
                 </>
             )}
+        </div>
+    );
+};
+
+const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const models = AI_MODELS[generationType] || [];
+    const currentModel = models.find(m => m.id === value) || models[0];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+            >
+                <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
+                    {currentModel && (
+                        <img
+                            src={currentModel.image}
+                            alt={currentModel.name}
+                            className="w-full h-full object-cover"
+                        />
+                    )}
+                </div>
+                <span className="hidden sm:inline">{currentModel?.name || 'Model'}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full left-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                        {/* Type Tabs */}
+                        <div className="flex border-b border-white/5">
+                            <button
+                                onClick={() => { onTypeChange('video'); onChange(AI_MODELS.video[0].id); }}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold transition-colors ${generationType === 'video' ? 'text-purple-400 bg-purple-500/10' : 'text-gray-500 hover:text-white'}`}
+                            >
+                                <Film size={14} />
+                                VIDEO
+                            </button>
+                            <button
+                                onClick={() => { onTypeChange('image'); onChange(AI_MODELS.image[0].id); }}
+                                className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold transition-colors ${generationType === 'image' ? 'text-purple-400 bg-purple-500/10' : 'text-gray-500 hover:text-white'}`}
+                            >
+                                <Image size={14} />
+                                IMAGE
+                            </button>
+                        </div>
+
+                        {/* Model List */}
+                        <div className="p-2 max-h-64 overflow-y-auto custom-scrollbar">
+                            {models.map(model => (
+                                <button
+                                    key={model.id}
+                                    onClick={() => { onChange(model.id); setIsOpen(false); }}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${value === model.id ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                                >
+                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
+                                        <img
+                                            src={model.image}
+                                            alt={model.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <span>{model.name}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+const StyleSelect = ({ value, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const textValue = (value) => {
+        const style = GEN_STYLES.find(s => s.id === value);
+        return style ? style.name : 'Style';
+    };
+    const currentStyle = GEN_STYLES.find(s => s.id === value) || GEN_STYLES[0];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+            >
+                <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
+                    <img
+                        src={currentStyle.image}
+                        alt={currentStyle.name}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+                <span className="hidden sm:inline">{currentStyle.name}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            {GEN_STYLES.map(style => (
+                                <button
+                                    key={style.id}
+                                    onClick={() => { onChange(style.id); setIsOpen(false); }}
+                                    className={`relative group rounded-xl overflow-hidden border transition-all ${value === style.id ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}
+                                >
+                                    <div className="aspect-square w-full">
+                                        <img
+                                            src={style.image}
+                                            alt={style.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
+                                            <span className="text-[10px] font-bold text-white truncate w-full text-center">{style.name}</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+const LightingSelect = ({ value, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const currentStyle = LIGHTING_STYLES.find(s => s.id === value) || LIGHTING_STYLES[0];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+            >
+                <div className="w-6 h-6 rounded-full overflow-hidden gray-scale-0 bg-white/5 flex-shrink-0 border border-white/20">
+                    <img
+                        src={currentStyle.image}
+                        alt={currentStyle.name}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+                <span className="hidden sm:inline">{currentStyle.name}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
+                            {LIGHTING_STYLES.map(style => (
+                                <button
+                                    key={style.id}
+                                    onClick={() => { onChange(style.id); setIsOpen(false); }}
+                                    className={`relative group rounded-xl overflow-hidden border transition-all ${value === style.id ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}
+                                >
+                                    <div className="aspect-square w-full relative">
+                                        <img
+                                            src={style.image}
+                                            alt={style.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2">
+                                            <span className="text-[10px] font-bold text-white truncate w-full text-center">{style.name}</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+const MotionSelect = ({ value, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const currentMove = CAMERA_MOVES.find(m => m.id === value) || CAMERA_MOVES[0];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+            >
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+                    <Camera size={16} className={`text-purple-400 ${currentMove.anim}`} />
+                </div>
+                <span className="hidden sm:inline">{currentMove.label}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full left-0 mb-2 w-72 max-h-80 overflow-y-auto custom-scrollbar bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 z-20 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2 grid grid-cols-2 gap-2">
+                            {CAMERA_MOVES.map(move => (
+                                <button
+                                    key={move.id}
+                                    onClick={() => { onChange(move.id); setIsOpen(false); }}
+                                    className={`relative group p-3 rounded-xl border transition-all flex flex-col items-center gap-2 ${value === move.id ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 hover:border-white/20 hover:bg-white/5'}`}
+                                >
+                                    <div className="w-10 h-10 rounded-lg bg-black/50 flex items-center justify-center relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
+                                        <Camera size={20} className={`text-white/80 group-hover:text-purple-400 ${move.anim}`} />
+                                    </div>
+                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-white">{move.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+const IntroOverlay = ({ onComplete }) => {
+    const [fading, setFading] = useState(false);
+
+    const handleEnd = () => {
+        setFading(true);
+        setTimeout(onComplete, 800);
+    };
+
+    return (
+        <div className={`fixed inset-0 z-[100] bg-black flex items-center justify-center transition-opacity duration-1000 ${fading ? 'opacity-0' : 'opacity-100'}`}>
+            <video
+                src="/ui/animation/1G.mp4"
+                muted
+                autoPlay
+                playsInline
+                onEnded={handleEnd}
+                onClick={handleEnd}
+                className="max-w-[90%] max-h-[90%] md:max-w-[800px] rounded-[70px] shadow-[0_0_100px_rgba(147,51,234,0.2)] object-cover border border-white/10"
+            />
         </div>
     );
 };

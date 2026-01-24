@@ -37,11 +37,7 @@ const GenesisLanding = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // States for AI Playground
-  const [aiPromptInput, setAiPromptInput] = useState('');
-  const [aiPromptResult, setAiPromptResult] = useState(null);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const apiKey = ""; // API Key placeholder
+
 
   const navigate = useNavigate();
 
@@ -81,45 +77,6 @@ const GenesisLanding = () => {
     } else {
       setErrorMsg('Code invalide. Accès refusé.');
       setTimeout(() => setErrorMsg(''), 2000);
-    }
-  };
-
-  const generateGenesisPrompt = async () => {
-    if (!aiPromptInput.trim()) return;
-    setIsAiLoading(true);
-    setAiPromptResult(null);
-
-    const systemPrompt = "Tu es GENESIS, un expert mondial en Prompt Engineering pour l'IA générative vidéo (Midjourney, Runway Gen-3, Kling). Ton style est Cyberpunk, Dark, Néon, Cinématographique. L'utilisateur va te donner une idée simple. Tu dois la transformer en : 1. Un Prompt d'Image ultra-détaillé en Anglais (pour Stable Diffusion/Midjourney) avec des mots clés techniques (8k, octane render, volumetric lighting). 2. Un Prompt de Mouvement Caméra pour la vidéo. Réponds en JSON : { \"imagePrompt\": \"...\", \"cameraPrompt\": \"...\" }.";
-
-    try {
-      // Mocking response if no API key is provided to avoid error
-      if (!apiKey) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setAiPromptResult({
-          imagePrompt: "Cinematic shot of " + aiPromptInput + ", cyberpunk style, neon lights, volumetric fog, octane render, 8k, highly detailed, photorealistic.",
-          cameraPrompt: "Slow push in, cinematic lighting, stabilize."
-        });
-      } else {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `Transforme cette idée en prompt PRO : "${aiPromptInput}"` }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        });
-        const data = await response.json();
-        if (data.candidates && data.candidates[0].content) {
-          const result = JSON.parse(data.candidates[0].content.parts[0].text);
-          setAiPromptResult(result);
-        }
-      }
-    } catch (error) {
-      console.error("Erreur IA:", error);
-      setAiPromptResult({ imagePrompt: "Erreur de connexion au Neuro-Core...", cameraPrompt: "Réessayez plus tard." });
-    } finally {
-      setIsAiLoading(false);
     }
   };
 
@@ -253,94 +210,9 @@ const GenesisLanding = () => {
 
 
       {/* AI PLAYGROUND SECTION (NEW) */}
-      <section className="py-24 relative z-10 border-b border-white/5 bg-black/40">
-        <div className="container mx-auto px-6 relative">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 text-xs font-bold tracking-wider uppercase mb-4">
-              <Sparkles className="w-3 h-3" /> DEMO GRATUITE
-            </span>
-            <h2 className="section-title">GENESIS <span className="text-gradient">PROMPT ARCHITECT</span></h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Testez la puissance de notre workflow. Entrez une idée simple, et notre IA générera pour vous un prompt professionnel prêt à l'emploi.
-            </p>
-          </div>
-
-          <div className="max-w-3xl mx-auto bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
-            {/* Terminal Header */}
-            <div className="bg-gray-900 px-4 py-2 flex items-center gap-2 border-b border-white/5">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="ml-2 text-xs text-gray-500 font-mono">genesis_terminal_v1.0</span>
-            </div>
-
-            <div className="p-6 md:p-8">
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <input
-                  type="text"
-                  value={aiPromptInput}
-                  onChange={(e) => setAiPromptInput(e.target.value)}
-                  placeholder="Ex: Une voiture futuriste dans Paris sous la pluie..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors font-inter"
-                />
-                <button
-                  onClick={generateGenesisPrompt}
-                  disabled={isAiLoading || !aiPromptInput}
-                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-bold font-orbitron flex items-center justify-center gap-2 transition-all"
-                >
-                  {isAiLoading ? <span className="animate-spin">⚡</span> : <Sparkles className="w-5 h-5" />}
-                  GÉNÉRER
-                </button>
-                <button
-                  onClick={() => navigate('/prompt')}
-                  className="bg-transparent border border-white/20 hover:bg-white/10 text-white px-6 py-3 rounded-lg font-bold font-orbitron flex items-center justify-center gap-2 transition-all"
-                >
-                  <Monitor className="w-5 h-5" />
-                  MODE PRO
-                </button>
-              </div>
-
-              {/* AI Output Area */}
-              <div className="min-h-[200px] bg-black/50 rounded-xl border border-white/5 p-6 font-mono text-sm relative">
-                {!aiPromptResult && !isAiLoading && (
-                  <div className="text-gray-600 flex flex-col items-center justify-center h-full gap-2">
-                    <Terminal className="w-8 h-8 opacity-50" />
-                    <p>En attente de données...</p>
-                  </div>
-                )}
-
-                {isAiLoading && (
-                  <div className="space-y-3">
-                    <div className="h-4 bg-purple-900/30 rounded w-3/4 animate-pulse"></div>
-                    <div className="h-4 bg-purple-900/30 rounded w-1/2 animate-pulse"></div>
-                    <div className="h-4 bg-purple-900/30 rounded w-5/6 animate-pulse"></div>
-                  </div>
-                )}
-
-                {aiPromptResult && (
-                  <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 text-left">
-                    <div>
-                      <h4 className="text-purple-400 font-bold mb-2 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-purple-500 rounded-full"></span> IMAGE PROMPT
-                      </h4>
-                      <p className="text-gray-300 bg-white/5 p-3 rounded border border-white/5 selection:bg-purple-500/50">
-                        {aiPromptResult.imagePrompt}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-blue-400 font-bold mb-2 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span> CAMERA MOTION
-                      </h4>
-                      <p className="text-gray-300 bg-white/5 p-3 rounded border border-white/5 selection:bg-blue-500/50">
-                        {aiPromptResult.cameraPrompt}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* AI PLAYGROUND SECTION (NEW) */}
+      <section className="relative z-10 border-b border-white/5 bg-black/40">
+        <PromptArchitect embedded={true} />
       </section>
 
       {/* Transformation Demo */}
