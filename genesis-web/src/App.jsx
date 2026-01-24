@@ -14,6 +14,7 @@ const TIKTOK_URL = "https://www.tiktok.com/@visuals.by.genesis";
 import YouTube from 'react-youtube';
 import { BeforeAfter } from './components/BeforeAfter';
 import PromptArchitect from './pages/PromptArchitect';
+import GeneGym from './pages/GeneGym';
 
 
 const VIDEOS = [
@@ -31,6 +32,7 @@ const GenesisLanding = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
@@ -131,9 +133,9 @@ const GenesisLanding = () => {
             <img src="/img/GENESIS.png" alt="GENESIS" style={{ height: '45px', borderRadius: '10px', objectFit: 'cover' }} />
           </div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <a href="#programme" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }}>Programme</a>
+            <a href="#programme" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }} onClick={(e) => { e.preventDefault(); document.getElementById('programme').scrollIntoView({ behavior: 'smooth' }); }}>Programme</a>
             <a href="#reviews" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }} onClick={(e) => { e.preventDefault(); document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' }); }}>Avis</a>
-            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-cta-nav">
+            <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-cta-nav">
               <span className="btn-cta-nav-content">Rejoindre</span>
             </a>
           </div>
@@ -164,24 +166,30 @@ const GenesisLanding = () => {
             {/* Left Actions */}
             <div className="hero-left-col animate-fade-up delay-100">
               <p className="hero-desc">
-                Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium. Même sans compétences techniques.
+                Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium. Même sans compétences techniques. Un workflow de réalisateurs pensé pour créer des vidéos IA exploitables et vendables.
               </p>
               <div className="hero-actions">
-                <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary">
+                <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-primary">
                   Rejoindre l'Élite <ArrowRight size={20} />
                 </a>
-                <a href="#programme" className="btn-secondary">
+                <a href="#programme" className="btn-secondary" onClick={(e) => { e.preventDefault(); document.getElementById('programme').scrollIntoView({ behavior: 'smooth' }); }}>
                   <Play size={20} fill="white" /> Découvrir
                 </a>
               </div>
 
               <div className="social-proof" onClick={() => document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' })}>
-                <div className="avatar-stack">
+                <div className="avatar-stack flex -space-x-4">
                   {[1, 2, 3, 4].map((i) => (
-                    <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 345}`} alt="User" />
+                    <img
+                      key={i}
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 345}&mouth=smile&eyebrows=default`}
+                      alt="User"
+                      className="w-10 h-10 rounded-full border-2 border-black transition-all duration-300 hover:shadow-[0_0_15px_#a855f7] hover:scale-110 hover:z-10"
+                      style={{ backgroundColor: 'black' }}
+                    />
                   ))}
                 </div>
-                <p className="text-sm ml-6">Rejoint par <strong>500+ créateurs</strong><br />dont <span style={{ color: '#a855f7' }}>GIMS, NETFLIX...</span></p>
+                <p className="text-sm ml-6">Rejoint par <strong>500+ créateurs</strong><br />dont <span style={{ color: '#a855f7' }}>KOZI, ERON...</span></p>
               </div>
             </div>
 
@@ -341,8 +349,8 @@ const GenesisLanding = () => {
           <h2 className="section-title">LA PUISSANCE DE <span className="text-gradient">L'IA</span></h2>
           <div className="max-w-4xl mx-auto mt-10">
             <BeforeAfter
-              beforeImage="https://picsum.photos/id/646/1920/1080?grayscale"
-              afterImage="https://picsum.photos/id/646/1920/1080"
+              beforeImage="/img/eric.jpg"
+              afterImage="/img/eric2.png"
             />
           </div>
         </div>
@@ -517,7 +525,7 @@ const GenesisLanding = () => {
                 <li className="list-item font-bold text-white"><ShieldCheck size={20} color="#22d3ee" /> On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!</li>
               </div>
 
-              <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main">
+              <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-join-main">
                 CHOISIR MON MODULE
               </a>
               <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
@@ -590,7 +598,7 @@ const GenesisLanding = () => {
             <a href={CONTACT_LINK} target="_blank">Mentions Légales</a>
             <a href={CONTACT_LINK} target="_blank">CGV</a>
             <a href={CONTACT_LINK} target="_blank">RGPD</a>
-            <a href={CONTACT_LINK} target="_blank">Contact</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }}>Contact</a>
           </div>
         </div>
       </footer >
@@ -598,7 +606,7 @@ const GenesisLanding = () => {
       {/* Modale Secrète */}
       {
         isSecretModalOpen && (
-          <div className="modal-overlay">
+          <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setIsSecretModalOpen(false) }}>
             <div className="modal-content animate-fade-up">
               <button
                 onClick={() => setIsSecretModalOpen(false)}
@@ -627,6 +635,30 @@ const GenesisLanding = () => {
           </div>
         )
       }
+
+      {/* Tally Contact Modal */}
+      {isContactModalOpen && (
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setIsContactModalOpen(false) }} style={{ alignItems: 'flex-start', paddingTop: '50px', overflowY: 'auto' }}>
+          <div className="modal-content animate-fade-up" style={{ maxWidth: '600px', width: '90%', height: '80vh', padding: '0', background: '#1a1a1a', overflow: 'hidden', display: 'flex', flexDirection: 'col' }}>
+            <button
+              onClick={() => setIsContactModalOpen(false)}
+              style={{ position: 'absolute', top: '15px', right: '15px', color: '#fff', zIndex: 10, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '5px' }}
+            >
+              <X size={24} />
+            </button>
+            <iframe
+              src="https://tally.so/r/pbr5G1?utm_source=ig&utm_medium=social&utm_content=link_in_bio&transparentBackground=1&hideTitle=1&hideFooter=1&alignLeft=1"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              marginHeight="0"
+              marginWidth="0"
+              title="Contact Form"
+              style={{ background: 'transparent' }}
+            ></iframe>
+          </div>
+        </div>
+      )}
     </div >
   );
 };
@@ -670,310 +702,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
   </div>
 );
 
-// --- GENEGYM PRO (DASHBOARD APP) ---
-const FitnessView = () => {
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem('genegym_access');
-    navigate('/');
-  };
 
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [timer, setTimer] = useState(120);
-  const [isTimerActive, setIsTimerActive] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState([
-
-    { sender: 'coach', text: "Wesh l'équipe ! Prêt à charbonner ?" }
-  ]);
-
-  // Mock Programs Data
-  const programs = {
-    'Superset': [
-      { id: 1, title: 'Pompes Explosives', sets: '4x12', cat: 'Push' },
-      { id: 2, title: 'Tractions', sets: '4xMax', cat: 'Pull' },
-      { id: 3, title: 'Dips', sets: '3x15', cat: 'Push' },
-    ],
-    'FullBody': [
-      { id: 10, title: 'Squat', sets: '4x8', cat: 'Legs' },
-      { id: 11, title: 'Bench Press', sets: '4x10', cat: 'Push' },
-      { id: 12, title: 'Rowing', sets: '4x10', cat: 'Pull' },
-    ]
-  };
-
-  const [activeProgram, setActiveProgram] = useState('Superset');
-  const [exercises, setExercises] = useState(programs['Superset'].map(e => ({ ...e, done: false })));
-
-  // Update exercises when program changes
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setExercises(programs[activeProgram].map(e => ({ ...e, done: false })));
-  }, [activeProgram, programs]);
-
-  // Timer Logic
-  useEffect(() => {
-    let interval;
-    if (isTimerActive && timer > 0) {
-      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-    } else if (timer === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsTimerActive(false);
-      setTimer(120);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerActive, timer]);
-
-  const toggleExercise = (id) => {
-    const newExercises = exercises.map(ex => ex.id === id ? { ...ex, done: !ex.done } : ex);
-    setExercises(newExercises);
-    if (newExercises.every(e => e.done)) setShowCelebration(true);
-  };
-
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-
-  const handleChatSubmit = (e) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    setChatMessages([...chatMessages, { sender: 'user', text: chatInput }]);
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { sender: 'coach', text: "Ça marche ! Continue comme ça champion." }]);
-    }, 1000);
-    setChatInput('');
-  };
-
-  // --- UI COMPONENTS ---
-
-
-
-  return (
-    <div className="fixed inset-0 z-[2000] bg-[#050505] text-white font-inter flex flex-col md:flex-row overflow-hidden">
-
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-72 bg-[#0a0a0a] border-r border-white/5 p-6 h-screen overflow-y-auto">
-        <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-red-500/20">
-            <img src="/img/DarkLogo.png" alt="GeneGym Logo" className="w-full h-full object-cover" />
-          </div>
-          <span className="font-orbitron font-bold text-xl tracking-wide">GENEGYM <span className="text-red-500 text-xs align-top">PRO</span></span>
-        </div>
-
-        <nav className="flex-1 space-y-2">
-          {[
-            { id: 'dashboard', icon: Home, label: 'Tableau de bord' },
-            { id: 'workout', icon: Dumbbell, label: 'Programme' },
-            { id: 'calendar', icon: Repeat, label: 'Historique' },
-            { id: 'stats', icon: Activity, label: 'Performances' }
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all ${activeTab === item.id ? 'bg-red-600 text-white shadow-lg shadow-red-900/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-            >
-              <item.icon size={20} />
-              <span className="font-medium">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="mt-auto border-t border-white/5 pt-6">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-            <X size={20} />
-            Déconnexion
-          </button>
-        </div>
-      </aside>
-
-      {/* MOBILE HEADER */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-30 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg overflow-hidden">
-            <img src="/img/DarkLogo.png" alt="GeneGym Logo" className="w-full h-full object-cover" />
-          </div>
-          <span className="font-orbitron font-bold text-lg">GENEGYM</span>
-        </div>
-        <button onClick={handleLogout} className="p-2 bg-white/5 rounded-full text-gray-400"><X size={20} /></button>
-      </div>
-
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 h-full overflow-y-auto bg-[#050505] relative scroll-smooth pb-24 md:pb-0">
-
-        <div className="max-w-5xl mx-auto p-6 md:p-10">
-
-          {/* HEADER SECTION */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-            <div>
-              <p className="text-gray-400 text-sm font-medium mb-1 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> En ligne</p>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">Salut, <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500">La Team!</span></h1>
-            </div>
-            <div className="flex gap-2">
-              {Object.keys(programs).map(prog => (
-                <button
-                  key={prog}
-                  onClick={() => setActiveProgram(prog)}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${activeProgram === prog ? 'bg-white text-[#0f172a] border-white' : 'bg-transparent text-gray-400 border-white/10 hover:border-white/30'}`}
-                >
-                  {prog}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* DASHBOARD GRID */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <StatCard icon={Zap} label="Calories" value="840" color="text-orange-500" />
-            <StatCard icon={Timer} label="Temps" value="45m" color="text-red-500" />
-            <StatCard icon={Dumbbell} label="Volume" value="2.4T" color="text-purple-500" />
-            <StatCard icon={Activity} label="Série" value="12 J" color="text-green-500" />
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* WORKOUT LIST */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-xl font-bold font-orbitron mb-4 text-white flex items-center gap-2">
-                <Dumbbell className="text-red-500" /> Séance du jour
-              </h2>
-
-              <div className="space-y-3">
-                {exercises.map((ex) => (
-                  <div
-                    key={ex.id}
-                    onClick={() => toggleExercise(ex.id)}
-                    className={`group relative overflow-hidden p-4 rounded-2xl border transition-all cursor-pointer flex items-center gap-4 ${ex.done ? 'bg-green-500/10 border-green-500/30' : 'bg-[#0a0a0a] border-white/5 hover:border-red-500/50'}`}
-                  >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${ex.done ? 'bg-green-500 text-white' : 'bg-white/5 text-gray-400 group-hover:bg-red-600 group-hover:text-white'}`}>
-                      {ex.done ? <Check size={24} strokeWidth={3} /> : <Dumbbell size={24} />}
-                    </div>
-
-                    <div className="flex-1">
-                      <h3 className={`font-semibold text-lg ${ex.done ? 'text-gray-400 line-through' : 'text-white'}`}>{ex.title}</h3>
-                      <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
-                        <span className="bg-white/5 px-2 py-0.5 rounded text-xs">{ex.cat}</span>
-                        <span>{ex.sets}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SIDE WIDGETS */}
-            <div className="space-y-6">
-              {/* TIMER WIDGET */}
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-6 text-center relative overflow-hidden">
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 to-purple-500"></div>
-                <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4">Repos</div>
-                <div className="text-6xl font-mono font-bold text-white mb-6 tabular-nums tracking-tighter">
-                  {formatTime(timer)}
-                </div>
-                <div className="flex justify-center gap-4">
-                  <button
-                    onClick={() => setIsTimerActive(!isTimerActive)}
-                    className={`h-14 w-14 rounded-full flex items-center justify-center transition-all shadow-lg ${isTimerActive ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' : 'bg-red-600 text-white hover:scale-105 shadow-red-600/30'}`}
-                  >
-                    {isTimerActive ? <span className="w-4 h-4 rounded-sm bg-current" /> : <Play size={24} fill="white" className="ml-1" />}
-                  </button>
-                  <button
-                    onClick={() => setTimer(120)}
-                    className="h-14 w-14 rounded-full bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
-                  >
-                    <span className="font-bold text-xs">+30s</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* COACH CHAT MINI */}
-              <div className="bg-gradient-to-br from-red-800 to-purple-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl">
-                <div className="flex items-center gap-3 mb-4 relative z-10">
-                  <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                    <Zap size={20} fill="currentColor" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg">Coach IA</h4>
-                    <p className="text-xs text-red-100 opacity-80">Toujours disponible</p>
-                  </div>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 mb-4 border border-white/10 text-sm leading-relaxed">
-                  "N'oublie pas de bien respirer pendant les squats. Tu es une machine !"
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Posez une question..."
-                    className="w-full bg-black/20 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-sm text-white placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleChatSubmit(e)}
-                  />
-                  <button onClick={handleChatSubmit} className="absolute right-1 top-1 p-1 bg-white/20 rounded hover:bg-white/40 transition-colors">
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </main>
-
-      {/* MOBILE BOTTOM NAV */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-[#0a0a0a]/90 backdrop-blur-xl border-t border-white/5 pb-safe z-50">
-        <div className="flex justify-around items-center p-2">
-          <NavIcon icon={Home} label="Accueil" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
-          <NavIcon icon={Repeat} label="Programme" active={activeTab === 'workout'} onClick={() => setActiveTab('workout')} />
-
-          <div className="relative -top-5">
-            <button className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/40 border-4 border-[#050505]">
-              <Play size={24} fill="white" className="ml-1 text-white" />
-            </button>
-          </div>
-
-          <NavIcon icon={Activity} label="Stats" active={activeTab === 'stats'} onClick={() => setActiveTab('stats')} />
-          <NavIcon icon={Users} label="Profil" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
-        </div>
-      </nav>
-
-      {/* CELEBRATION OVERLAY */}
-      {showCelebration && (
-        <div className="fixed inset-0 z-[2001] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-up">
-          <div className="bg-[#0a0a0a] border border-green-500/50 rounded-3xl p-8 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute inset-x-0 top-0 h-1 bg-green-500"></div>
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500">
-              <Star size={40} fill="currentColor" className="animate-spin-slow" />
-            </div>
-            <h2 className="text-3xl font-black text-white mb-2 font-orbitron">VICTOIRE !</h2>
-            <p className="text-gray-400 mb-8">Séance terminée. Tu es un monstre.<br />Repose-toi bien.</p>
-            <button
-              onClick={() => { setShowCelebration(false); handleLogout(); }}
-              className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition-all hover:scale-105"
-            >
-              RETOUR ACCUEIL
-            </button>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
-};
-
-// UI Helpers
-// eslint-disable-next-line no-unused-vars
-const StatCard = ({ icon: Icon, label, value, color }) => (
-  <div className="bg-[#0a0a0a] p-4 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:border-white/10 transition-colors">
-    <div className={`p-2 rounded-xl bg-opacity-10 ${color.replace('text-', 'bg-')} ${color}`}>
-      <Icon size={20} />
-    </div>
-    <div className="font-bold text-xl text-white">{value}</div>
-    <div className="text-xs text-gray-400 font-medium uppercase">{label}</div>
-  </div>
-);
 
 // eslint-disable-next-line no-unused-vars
 const NavIcon = ({ icon: Icon, active, onClick }) => (
@@ -990,6 +719,17 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
+  const [showFlashOffer, setShowFlashOffer] = useState(false);
+
+  useEffect(() => {
+    // 30% chance to show the popup on load
+    if (Math.random() < 0.3) {
+      // Small delay to not be too aggressive
+      const timer = setTimeout(() => setShowFlashOffer(true), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -999,14 +739,105 @@ const App = () => {
           path="/genegym"
           element={
             <ProtectedRoute>
-              <FitnessView />
+              <GeneGym />
             </ProtectedRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {showFlashOffer && <FlashOfferModal onClose={() => setShowFlashOffer(false)} />}
     </Router>
   );
 };
+
+const FlashOfferModal = ({ onClose }) => {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0);
+      const difference = midnight - now;
+      if (difference > 0) {
+        return {
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / (1000 * 60)) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        };
+      }
+      return { hours: 0, minutes: 0, seconds: 0 };
+    };
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Close on ESC
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }} style={{ zIndex: 3000 }}>
+      {/* Reusing pricing card style but in modal context */}
+      <div className="modal-content animate-fade-up" style={{ maxWidth: '90%', width: '400px', padding: '0', overflow: 'hidden', border: '1px solid #a855f7' }}>
+        <button
+          onClick={onClose}
+          style={{ position: 'absolute', top: '15px', right: '15px', color: '#fff', zIndex: 10, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '5px' }}
+        >
+          <X size={24} />
+        </button>
+
+        <div className="pricing-card" style={{ border: 'none', background: 'transparent', boxShadow: 'none', margin: 0, maxWidth: 'none' }}>
+          <div className="pricing-header" style={{ padding: '20px' }}>
+            <div className="fomo-container">
+              <div className="fomo-label" style={{ fontSize: '0.7rem', padding: '4px 8px' }}>⚡ OFFRE DE LANCEMENT</div>
+              <div className="fomo-warning" style={{ fontSize: '0.8rem' }}>Le prix double ce soir à minuit !</div>
+              <div className="fomo-countdown" style={{ marginBottom: '10px' }}>
+                <div className="countdown-item">
+                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.hours).padStart(2, '0')}</span>
+                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>H</span>
+                </div>
+                <span className="countdown-sep" style={{ fontSize: '1.2rem' }}>:</span>
+                <div className="countdown-item">
+                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.minutes).padStart(2, '0')}</span>
+                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>Min</span>
+                </div>
+                <span className="countdown-sep" style={{ fontSize: '1.2rem' }}>:</span>
+                <div className="countdown-item">
+                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.seconds).padStart(2, '0')}</span>
+                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>Sec</span>
+                </div>
+              </div>
+            </div>
+            <div className="fomo-urgency-tag animate-pulse-fast" style={{ fontSize: '0.7rem', padding: '6px 12px', marginTop: '10px' }}>
+              ⚠️ PLUS QUE 5 PLACES !
+            </div>
+            <h3 className="font-orbitron font-bold text-lg mt-2">GENESIS ACADEMY</h3>
+            <p className="text-muted text-xs">Accès illimité à vie + Mises à jour</p>
+          </div>
+          <div className="p-6 text-center bg-black/50">
+            <div className="flex-center mb-3">
+              <span className="old-price" style={{ fontSize: '1rem' }}>800€</span>
+              <span className="price" style={{ fontSize: '2rem' }}>499€</span>
+            </div>
+
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main" style={{ width: '100%', minWidth: 'auto' }}>
+              CHOISIR MON MODULE
+            </a>
+            <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 export default App;

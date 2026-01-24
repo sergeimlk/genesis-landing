@@ -9,7 +9,7 @@ L'objectif est de guider le visiteur à travers un entonnoir émotionnel : **Cur
 ### Améliorations Proposées :
 *   **Headline (Accroche) plus orientée "Bénéfice Client"** :
     *   *Actuel* : "Devenez l'élite de la vidéo IA" (Un peu vague).
-    *   *Proposition* : **"Créez des Clips Vidéo IA de Niveau Cinéma en 7 Jours – Même Sans Compétences Techniques."**
+    *   *Proposition* : **"Créez des visuels de Niveau Cinéma en 7 Jours – Même Sans Compétences Techniques."**
     *   *Sous-titre* : "Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium."
 *   **Preuve Sociale "Above the Fold" (Au-dessus de la ligne de flottaison)** :
     *   Ajoutez immédiatement sous le bouton CTA : "Déjà rejoint par 500+ créateurs dont [Logo 1], [Logo 2]".
