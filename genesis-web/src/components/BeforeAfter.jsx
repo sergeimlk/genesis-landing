@@ -43,7 +43,7 @@ export const BeforeAfter = ({ beforeImage, afterImage }) => {
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-[500px] rounded-3xl overflow-hidden cursor-col-resize select-none border border-white/10 shadow-2xl"
+            className="relative w-full aspect-square rounded-3xl overflow-hidden cursor-col-resize select-none border border-white/10 shadow-2xl"
             onMouseDown={handleStart}
             onTouchStart={handleStart}
         >

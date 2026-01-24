@@ -565,7 +565,7 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-56 max-h-60 overflow-y-auto custom-scrollbar bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-20 flex flex-col p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-56 max-h-60 overflow-y-auto custom-scrollbar bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
                         {options.map(opt => (
                             <button
                                 key={opt}
@@ -609,7 +609,7 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
                         {/* Type Tabs */}
                         <div className="flex border-b border-white/5">
                             <button
@@ -682,7 +682,7 @@ const StyleSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
                             {GEN_STYLES.map(style => (
                                 <button
@@ -734,7 +734,7 @@ const LightingSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
                             {LIGHTING_STYLES.map(style => (
                                 <button
@@ -773,7 +773,11 @@ const MotionSelect = ({ value, onChange }) => {
                 className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
             >
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
-                    <Camera size={16} className={`text-purple-400 ${currentMove.anim}`} />
+                    <img
+                        src="/ui/animation/perso.png"
+                        alt="Camera Move"
+                        className={`w-full h-full object-contain p-1 ${currentMove.anim}`}
+                    />
                 </div>
                 <span className="hidden sm:inline">{currentMove.label}</span>
                 <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -782,7 +786,7 @@ const MotionSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-72 max-h-80 overflow-y-auto custom-scrollbar bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 z-20 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full left-0 mb-2 w-72 max-h-80 overflow-y-auto custom-scrollbar bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 z-[100] overflow-hidden p-1 animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-2 grid grid-cols-2 gap-2">
                             {CAMERA_MOVES.map(move => (
                                 <button
@@ -792,7 +796,11 @@ const MotionSelect = ({ value, onChange }) => {
                                 >
                                     <div className="w-10 h-10 rounded-lg bg-black/50 flex items-center justify-center relative overflow-hidden">
                                         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
-                                        <Camera size={20} className={`text-white/80 group-hover:text-purple-400 ${move.anim}`} />
+                                        <img
+                                            src="/ui/animation/perso.png"
+                                            alt={move.label}
+                                            className={`w-full h-full object-contain p-1 ${move.anim}`}
+                                        />
                                     </div>
                                     <span className="text-[10px] font-bold text-gray-400 group-hover:text-white">{move.label}</span>
                                 </button>

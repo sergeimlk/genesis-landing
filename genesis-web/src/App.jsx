@@ -221,8 +221,8 @@ const GenesisLanding = () => {
           <h2 className="section-title">LA PUISSANCE DE <span className="text-gradient">L'IA</span></h2>
           <div className="max-w-4xl mx-auto mt-10">
             <BeforeAfter
-              beforeImage="/img/eric2.jpg"
-              afterImage="/img/eric.png"
+              beforeImage="/img/eric2.png"
+              afterImage="/img/eric.jpg"
             />
           </div>
         </div>
@@ -408,14 +408,29 @@ const GenesisLanding = () => {
 
       {/* Notion Embed Section (Responsive) */}
       <section className="section-padding">
-        <div className="container" style={{ maxWidth: '800px', width: '100%', margin: '0 auto' }}>
-          <div style={{ position: 'relative', width: '100%', height: '600px', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <iframe
-              src="https://boiled-gondola-ea5.notion.site/2837b3ecdb188150bacef0d0c737d637"
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-              allowFullScreen
-              title="Genesis Notion Embed"
-            />
+        <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div className="bg-[#111] border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all">
+            {/* Background Glow */}
+            <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_70%)] pointer-events-none"></div>
+
+            <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:border-purple-500/50 transition-all duration-500 relative z-10">
+              <svg viewBox="0 0 24 24" className="w-10 h-10 fill-white"><path d="M4.021 21.998L3 4.015l13.567-2.013 4.43 2.671v15.286l-4.463 2.039L4.021 21.998zm4.316-2.583v-12.8l-1.635.856v11.97l1.635-.026zm2.253-12.288l5.888-1.745v11.378l-5.888 2.724V7.127zm7.653 9.471l1.664-.784V5.7l-1.664-1.002v11.9z" /></svg>
+            </div>
+
+            <h3 className="text-2xl md:text-3xl font-bold font-orbitron mb-4 relative z-10">PROGRAMME DÉTAILLÉ</h3>
+            <p className="text-gray-400 mb-8 max-w-lg text-lg relative z-10">
+              Le contenu complet de la formation, module par module, est disponible sur notre Hub Notion public.
+            </p>
+
+            <a
+              href={CONTACT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative px-8 py-4 bg-white text-black font-bold font-orbitron rounded-xl hover:scale-105 transition-all flex items-center gap-3 overflow-hidden z-10"
+            >
+              <span className="relative z-10 flex items-center gap-2">ACCÉDER AU NOTION <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            </a>
           </div>
         </div>
       </section>
