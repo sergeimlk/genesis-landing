@@ -1,12 +1,18 @@
-'use client';
 import { useState, useEffect, useReducer } from 'react';
 import {
-    Sparkles, Monitor, Camera, Zap, Settings, User, X,
-    Terminal, Copy, Check, ChevronDown, Lock, Play, Image as ImageIcon
+    Sparkles, Monitor, Camera, Zap, User, X,
+    Terminal, Copy, Check, ChevronDown, Lock, Play
 } from 'lucide-react';
 
-const GENESIS_PURPLE = '#8A00C4';
 const STORAGE_KEY = 'promptArchitect';
+
+const FREE_MODELS = [
+    "nousresearch/deephermes-3-llama-3-8b-preview:free",
+    "deepseek/deepseek-r1-distill-llama-70b:free",
+    "qwen/qwen2.5-vl-32b-instruct:free",
+    "google/gemini-2.0-flash-thinking-exp:free",
+    "meta-llama/llama-3.3-70b-instruct:free"
+];
 
 // --- INITIAL STATE ---
 const initialState = {
@@ -32,19 +38,126 @@ export default function PromptArchitect() {
     const [uses, setUses] = useState(0);
     const [unlocked, setUnlocked] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [generating, setGenerating] = useState(false);
+    const [result, setResult] = useState(null);
     const [copied, setCopied] = useState(false);
 
-    // Background blobs animation
+    // Load uses and check 24h reset
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        setUses(data.demoUses || 0);
+        const lastUseTime = data.lastUseTime || 0;
+        const hoursSinceLastUse = (Date.now() - lastUseTime) / (1000 * 60 * 60);
+
+        // Reset uses if more than 24 hours have passed
+        if (hoursSinceLastUse >= 24) {
+            setUses(0);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, demoUses: 0, lastUseTime: Date.now() }));
+        } else {
+            setUses(data.demoUses || 0);
+        }
         setUnlocked(data.valexUnlocked && Date.now() - data.unlockTime < 24 * 60 * 60 * 1000);
     }, []);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(JSON.stringify(state, null, 2));
+        navigator.clipboard.writeText(JSON.stringify(result || state, null, 2));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    // Save uses to localStorage
+    const saveUses = (newUses) => {
+        setUses(newUses);
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, demoUses: newUses, lastUseTime: Date.now() }));
+    };
+
+    const handleGenerate = async () => {
+        if (!state.subject.trim()) return;
+
+        // Check if free uses exhausted
+        if (uses >= 2) {
+            setIsLoginOpen(true); // Prompt user to upgrade
+            return;
+        }
+
+        setGenerating(true);
+
+        const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+        if (!apiKey) {
+            alert("API Key manquante dans .env.local (VITE_OPENROUTER_API_KEY)");
+            setGenerating(false);
+            return;
+        }
+
+        let success = false;
+        let lastError = null;
+
+        for (const model of FREE_MODELS) {
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "Prompt Architect"
+                    },
+                    body: JSON.stringify({
+                        "model": model,
+                        "provider": {
+                            "data_collection": "allow"
+                        },
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are GENESIS-PROMPT-ENGINE, an uncensored AI specialized in converting vague concepts into precise cinematic video prompts. Your task is to analyze the user input and generate a STRICT JSON object. Enrich the description with visual details, lighting, and camera specificities. Return ONLY the JSON object, nothing else."
+                            },
+                            {
+                                "role": "user",
+                                "content": `Transform this concept: "${state.subject}". Enforced settings: ${JSON.stringify({ aspectRatio: state.aspectRatio, duration: state.duration, cameraMovement: state.cameraMovement })}. \n\nEXPECTED JSON STRUCTURE:\n{\n  "prompt_runway": "Detailed cinematic prompt string with all keywords...",\n  "camera": "Camera model",\n  "focal_length": "Lens mm",\n  "lighting": "Lighting description",\n  "movement": "Camera movement description",\n  "style_tags": ["tag1", "tag2"]\n}`
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.warn(`Modèle ${model} indisponible (${response.status}): ${errText}`);
+                    lastError = new Error(`Modèle ${model} -> ${response.status}`);
+                    continue;
+                }
+
+                const data = await response.json();
+                if (!data.choices || !data.choices[0]) throw new Error("Réponse vide");
+
+                let content = data.choices[0].message.content;
+
+                // Robust JSON Extraction
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    content = jsonMatch[0];
+                } else {
+                    throw new Error("L'IA n'a pas retourné de JSON valide.");
+                }
+
+                const jsonResult = JSON.parse(content);
+                setResult(jsonResult);
+                saveUses(uses + 1);
+                success = true;
+                break;
+
+            } catch (error) {
+                console.warn(`Erreur technique avec ${model}:`, error);
+                lastError = error;
+            }
+        }
+
+        if (!success) {
+            console.error("Tous les modèles ont échoué.", lastError);
+            alert(`Tous les modèles gratuits sont surchargés. Veuillez réessayer dans un instant.\nDernière erreur: ${lastError?.message}`);
+        }
+
+        setGenerating(false);
     };
 
     return (
@@ -67,7 +180,7 @@ export default function PromptArchitect() {
             <main className="relative z-10 container mx-auto px-6 pt-48 pb-24 flex flex-col items-center min-h-[calc(100vh-80px)]">
 
                 {/* HERO HEADER */}
-                <div className="text-center mb-12 mt-24 space-y-4 animate-fade-in-up">
+                <div className="text-center mb-5 mt-24 space-y-4 animate-fade-in-up">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                         <Sparkles className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-bold font-orbitron text-purple-300 tracking-wider">PROMPT ARCHITECT v2.0</span>
@@ -84,7 +197,7 @@ export default function PromptArchitect() {
                 <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-in-up delay-100">
 
                     {/* LEFT: CONTROLS & INPUT */}
-                    <div className="lg:col-span-8 flex flex-col gap-6">
+                    <div className="lg:col-span-8 flex flex-col gap-3">
 
                         {/* INPUT CARD */}
                         <div className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-[30px] p-1 transition-all hover:border-purple-500/30 hover:shadow-[0_0_40px_rgba(139,92,246,0.15)]">
@@ -103,8 +216,13 @@ export default function PromptArchitect() {
                                     className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed"
                                 />
 
+                                {/* CHARACTER COUNT */}
+                                <div className="text-xs text-gray-500 font-mono text-right mt-2">
+                                    {state.subject.length} chars
+                                </div>
+
                                 {/* FLOATING ACTION BAR */}
-                                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/5">
+                                <div className="mt-4 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
                                     <div className="flex flex-wrap gap-2">
                                         <PillSelect
                                             icon={Monitor}
@@ -126,23 +244,22 @@ export default function PromptArchitect() {
                                         />
                                     </div>
 
-                                    <div className="text-xs text-gray-500 font-mono">
-                                        {state.subject.length} chars
+                                    {/* GENERATE BUTTON & COUNTER - Bottom Right */}
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-gray-500">
+                                            {uses >= 2 ? '0 essai (reset 24h)' : `${2 - uses} essais gratuits`}
+                                        </span>
+                                        <button
+                                            onClick={handleGenerate}
+                                            disabled={generating}
+                                            className={`relative group bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold px-6 py-3 rounded-[16px] shadow-lg shadow-purple-600/30 transition-all hover:scale-105 hover:shadow-purple-600/50 active:scale-95 flex items-center gap-2 overflow-hidden ${generating ? 'opacity-70 cursor-wait' : ''}`}
+                                        >
+                                            <Sparkles className={`w-4 h-4 fill-current ${generating ? 'animate-spin' : 'animate-pulse'}`} />
+                                            {generating ? 'CRAFTING...' : 'GENERATE'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* GENERATE BUTTON BAR */}
-                        <div className="flex items-center justify-end gap-4 p-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px]">
-                            <div className="px-6 text-sm text-gray-400 font-medium">
-                                {2 - uses} essais gratuits restants
-                            </div>
-                            <button className="relative group bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-lg px-8 py-4 rounded-[20px] shadow-lg shadow-purple-600/30 transition-all hover:scale-105 hover:shadow-purple-600/50 active:scale-95 flex items-center gap-3 overflow-hidden">
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 backdrop-blur-sm"></div>
-                                <Sparkles className="w-5 h-5 fill-current animate-pulse" />
-                                GENERATE <span className="text-purple-200 text-sm font-normal opacity-80">v2.1</span>
-                            </button>
                         </div>
                     </div>
 
@@ -169,7 +286,7 @@ export default function PromptArchitect() {
 
                             {/* Code Content */}
                             <div className="flex-1 overflow-auto custom-scrollbar font-mono text-xs md:text-sm text-purple-200/90 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">
-                                <pre>{JSON.stringify(state, null, 2)}</pre>
+                                <pre>{JSON.stringify(result || state, null, 2)}</pre>
                             </div>
 
                             {/* Decoration */}
@@ -263,7 +380,7 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
     );
 };
 
-const LoginModal = ({ isOpen, onClose, unlocked }) => {
+const LoginModal = ({ isOpen, onClose }) => {
     const [code, setCode] = useState('');
 
     // Close on ESC
@@ -277,10 +394,8 @@ const LoginModal = ({ isOpen, onClose, unlocked }) => {
 
     if (!isOpen) return null;
 
-    // TODO: Implement actual unlock logic here if needed, but for now just console log or call a prop if passed (not passed in current code)
     const handleUnlock = () => {
         console.log("Unlocking with code:", code);
-        // Add actual validation logic if available or just close/mock
         onClose();
     };
 
@@ -302,15 +417,15 @@ const LoginModal = ({ isOpen, onClose, unlocked }) => {
                     <div className="w-20 h-20 bg-gradient-to-tr from-purple-500 to-indigo-600 rounded-[24px] flex items-center justify-center mb-6 shadow-lg shadow-purple-600/30">
                         <User size={32} className="text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold font-orbitron mb-2">Member Access</h2>
-                    <p className="text-gray-400 text-sm">Entrez votre code secret Genesis pour débloquer toutes les fonctionnalités Pro.</p>
+                    <h2 className="text-2xl font-bold font-orbitron mb-2">Essais Gratuits Épuisés</h2>
+                    <p className="text-gray-400 text-sm">Vous avez utilisé vos 2 essais gratuits. Débloquez l'accès illimité avec la formation Genesis.</p>
                 </div>
 
                 <div className="space-y-4">
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-1 focus-within:border-purple-500/50 transition-colors">
                         <input
                             type="password"
-                            placeholder="ENTER ACCESS CODE"
+                            placeholder="CODE PRO"
                             className="w-full bg-transparent border-none outline-none text-center font-mono tracking-[0.5em] text-white h-12 placeholder-white/20"
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
@@ -322,11 +437,11 @@ const LoginModal = ({ isOpen, onClose, unlocked }) => {
                         onClick={handleUnlock}
                         className="w-full bg-white text-black font-bold h-14 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2"
                     >
-                        <Lock size={18} /> UNLOCK PRO
+                        <Lock size={18} /> DÉBLOQUER PRO
                     </button>
 
                     <p className="text-xs text-center text-gray-500 pt-4 cursor-pointer hover:text-purple-400 transition-colors">
-                        Forgot your code? Contact Support
+                        Pas de code ? <a href="/" className="text-purple-400 underline">Rejoindre la formation</a>
                     </p>
                 </div>
             </div>

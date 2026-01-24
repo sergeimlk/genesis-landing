@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronsLeftRight } from 'lucide-react';
 
 export const BeforeAfter = ({ beforeImage, afterImage }) => {
@@ -6,7 +6,7 @@ export const BeforeAfter = ({ beforeImage, afterImage }) => {
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef(null);
 
-    const handleMove = (event) => {
+    const handleMove = useCallback((event) => {
         if (!containerRef.current) return;
 
         const containerRect = containerRef.current.getBoundingClientRect();
@@ -14,7 +14,7 @@ export const BeforeAfter = ({ beforeImage, afterImage }) => {
         const position = (x / containerRect.width) * 100;
 
         setSliderPosition(Math.min(100, Math.max(0, position)));
-    };
+    }, []);
 
     const handleStart = (event) => {
         setIsDragging(true);
@@ -38,7 +38,7 @@ export const BeforeAfter = ({ beforeImage, afterImage }) => {
             window.removeEventListener('touchmove', handleWindowMove);
             window.removeEventListener('touchend', handleWindowUp);
         };
-    }, [isDragging]);
+    }, [isDragging, handleMove]);
 
     return (
         <div

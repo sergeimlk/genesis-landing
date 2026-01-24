@@ -23,7 +23,21 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', {
+        varsIgnorePattern: '^[A-Z_]',
+        argsIgnorePattern: '^_|^[A-Z]'
+      }],
+      // Allow state initialization in useEffect (common pattern for restoring from localStorage)
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
+  // Serverless API functions (Vercel) need Node.js globals
+  {
+    files: ['api/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
     },
   },
 ])

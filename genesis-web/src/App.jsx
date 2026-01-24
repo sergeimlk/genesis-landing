@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import {
   Play, Check, Star, ChevronDown, ChevronUp, ChevronRight, Instagram, ArrowRight, Zap,
-  Monitor, Film, Users, ShieldCheck, Clock, Quote, Lock, X, Dumbbell,
-  Activity, Timer, Repeat, Home, Sparkles, Bot, Terminal
+  Monitor, Film, Users, ShieldCheck, Clock, Lock, X,
+  Sparkles, Terminal
 } from 'lucide-react';
 import './App.css';
 
@@ -349,8 +349,8 @@ const GenesisLanding = () => {
           <h2 className="section-title">LA PUISSANCE DE <span className="text-gradient">L'IA</span></h2>
           <div className="max-w-4xl mx-auto mt-10">
             <BeforeAfter
-              beforeImage="/img/eric.jpg"
-              afterImage="/img/eric2.png"
+              beforeImage="/img/eric2.jpg"
+              afterImage="/img/eric.png"
             />
           </div>
         </div>
@@ -532,14 +532,14 @@ const GenesisLanding = () => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Notion Embed Section (Responsive) */}
       <section className="section-padding">
         <div className="container" style={{ maxWidth: '800px', width: '100%', margin: '0 auto' }}>
           <div style={{ position: 'relative', width: '100%', height: '600px', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
             <iframe
-              src="https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637"
+              src="https://boiled-gondola-ea5.notion.site/2837b3ecdb188150bacef0d0c737d637"
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
               allowFullScreen
               title="Genesis Notion Embed"
@@ -549,7 +549,7 @@ const GenesisLanding = () => {
       </section>
 
       {/* FAQ */}
-      < section className="section-padding" >
+      <section className="section-padding">
         <div className="container" style={{ maxWidth: '800px' }}>
           <h2 className="section-title">FAQ</h2>
           <div className="space-y-4">
@@ -579,10 +579,10 @@ const GenesisLanding = () => {
             />
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Footer */}
-      < footer className="py-12 bg-black border-t border-white/10 text-center" >
+      <footer className="py-12 bg-black border-t border-white/10 text-center">
         <div className="container">
           <h2 style={{ fontFamily: 'var(--font-orbitron)', fontWeight: 900, fontSize: '1.5rem', marginBottom: '20px' }}>GENESIS</h2>
           <div className="flex justify-center gap-6 mb-8">
@@ -595,13 +595,13 @@ const GenesisLanding = () => {
           </div>
           <p className="text-muted text-sm mb-8">© 2024 Visuals by Genesis. All rights reserved.</p>
           <div className="flex-center gap-6 text-sm text-muted">
-            <a href={CONTACT_LINK} target="_blank">Mentions Légales</a>
-            <a href={CONTACT_LINK} target="_blank">CGV</a>
-            <a href={CONTACT_LINK} target="_blank">RGPD</a>
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">Mentions Légales</a>
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">CGV</a>
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">RGPD</a>
             <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }}>Contact</a>
           </div>
         </div>
-      </footer >
+      </footer>
 
       {/* Modale Secrète */}
       {
@@ -639,7 +639,7 @@ const GenesisLanding = () => {
       {/* Tally Contact Modal */}
       {isContactModalOpen && (
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setIsContactModalOpen(false) }} style={{ alignItems: 'flex-start', paddingTop: '50px', overflowY: 'auto' }}>
-          <div className="modal-content animate-fade-up" style={{ maxWidth: '600px', width: '90%', height: '80vh', padding: '0', background: '#1a1a1a', overflow: 'hidden', display: 'flex', flexDirection: 'col' }}>
+          <div className="modal-content animate-fade-up" style={{ maxWidth: '600px', width: '90%', height: '80vh', padding: '0 24px', background: '#1a1a1a', overflow: 'hidden', display: 'flex', flexDirection: 'col' }}>
             <button
               onClick={() => setIsContactModalOpen(false)}
               style={{ position: 'absolute', top: '15px', right: '15px', color: '#fff', zIndex: 10, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '5px' }}
@@ -651,15 +651,13 @@ const GenesisLanding = () => {
               width="100%"
               height="100%"
               frameBorder="0"
-              marginHeight="0"
-              marginWidth="0"
               title="Contact Form"
-              style={{ background: 'transparent' }}
+              style={{ background: 'transparent', margin: 0 }}
             ></iframe>
           </div>
         </div>
       )}
-    </div >
+    </div>
   );
 };
 
@@ -700,15 +698,6 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
       {answer}
     </div>
   </div>
-);
-
-
-
-// eslint-disable-next-line no-unused-vars
-const NavIcon = ({ icon: Icon, active, onClick }) => (
-  <button onClick={onClick} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors ${active ? 'text-red-500' : 'text-gray-500 hover:text-white'}`}>
-    <Icon size={24} strokeWidth={active ? 2.5 : 2} />
-  </button>
 );
 
 // --- ROUTING & PROTECTION ---
@@ -828,8 +817,8 @@ const FlashOfferModal = ({ onClose }) => {
               <span className="price" style={{ fontSize: '2rem' }}>499€</span>
             </div>
 
-            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main" style={{ width: '100%', minWidth: 'auto' }}>
-              CHOISIR MON MODULE
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main" style={{ width: '100%', minWidth: '100%' }}>
+              CHOISIR <br /> MON MODULE
             </a>
             <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
           </div>

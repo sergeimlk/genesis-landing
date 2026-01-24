@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Home, Dumbbell, Repeat, Activity, X, Plus, Save,
+    Home, Dumbbell, Activity, X, Plus, Save,
     Trash2, Play, Square, CheckCircle, Clock, Calendar,
-    ChevronRight, Trophy, TrendingUp, Zap, Info
+    ChevronRight, Trophy, TrendingUp, Zap
 } from 'lucide-react';
 
 const PREMADE_PROGRAMS = [
@@ -273,7 +273,7 @@ const GeneGym = () => {
 
     // --- VIEWS ---
 
-    const StatsView = () => {
+    const renderStatsView = () => {
         const totalSessions = history.length;
         const totalTime = history.reduce((acc, sess) => acc + (sess.duration || 0), 0);
 
@@ -300,7 +300,7 @@ const GeneGym = () => {
         );
     };
 
-    const HistoryView = () => (
+    const renderHistoryView = () => (
         <div className="space-y-4 animate-fade-in">
             <h2 className="text-2xl font-bold font-orbitron mb-6">Historique</h2>
             {history.length === 0 ? (
@@ -336,7 +336,7 @@ const GeneGym = () => {
         </div>
     );
 
-    const WorkoutView = () => {
+    const renderWorkoutView = () => {
         if (!activeSession) {
             return (
                 <div className="h-full flex flex-col items-center justify-center text-center p-6 animate-fade-in space-y-6">
@@ -385,7 +385,7 @@ const GeneGym = () => {
 
                 {/* Exercises List */}
                 <div className="space-y-4">
-                    {activeSession.exercises.map((exercise, exIndex) => (
+                    {activeSession.exercises.map((exercise) => (
                         <div key={exercise.id} className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden">
                             <div className="p-4 bg-white/5 flex justify-between items-center border-b border-white/5">
                                 <div>
@@ -470,7 +470,7 @@ const GeneGym = () => {
         );
     };
 
-    const DashboardView = () => (
+    const renderDashboardView = () => (
         <div className="space-y-8 animate-fade-in">
             <header className="mb-8">
                 <h1 className="text-3xl font-bold font-orbitron mb-2">Bon retour, <span className="text-red-500">Champion</span>.</h1>
@@ -604,10 +604,10 @@ const GeneGym = () => {
             <main className="flex-1 overflow-y-auto relative bg-[#050505] custom-scrollbar">
                 <div className="p-4 md:p-8 max-w-4xl mx-auto pb-24 md:pb-8">
                     {/* Active Route View */}
-                    {activeTab === 'dashboard' && <DashboardView />}
-                    {activeTab === 'workout' && <WorkoutView />}
-                    {activeTab === 'calendar' && <HistoryView />}
-                    {activeTab === 'stats' && <StatsView />}
+                    {activeTab === 'dashboard' && renderDashboardView()}
+                    {activeTab === 'workout' && renderWorkoutView()}
+                    {activeTab === 'calendar' && renderHistoryView()}
+                    {activeTab === 'stats' && renderStatsView()}
 
                 </div>
             </main>

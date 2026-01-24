@@ -4,110 +4,14 @@ Ce document détaille la faisabilité, l'architecture et le code pour intégrer 
 
 ---
 
-## 1. Coach IA Réactif pour GeneGym (via Gemini)
-
-**Objectif :** Un coach interactif dans `/genegym` qui répond aux questions fitness/nutrition en temps réel.
-**Faisabilité :** ✅ **Totale & Gratuite** (via Google Gemini API Free Tier).
-
-### Architecture Technique
-Ne JAMAIS appeler l'API Gemini directement depuis le React (risque de vol de clé API). Il faut passer par une "Serverless Function" (Vercel).
-
-`React (Client)`  ➡️  `Vercel API (Serveur)`  ➡️  `Google Gemini API`
-
-### Étape 1 : Obtenir la clé API
-1.  Allez sur [Google AI Studio](https://aistudio.google.com/).
-2.  Créez une clé API (API Key).
-3.  Ajoutez-la dans votre fichier `.env.local` à la racine du projet :
-    ```bash
-    GEMINI_API_KEY="votre_clé_ici"
-    ```
-
-### Étape 2 : Créer l'API Route (Backend)
-Créez le fichier `api/coach.js` (ou `src/api/coach.js` selon votre structure Vercel, souvent à la racine dans un dossier `api` pour les projets Vite/Vercel standard).
-
-```javascript
-// api/coach.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
-
-  const { message, history } = req.body;
-
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    
-    // Contextualisation du Coach
-    const systemInstruction = `
-      Tu es le Coach GeneGym, un expert en musculation et nutrition (style agressif mais bienveillant, "No Pain No Gain").
-      Tu dois motiver l'utilisateur. Tes réponses sont courtes (max 2 phrases) et percutantes.
-      Tu ne parles QUE de sport et nutrition.
-    `;
-
-    // Prompt combiné
-    const prompt = `${systemInstruction}\n\nHistorique: ${JSON.stringify(history)}\nUser: ${message}`;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    res.status(200).json({ text });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur Coach IA' });
-  }
-}
-```
-
-### Étape 3 : Intégration React (GeneGym.jsx)
-Dans votre composant `GeneGym.jsx`, modifiez `handleChatSubmit` pour appeler cette API.
-
-```javascript
-const handleChatSubmit = async (e) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    
-    // 1. Affiche msg user
-    const newMsgUtilisateur = { sender: 'user', text: chatInput };
-    setChatMessages(prev => [...prev, newMsgUtilisateur]);
-    setChatInput('');
-    setIsLoading(true); // Ajouter un state loading
-
-    try {
-        // 2. Appel API Vercel
-        const response = await fetch('/api/coach', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                message: chatInput,
-                history: chatMessages.slice(-5) // On envoie les 5 derniers messages pour le contexte
-            })
-        });
-        
-        const data = await response.json();
-        
-        // 3. Affiche réponse Coach
-        setChatMessages(prev => [...prev, { sender: 'coach', text: data.text }]);
-    } catch (err) {
-        setChatMessages(prev => [...prev, { sender: 'coach', text: "Erreur réseau, soldat. Réessaie." }]);
-    } finally {
-        setIsLoading(false);
-    }
-};
-```
-
----
-
-## 2. Prompt Master "No Limits" (Grok / Uncensored)
+## Prompt Master "No Limits" (Grok / Uncensored)
 
 **Objectif :** Transformer une phrase simple en Prompt JSON technique optimisé, sans censure ("gore" ou autre), gratuitement.
 **Le Problème :** L'API officielle de **Grok** (xAI) est **payante**. ChatGPT et Gemini ont des filtres de sécurité stricts (censure).
 **La Solution "Gratuite/Cheap" & "Uncensored" :** Utiliser des modèles Open Source "Non Censurés" (comme **Dolphin Mistral**, **Hermes**, ou **Llama 3 Uncensored**) hébergés via des API peu coûteuses ou gratuites (HuggingFace Inference API ou OpenRouter).
 
 ### Option Recommandée : OpenRouter (Le moins cher / quasi gratuit)
-OpenRouter permet d'accéder à des modèles comme `Toppy M` ou `Dolphin` pour quelques centimes par millions de tokens (ce qui est virtuellement gratuit pour un usage perso/démo).
+OpenRouter permet d'accéder à des modèles comme `Dolphin` pour quelques centimes par millions de tokens (ce qui est virtuellement gratuit pour un usage perso/démo).
 
 ### Architecture JSON Optimisé
 Le but est de forcer l'IA à sortir STRICTEMENT du JSON utilisable par votre code.
