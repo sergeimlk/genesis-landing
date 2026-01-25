@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronsLeftRight } from 'lucide-react';
+import { ChevronsLeftRight, Play, X } from 'lucide-react';
 
 export const BeforeAfter = ({ beforeImage, afterImage }) => {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const containerRef = useRef(null);
 
     const handleMove = useCallback((event) => {
@@ -87,6 +88,56 @@ export const BeforeAfter = ({ beforeImage, afterImage }) => {
                     <ChevronsLeftRight className="text-black w-5 h-5" />
                 </div>
             </div>
+
+            {/* ANIMATE Button */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setShowModal(true);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 group"
+            >
+                <div className="relative overflow-hidden rounded-full bg-gradient-to-r from-purple-600 to-pink-600 p-[2px] shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_50px_rgba(168,85,247,0.9)] transition-shadow duration-300">
+                    <div className="bg-black rounded-full px-8 py-3 flex items-center gap-3 transition-colors group-hover:bg-black/80">
+                        <span className="font-orbitron font-bold text-white tracking-widest text-lg">ANIMATE!</span>
+                        <div className="bg-white rounded-full p-1 group-hover:scale-110 transition-transform duration-300">
+                            <Play size={16} className="text-purple-600 fill-purple-600 ml-0.5" />
+                        </div>
+                    </div>
+                    {/* Shimmer Effect */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10"></div>
+                </div>
+            </button>
+
+            {/* Video Modal */}
+            {showModal && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-300"
+                    onClick={() => setShowModal(false)}
+                >
+                    <button
+                        onClick={() => setShowModal(false)}
+                        className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+                    >
+                        <X size={32} />
+                    </button>
+
+                    <div
+                        className="relative w-full max-w-5xl aspect-video bg-black rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <iframe
+                            src="https://drive.google.com/file/d/1Zm9EFd29OeYoFaZjEo2N5nFS0TnemR9z/preview"
+                            width="100%"
+                            height="100%"
+                            allow="autoplay"
+                            className="w-full h-full"
+                        ></iframe>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

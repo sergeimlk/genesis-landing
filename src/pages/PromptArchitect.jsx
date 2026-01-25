@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Sparkles, Monitor, Camera, Zap, User, X,
@@ -35,11 +35,11 @@ const AI_MODELS = {
 const GEN_STYLES = [
     { id: 'genesis-cinematic', name: 'Cinematic', image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200&auto=format&fit=crop' },
     { id: 'cyberpunk', name: 'Cyberpunk', image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200&auto=format&fit=crop' },
-    { id: 'simpsons', name: 'Simpsons', image: 'https://wallpapers.com/images/hd/the-simpsons-house-background-1920-x-1080-b747j52y43292440.jpg' },
-    { id: 'minecraft', name: 'Minecraft', image: 'https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=200&auto=format&fit=crop' },
+    { id: 'simpsons', name: 'Simpsons', image: 'public/ui/perso/GenModels/image/simpsons.png' },
+    { id: 'minecraft', name: 'Minecraft', image: 'public/ui/perso/GenModels/image/minecraft.png' },
     { id: 'disney-pixar', name: 'Disney Pixar', image: 'https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=200&auto=format&fit=crop' },
-    { id: 'studio-ghibli', name: 'Studio Ghibli', image: 'https://wallpapers.com/images/featured/spirited-away-background-02s3090740924009.jpg' },
-    { id: 'vaporwave', name: 'Vaporwave', image: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?q=80&w=200&auto=format&fit=crop' },
+    { id: 'studio-ghibli', name: 'Studio Ghibli', image: 'public/ui/perso/GenModels/image/ghibli.png' },
+    { id: 'vaporwave', name: 'Vaporwave', image: 'public/ui/perso/GenModels/image/vaporwave.png' },
     { id: 'realistic', name: 'Realistic Photo', image: 'https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=200&auto=format&fit=crop' },
     { id: 'anime', name: 'Anime Shinkai', image: 'https://images.unsplash.com/photo-1560972550-aba3456b5564?q=80&w=200&auto=format&fit=crop' },
     { id: 'oil-painting', name: 'Van Gogh Oil', image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=200&auto=format&fit=crop' },
@@ -47,9 +47,22 @@ const GEN_STYLES = [
 
 // --- CAMERA & AI CONFIGURATION ---
 const SHOT_TYPES = [
-    'Extreme Close-up', 'Close-up', 'Medium Shot', 'Cowboy Shot', 'Full Shot',
-    'Wide Shot', 'Extreme Wide Shot', 'Top View', 'Low Angle', 'High Angle',
-    'Dutch Angle', 'Over-the-Shoulder', 'First Person POV', 'Drone View'
+    { id: 'extreme-close-up', name: 'Extreme Close-up', desc: 'ECU', scale: 4 },
+    { id: 'close-up', name: 'Close-up', desc: 'CU', scale: 3 },
+    { id: 'medium-close-up', name: 'Medium Close-up', desc: 'MCU', scale: 2.2 },
+    { id: 'medium-shot', name: 'Medium Shot', desc: 'MS', scale: 1.8 },
+    { id: 'cowboy-shot', name: 'Cowboy Shot', desc: 'CS', scale: 1.5 },
+    { id: 'medium-full', name: 'Medium Full', desc: 'MFS', scale: 1.3 },
+    { id: 'full-shot', name: 'Full Shot', desc: 'FS', scale: 1.1 },
+    { id: 'wide-shot', name: 'Wide Shot', desc: 'WS', scale: 0.9 },
+    { id: 'extreme-wide', name: 'Extreme Wide', desc: 'EWS', scale: 0.6 },
+    { id: 'top-view', name: 'Top View', desc: 'Bird Eye', scale: 0.7 },
+    { id: 'low-angle', name: 'Low Angle', desc: 'LA', scale: 1.2 },
+    { id: 'high-angle', name: 'High Angle', desc: 'HA', scale: 1.0 },
+    { id: 'dutch-angle', name: 'Dutch Angle', desc: 'Tilted', scale: 1.1 },
+    { id: 'over-shoulder', name: 'Over Shoulder', desc: 'OTS', scale: 1.4 },
+    { id: 'pov', name: 'First Person POV', desc: 'POV', scale: 1.6 },
+    { id: 'drone-view', name: 'Drone View', desc: 'Aerial', scale: 0.5 },
 ];
 
 const CAMERA_MOVES = [
@@ -101,7 +114,7 @@ const initialState = {
     generationType: 'video',
     aiModel: 'veo3',
     style: 'genesis-cinematic',
-    shotType: 'Wide Shot',
+    shotType: 'wide-shot',
     duration: '5s',
     aspectRatio: '16:9',
     cameraMovement: 'Static',
@@ -127,6 +140,7 @@ export default function PromptArchitect({ embedded = false }) {
     const [copied, setCopied] = useState(false);
     const [countdown, setCountdown] = useState(0);
     const [showIntro, setShowIntro] = useState(!embedded);
+    const [showFomoBanner, setShowFomoBanner] = useState(true);
 
     // Countdown logic
     useEffect(() => {
@@ -174,7 +188,7 @@ export default function PromptArchitect({ embedded = false }) {
     };
 
     const handleGenerate = async () => {
-        if (!unlocked && uses >= 2) {
+        if (!unlocked && uses >= 3) {
             setIsLoginOpen(true);
             return;
         }
@@ -234,7 +248,7 @@ export default function PromptArchitect({ embedded = false }) {
                                 - Durée: ${state.duration}
                                 - Mouvement: ${state.cameraMovement}
                                 - Effets: ${state.cameraFX}
-                                - Éclairage: ${state.lighting}
+                                - Ambiance (Mood): ${state.lighting}
 
                                 RÈGLES CRITIQUES :
                                 1. Réponds UNIQUEMENT le JSON pur. Pas de markdown, pas de texte avant/après.
@@ -295,7 +309,7 @@ export default function PromptArchitect({ embedded = false }) {
     };
 
     return (
-        <div className={embedded ? "w-full text-white font-sans relative" : "min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative"}>
+        <div className={embedded ? "w-full text-white font-sans relative" : "min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden overflow-y-auto relative"}>
 
             {/* INTRO OVERLAY */}
             {showIntro && !embedded && (
@@ -311,11 +325,17 @@ export default function PromptArchitect({ embedded = false }) {
                 </div>
             )}
 
+            {/* FOMO BANNER */}
+            {!embedded && showFomoBanner && (
+                <FomoBanner onClose={() => setShowFomoBanner(false)} />
+            )}
+
             {/* NAVBAR */}
             {!embedded && (
                 <NavBar
                     onProfileClick={() => setIsLoginOpen(true)}
                     unlocked={unlocked}
+                    hasBanner={showFomoBanner}
                 />
             )}
 
@@ -323,16 +343,16 @@ export default function PromptArchitect({ embedded = false }) {
             <main className={`relative z-10 container mx-auto px-6 ${embedded ? 'py-0' : 'pt-48 pb-24'} flex flex-col items-center min-h-[calc(100vh-80px)]`}>
 
                 {/* HERO HEADER */}
-                <div className="text-center mb-5 mt-24 space-y-4 animate-fade-in-up">
+                <div className="text-center mb-5 mt-36 space-y-4 animate-fade-in-up">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                         <Sparkles className="w-4 h-4 text-purple-400" />
-                        <span className="text-xs font-bold font-orbitron text-purple-300 tracking-wider">PROMPT ARCHITECT v2.0</span>
+                        <span className="text-xs font-bold font-orbitron text-purple-300 tracking-wider">PROMPT ARCHITECT Pro</span>
                     </div>
-                    <h1 className="text-5xl md:text-5xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
-                        CRAFT YOUR <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">VISION!</span>
+                    <h1 className="text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
+                        VOS PROMPTS <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">OPTIMISÉS!</span>
                     </h1>
-                    <p className="text-gray-400 max-w-lg mx-auto text-lg">
-                        L'outil ultime pour générer des prompts vidéo cinématiques. <br />Exploitez la puissance de Veo3 & Kling 2.6!
+                    <p className="text-gray-400 max-w-lg mx-auto text-sm md:text-md px-4">
+                        L'outil ultime pour générer des prompts vidéo cinématiques.
                     </p>
                 </div>
 
@@ -346,7 +366,7 @@ export default function PromptArchitect({ embedded = false }) {
                         <div className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-[30px] p-1 transition-all hover:border-purple-500/30 hover:shadow-[0_0_40px_rgba(139,92,246,0.15)]">
                             <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-6 h-full min-h-[300px] flex flex-col relative">
+                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-5 h-full min-h-[100px] max-h-[450px] flex flex-col relative">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3 text-gray-400">
                                         <Terminal className="w-5 h-5" />
@@ -367,7 +387,7 @@ export default function PromptArchitect({ embedded = false }) {
                                     value={state.subject}
                                     onChange={(e) => dispatch({ type: 'subject', value: e.target.value })}
                                     placeholder="Décrivez votre scène: Un samouraï cyberpunk marchant sous la pluie à néo-tokyo..."
-                                    className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed pb-24"
+                                    className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed pb-24 genesis-scrollbar"
                                 />
 
                                 {/* CHARACTER COUNT */}
@@ -376,49 +396,61 @@ export default function PromptArchitect({ embedded = false }) {
                                 </div>
 
                                 {/* FLOATING ACTION BAR */}
-                                <div className="mt-4 flex flex-wrap items-center gap-2 pt-4 border-t border-white/5 pb-16">
-                                    <PillSelect
-                                        icon={Monitor}
-                                        value={state.aspectRatio}
-                                        options={['16:9', '9:16', '1:1', '21:9']}
-                                        onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
-                                    />
-                                    <PillSelect
-                                        icon={Play}
-                                        value={state.duration}
-                                        options={['5s', '10s', '15s']}
-                                        onChange={(v) => dispatch({ type: 'duration', value: v })}
-                                    />
-                                    <PillSelect
-                                        icon={Aperture}
-                                        value={state.shotType}
-                                        options={SHOT_TYPES}
-                                        onChange={(v) => dispatch({ type: 'shotType', value: v })}
-                                    />
-                                    <LightingSelect
-                                        value={state.lighting}
-                                        onChange={(v) => dispatch({ type: 'lighting', value: v })}
-                                    />
-                                    <MotionSelect
-                                        value={state.cameraMovement}
-                                        onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
-                                    />
-                                    <PillSelect
-                                        icon={Zap}
-                                        value={state.cameraFX}
-                                        options={CAMERA_FX}
-                                        onChange={(v) => dispatch({ type: 'cameraFX', value: v })}
-                                    />
-                                    <ModelSelect
-                                        generationType={state.generationType}
-                                        value={state.aiModel}
-                                        onChange={(v) => dispatch({ type: 'aiModel', value: v })}
-                                        onTypeChange={(v) => dispatch({ type: 'generationType', value: v })}
-                                    />
-                                    <StyleSelect
-                                        value={state.style}
-                                        onChange={(v) => dispatch({ type: 'style', value: v })}
-                                    />
+                                <div className="mt-4 flex flex-col gap-3 pt-4 border-t border-white/5 pb-16">
+                                    {/* ROW 1: Dimensions, Durée, Effet, Eclairage */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <AspectRatioSelect
+                                            value={state.aspectRatio}
+                                            onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
+                                        />
+                                        <PillSelect
+                                            icon={Play}
+                                            value={state.duration}
+                                            options={['5s', '10s', '15s']}
+                                            onChange={(v) => dispatch({ type: 'duration', value: v })}
+                                        />
+                                        <PillSelect
+                                            icon={Zap}
+                                            value={state.cameraFX}
+                                            options={CAMERA_FX}
+                                            onChange={(v) => dispatch({ type: 'cameraFX', value: v })}
+                                        />
+
+                                    </div>
+
+                                    {/* ROW 2: Angle, Mouvement, Style */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <ShotTypeSelect
+                                            value={state.shotType}
+                                            onChange={(v) => dispatch({ type: 'shotType', value: v })}
+                                        />
+                                        <MotionSelect
+                                            value={state.cameraMovement}
+                                            onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
+                                        />
+                                        <StyleSelect
+                                            value={state.style}
+                                            onChange={(v) => dispatch({ type: 'style', value: v })}
+                                        />
+                                    </div>
+
+                                    {/* ROW 3: Modèle & Mood */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <div className="flex-1 min-w-[140px]">
+                                            <MoodSelect
+                                                value={state.lighting}
+                                                onChange={(v) => dispatch({ type: 'lighting', value: v })}
+                                            />
+                                        </div>
+                                        <div className="flex-[2] min-w-[200px]">
+                                            <ModelSelect
+                                                generationType={state.generationType}
+                                                value={state.aiModel}
+                                                onChange={(v) => dispatch({ type: 'aiModel', value: v })}
+                                                onTypeChange={(v) => dispatch({ type: 'generationType', value: v })}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* GENERATE BUTTON - Fixed Bottom Right */}
@@ -439,7 +471,7 @@ export default function PromptArchitect({ embedded = false }) {
 
                                     {/* Usage Badge */}
                                     <div className="absolute -top-3 -right-2 z-[100] bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md border border-red-400 animate-bounce pointer-events-none">
-                                        {uses >= 2 ? '0 ESSAI' : `${2 - uses} FREE`}
+                                        {uses >= 3 ? '0 ESSAI' : `${3 - uses} FREE`}
                                     </div>
                                 </div>
                             </div>
@@ -476,7 +508,7 @@ export default function PromptArchitect({ embedded = false }) {
                                         <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                                         <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                                     </div>
-                                    <span className="text-xs font-mono text-gray-500 ml-2">prompt_architect.json</span>
+                                    <span className="text-xs font-mono text-gray-500 ml-2">prompt_preview.json</span>
                                 </div>
                                 <button
                                     onClick={handleCopy}
@@ -487,8 +519,8 @@ export default function PromptArchitect({ embedded = false }) {
                             </div>
 
                             {/* Code Content */}
-                            <div className="flex-1 overflow-auto custom-scrollbar font-mono text-xs md:text-sm text-purple-200/90 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">
-                                <pre>{JSON.stringify(result || state, null, 2)}</pre>
+                            <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar font-mono text-xs md:text-sm text-purple-200/90 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">
+                                <pre className="whitespace-pre-wrap break-words">{JSON.stringify(result || state, null, 2)}</pre>
                             </div>
 
                             {/* Decoration */}
@@ -523,11 +555,58 @@ export default function PromptArchitect({ embedded = false }) {
 
 // --- SUB COMPONENTS ---
 
-const NavBar = ({ onProfileClick, unlocked }) => (
-    <header className="fixed top-0 inset-x-0 z-50 h-20 flex items-center justify-between px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#050505]/50">
+// FOMO Banner Component
+const FomoBanner = ({ onClose }) => {
+    const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0);
+            const diff = midnight - now;
+            return {
+                hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((diff / (1000 * 60)) % 60),
+                seconds: Math.floor((diff / 1000) % 60)
+            };
+        };
+
+        setTimeLeft(calculateTimeLeft());
+        const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div
+            className="fixed top-0 inset-x-0 z-[60] bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 text-white py-2 px-4 flex items-center justify-center gap-3 text-sm font-medium cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={onClose}
+        >
+            <span className="animate-pulse">🔥</span>
+            <span className="hidden sm:inline">OFFRE DE LANCEMENT :</span>
+            <span className="font-bold">-40% sur GENESIS</span>
+            <span className="hidden md:inline">·</span>
+            <div className="flex items-center gap-1 font-mono font-bold bg-black/20 px-2 py-0.5 rounded">
+                <span>{String(timeLeft.hours).padStart(2, '0')}</span>
+                <span className="animate-pulse">:</span>
+                <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
+                <span className="animate-pulse">:</span>
+                <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
+            </div>
+            <span className="hidden lg:inline">avant fin de promo</span>
+            <span className="text-xs opacity-70 ml-2 hidden sm:inline">(clic pour fermer)</span>
+            <X size={16} className="ml-2 opacity-70 hover:opacity-100" />
+        </div>
+    );
+};
+
+const NavBar = ({ onProfileClick, unlocked, hasBanner }) => (
+    <header className={`fixed ${hasBanner ? 'top-10' : 'top-0'} inset-x-0 z-50 h-20 flex items-center justify-between px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#050505]/50 transition-all duration-300`}>
         <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-black rounded-xl border border-white/10 flex items-center justify-center shadow-lg shadow-purple-900/20">
-                <Zap className="w-5 h-5 text-white" fill="currentColor" />
+            <div className="h-[70px] aspect-[9/16] rounded-[20px] overflow-hidden border border-white/10 shadow-lg shadow-purple-900/20">
+                <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+                    <source src="/ui/perso/animation/1G.mp4" type="video/mp4" />
+                </video>
             </div>
             <span className="font-orbitron font-bold text-xl tracking-wider">GENESIS <span className="text-purple-500 text-xs align-top">LABS</span></span>
         </div>
@@ -555,7 +634,7 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-white/20 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white min-w-[100px]"
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-white/20 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
                 <Icon size={14} className="text-purple-400" />
                 <span>{value}</span>
@@ -565,16 +644,95 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-56 max-h-60 overflow-y-auto custom-scrollbar bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
-                        {options.map(opt => (
-                            <button
-                                key={opt}
-                                onClick={() => { onChange(opt); setIsOpen(false); }}
-                                className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${value === opt ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                            >
-                                {opt}
-                            </button>
-                        ))}
+                    <div className="absolute bottom-full right-0 mb-2 w-auto min-w-full bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                        <div className="max-h-60 overflow-y-auto genesis-scrollbar flex flex-col p-2">
+                            {options.map(opt => (
+                                <button
+                                    key={opt}
+                                    onClick={() => { onChange(opt); setIsOpen(false); }}
+                                    className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${value === opt ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                                >
+                                    {opt}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+// Aspect Ratio Data with visual proportions
+const ASPECT_RATIOS = [
+    { id: '16:9', name: '16:9', w: 16, h: 9, desc: 'Widescreen' },
+    { id: '9:16', name: '9:16', w: 9, h: 16, desc: 'Vertical' },
+    { id: '1:1', name: '1:1', w: 1, h: 1, desc: 'Square' },
+    { id: '21:9', name: '21:9', w: 21, h: 9, desc: 'Ultrawide' },
+    { id: '4:3', name: '4:3', w: 4, h: 3, desc: 'Classic' },
+    { id: '3:2', name: '3:2', w: 3, h: 2, desc: 'Photo' },
+    { id: '5:4', name: '5:4', w: 5, h: 4, desc: 'Large Format' },
+    { id: '2:3', name: '2:3', w: 2, h: 3, desc: 'Portrait' },
+    { id: '3:4', name: '3:4', w: 3, h: 4, desc: 'Portrait+' },
+    { id: '4:5', name: '4:5', w: 4, h: 5, desc: 'Instagram' },
+];
+
+const AspectRatioSelect = ({ value, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const currentRatio = ASPECT_RATIOS.find(r => r.id === value) || ASPECT_RATIOS[0];
+
+    // Calculate icon dimensions (max 20px)
+    const getIconDimensions = (w, h) => {
+        const maxSize = 18;
+        const ratio = w / h;
+        if (ratio >= 1) {
+            return { width: maxSize, height: maxSize / ratio };
+        } else {
+            return { width: maxSize * ratio, height: maxSize };
+        }
+    };
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-white/20 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
+            >
+                <div
+                    className="border-2 border-purple-400 rounded-sm bg-purple-400/20"
+                    style={getIconDimensions(currentRatio.w, currentRatio.h)}
+                />
+                <span>{currentRatio.name}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-2">
+                            <div className="grid grid-cols-2 gap-1.5">
+                                {ASPECT_RATIOS.map(ratio => {
+                                    const dims = getIconDimensions(ratio.w, ratio.h);
+                                    return (
+                                        <button
+                                            key={ratio.id}
+                                            onClick={() => { onChange(ratio.id); setIsOpen(false); }}
+                                            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${value === ratio.id ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                                        >
+                                            <div
+                                                className={`border-2 rounded-sm flex-shrink-0 ${value === ratio.id ? 'border-white bg-white/20' : 'border-gray-500 bg-gray-500/20'}`}
+                                                style={dims}
+                                            />
+                                            <div className="flex flex-col items-start">
+                                                <span className="font-bold">{ratio.name}</span>
+                                                <span className={`text-[9px] ${value === ratio.id ? 'text-purple-200' : 'text-gray-500'}`}>{ratio.desc}</span>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </>
             )}
@@ -591,7 +749,7 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
                 <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
                     {currentModel && (
@@ -609,7 +767,7 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full right-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
                         {/* Type Tabs */}
                         <div className="flex border-b border-white/5">
                             <button
@@ -629,7 +787,7 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
                         </div>
 
                         {/* Model List */}
-                        <div className="p-2 max-h-64 overflow-y-auto custom-scrollbar">
+                        <div className="p-2 max-h-64 overflow-y-auto genesis-scrollbar">
                             {models.map(model => (
                                 <button
                                     key={model.id}
@@ -666,7 +824,7 @@ const StyleSelect = ({ value, onChange }) => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
                 <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
                     <img
@@ -682,8 +840,8 @@ const StyleSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
+                    <div className="absolute bottom-full right-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto genesis-scrollbar">
                             {GEN_STYLES.map(style => (
                                 <button
                                     key={style.id}
@@ -710,7 +868,7 @@ const StyleSelect = ({ value, onChange }) => {
     );
 };
 
-const LightingSelect = ({ value, onChange }) => {
+const MoodSelect = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentStyle = LIGHTING_STYLES.find(s => s.id === value) || LIGHTING_STYLES[0];
 
@@ -718,7 +876,7 @@ const LightingSelect = ({ value, onChange }) => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
                 <div className="w-6 h-6 rounded-full overflow-hidden gray-scale-0 bg-white/5 flex-shrink-0 border border-white/20">
                     <img
@@ -734,8 +892,8 @@ const LightingSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto custom-scrollbar">
+                    <div className="absolute bottom-full right-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto genesis-scrollbar">
                             {LIGHTING_STYLES.map(style => (
                                 <button
                                     key={style.id}
@@ -770,13 +928,13 @@ const MotionSelect = ({ value, onChange }) => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white"
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
                     <img
-                        src="/ui/animation/perso.png"
+                        src="/ui/perso/animation/pngvaltop.png"
                         alt="Camera Move"
-                        className={`w-full h-full object-contain p-1 ${currentMove.anim}`}
+                        className={`w-full h-full object-cover ${currentMove.anim}`}
                     />
                 </div>
                 <span className="hidden sm:inline">{currentMove.label}</span>
@@ -786,25 +944,86 @@ const MotionSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full left-0 mb-2 w-72 max-h-80 overflow-y-auto custom-scrollbar bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 z-[100] overflow-hidden p-1 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-2 grid grid-cols-2 gap-2">
-                            {CAMERA_MOVES.map(move => (
-                                <button
-                                    key={move.id}
-                                    onClick={() => { onChange(move.id); setIsOpen(false); }}
-                                    className={`relative group p-3 rounded-xl border transition-all flex flex-col items-center gap-2 ${value === move.id ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 hover:border-white/20 hover:bg-white/5'}`}
-                                >
-                                    <div className="w-10 h-10 rounded-lg bg-black/50 flex items-center justify-center relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
-                                        <img
-                                            src="/ui/animation/perso.png"
-                                            alt={move.label}
-                                            className={`w-full h-full object-contain p-1 ${move.anim}`}
-                                        />
-                                    </div>
-                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-white">{move.label}</span>
-                                </button>
-                            ))}
+                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                        <div className="max-h-80 overflow-y-auto genesis-scrollbar p-2">
+                            <div className="grid grid-cols-3 gap-2">
+                                {CAMERA_MOVES.map(move => (
+                                    <button
+                                        key={move.id}
+                                        onClick={() => { onChange(move.id); setIsOpen(false); }}
+                                        className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden ${value === move.id ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}
+                                    >
+                                        <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:8px_8px]"></div>
+                                            <img
+                                                src="/ui/perso/animation/pngvaltop.png"
+                                                alt={move.label}
+                                                className={`w-3/4 h-3/4 object-contain ${move.anim}`}
+                                            />
+                                        </div>
+                                        <div className={`w-full py-1.5 px-1 text-center ${value === move.id ? 'bg-purple-600' : 'bg-black/70'}`}>
+                                            <span className={`text-[9px] font-bold truncate block ${value === move.id ? 'text-white' : 'text-gray-400'}`}>{move.label}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+const ShotTypeSelect = ({ value, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const currentShot = SHOT_TYPES.find(s => s.id === value) || SHOT_TYPES[0];
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
+            >
+                <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+                    <img
+                        src="/ui/perso/animation/pngvaltop.png"
+                        alt="Shot Type"
+                        className="object-cover"
+                        style={{ transform: `scale(${currentShot.scale})` }}
+                    />
+                </div>
+                <span className="hidden sm:inline">{currentShot.name}</span>
+                <span className="sm:hidden">{currentShot.desc}</span>
+                <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                        <div className="max-h-80 overflow-y-auto genesis-scrollbar p-2">
+                            <div className="grid grid-cols-3 gap-2">
+                                {SHOT_TYPES.map(shot => (
+                                    <button
+                                        key={shot.id}
+                                        onClick={() => { onChange(shot.id); setIsOpen(false); }}
+                                        className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden ${value === shot.id ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}
+                                    >
+                                        <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
+                                            <img
+                                                src="/ui/perso/animation/pngvaltop.png"
+                                                alt={shot.name}
+                                                className="object-cover transition-transform"
+                                                style={{ transform: `scale(${shot.scale})` }}
+                                            />
+                                        </div>
+                                        <div className={`w-full py-1.5 px-1 text-center ${value === shot.id ? 'bg-purple-600' : 'bg-black/70'}`}>
+                                            <span className={`text-[9px] font-bold truncate block ${value === shot.id ? 'text-white' : 'text-gray-400'}`}>{shot.name}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </>
@@ -814,7 +1033,14 @@ const MotionSelect = ({ value, onChange }) => {
 };
 
 const IntroOverlay = ({ onComplete }) => {
+    const videoRef = useRef(null);
     const [fading, setFading] = useState(false);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.playbackRate = 2.0;
+        }
+    }, []);
 
     const handleEnd = () => {
         setFading(true);
@@ -824,7 +1050,8 @@ const IntroOverlay = ({ onComplete }) => {
     return (
         <div className={`fixed inset-0 z-[100] bg-black flex items-center justify-center transition-opacity duration-1000 ${fading ? 'opacity-0' : 'opacity-100'}`}>
             <video
-                src="/ui/animation/1G.mp4"
+                ref={videoRef}
+                src="/ui/perso/animation/1G.mp4"
                 muted
                 autoPlay
                 playsInline
@@ -895,6 +1122,16 @@ const LoginModal = ({ isOpen, onClose }) => {
                     >
                         <Lock size={18} /> DÉBLOQUER PRO
                     </button>
+
+                    <a
+                        href="https://www.instagram.com/visuals.by.genesis/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 text-white font-bold h-14 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2 mt-3"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
+                        DEMANDER LE CODE À GENESIS
+                    </a>
 
                     <p className="text-xs text-center text-gray-500 pt-4 cursor-pointer hover:text-purple-400 transition-colors">
                         Pas de code ? <a href="/" className="text-purple-400 underline">Rejoindre la formation</a>

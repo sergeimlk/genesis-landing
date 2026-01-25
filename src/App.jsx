@@ -33,6 +33,7 @@ const GenesisLanding = () => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isCgvModalOpen, setIsCgvModalOpen] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
@@ -87,11 +88,11 @@ const GenesisLanding = () => {
         <div className="container nav-container">
           <div className="logo-container" onClick={() => setIsSecretModalOpen(true)}>
             <img src="/img/Glogo.png" alt="Genesis Logo" className="t-logo" />
-            <img src="/img/GENESIS.png" alt="GENESIS" style={{ height: '45px', borderRadius: '10px', objectFit: 'cover' }} />
+            <img src="/img/GENESIS.png" alt="GENESIS" className="logo-brand-img" />
           </div>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <a href="#programme" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }} onClick={(e) => { e.preventDefault(); document.getElementById('programme').scrollIntoView({ behavior: 'smooth' }); }}>Programme</a>
-            <a href="#reviews" className="link-nav" style={{ color: '#9ca3af', fontWeight: 500 }} onClick={(e) => { e.preventDefault(); document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' }); }}>Avis</a>
+          <div className="nav-links-group">
+            <a href="#programme" className="link-nav nav-link-item" onClick={(e) => { e.preventDefault(); document.getElementById('programme').scrollIntoView({ behavior: 'smooth' }); }}>Programme</a>
+            <a href="#reviews" className="link-nav nav-link-item" onClick={(e) => { e.preventDefault(); document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' }); }}>Avis</a>
             <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-cta-nav">
               <span className="btn-cta-nav-content">Rejoindre</span>
             </a>
@@ -141,19 +142,18 @@ const GenesisLanding = () => {
                       key={i}
                       src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 345}&mouth=smile&eyebrows=default`}
                       alt="User"
-                      className="w-10 h-10 rounded-full border-2 border-black transition-all duration-300 hover:shadow-[0_0_15px_#a855f7] hover:scale-110 hover:z-10"
-                      style={{ backgroundColor: 'black' }}
+                      className="w-10 h-10 rounded-full border-2 border-black bg-black transition-all duration-300 hover:shadow-[0_0_15px_#a855f7] hover:scale-110 hover:z-10"
                     />
                   ))}
                 </div>
-                <p className="text-sm ml-6">Rejoint par <strong>500+ créateurs</strong><br />dont <span style={{ color: '#a855f7' }}>KOZI, ERON...</span></p>
+                <p className="text-sm ml-6">Rejoint par <strong>500+ créateurs</strong><br />dont <span className="text-purple-500">KOZI, ERON...</span></p>
               </div>
             </div>
 
             {/* Right Video */}
             <div className="video-card-wrapper animate-float relative group">
               <div className="video-card">
-                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+                <div className="video-aspect-container">
                   <YouTube
                     key={currentVideoIndex}
                     videoId={VIDEOS[currentVideoIndex]}
@@ -173,7 +173,7 @@ const GenesisLanding = () => {
                       event.target.setVolume(20);
                       event.target.playVideo();
                     }}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    className="video-iframe-fill"
                   />
                 </div>
                 <div className="video-glow"></div>
@@ -193,7 +193,7 @@ const GenesisLanding = () => {
       </header>
 
       {/* Trust Section (Marquee) */}
-      <section className="section-padding" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+      <section className="section-padding trust-section">
         <p className="trust-title">Ils nous font confiance</p>
         <div className="marquee-container">
           <div className="marquee-track marquee-normal">
@@ -238,27 +238,27 @@ const GenesisLanding = () => {
           <div className="comparison-grid">
             {/* Old Way */}
             <div className="card bad">
-              <h3 className="card-title text-red-400" style={{ color: '#f87171' }}>
+              <h3 className="card-title card-title-red">
                 <span className="p-2 bg-red-500/10 rounded">❌</span> Sans l'accompagnement ou coaching
               </h3>
               <ul>
-                <li className="list-item"><span style={{ color: '#f87171' }}>•</span> Rendu amateur et glitchs</li>
-                <li className="list-item"><span style={{ color: '#f87171' }}>•</span> Perte de temps (installations complexes)</li>
-                <li className="list-item"><span style={{ color: '#f87171' }}>•</span> Vidéos génériques sans âme</li>
-                <li className="list-item"><span style={{ color: '#f87171' }}>•</span> Impossible de vendre à des pros</li>
+                <li className="list-item"><span className="bullet-red">•</span> Rendu amateur et glitchs</li>
+                <li className="list-item"><span className="bullet-red">•</span> Perte de temps (installations complexes)</li>
+                <li className="list-item"><span className="bullet-red">•</span> Vidéos génériques sans âme</li>
+                <li className="list-item"><span className="bullet-red">•</span> Impossible de vendre à des pros</li>
               </ul>
             </div>
 
             {/* New Way */}
             <div className="card good">
-              <h3 className="card-title text-purple-400" style={{ color: '#a855f7' }}>
+              <h3 className="card-title card-title-purple">
                 <span className="p-2 bg-purple-500/10 rounded">✅</span> Avec GENESIS
               </h3>
               <ul>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Workflow PRO (Stable Diffusion, ComfyUI)</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Style Cinématographique Unique</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Méthodes Zéro-Tech (Débutant friendly)</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Capacité à monétiser vos créations</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Workflow PRO (Stable Diffusion, ComfyUI)</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Style Cinématographique Unique</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Méthodes Zéro-Tech (Débutant friendly)</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Capacité à monétiser vos créations</li>
               </ul>
             </div>
           </div>
@@ -326,13 +326,116 @@ const GenesisLanding = () => {
       <section id="programme" className="section-padding bg-black/50">
         <div className="container">
           <h2 className="section-title">LE <span className="text-gradient">PROGRAMME</span></h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-center mb-12">
+            6 étapes concrètes pour passer de zéro à autonome dans la création et la vente de vidéos IA
+          </p>
           <div className="modules-grid">
-            <ModuleCard icon={<Zap />} title="Les Bases & Outils" desc="Comprendre l'IA générative. Outils en ligne simples pour des résultats immédiats sans PC puissant." />
-            <ModuleCard icon={<Monitor />} title="Workflow Avancé" desc="Maîtrisez Stable Diffusion, ComfyUI et Midjourney. Installation, prompts secrets et paramétrages." />
-            <ModuleCard icon={<Film />} title="Animation Vidéo" desc="Transformez des images en vidéos fluides (Kling, Runway). Contrôle du mouvement et de la caméra." />
-            <ModuleCard icon={<Users />} title="Deepfake & FaceSwap" desc="Techniques professionnelles pour l'intégration de visages (pour les clips musicaux et parodies)." />
-            <ModuleCard icon={<ShieldCheck />} title="Montage & Post-Prod" desc="Upscale 4K, étalonnage couleur, effets spéciaux. Le rendu final broadcast." />
-            <ModuleCard icon={<Star />} title="Bonus: Business" desc="Comment vendre vos prestations, trouver des clients et exporter pour les réseaux sociaux." />
+            {/* Étape 1 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 1</div>
+              <div className="module-icon"><Zap /></div>
+              <h3 className="module-title">Clarté & Positionnement</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Savoir où aller et pourquoi</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Analyse du profil</li>
+                <li><Check size={14} className="text-purple-400" />Identification de secteurs réalistes</li>
+                <li><Check size={14} className="text-purple-400" />Choix d'une niche exploitable</li>
+                <li><Check size={14} className="text-purple-400" />Définition d'un objectif concret</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Direction claire, axe de travail défini, cadre réaliste</span>
+              </div>
+            </div>
+
+            {/* Étape 2 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 2</div>
+              <div className="module-icon"><Film /></div>
+              <h3 className="module-title">Compétence Vidéo IA</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Produire des vidéos IA montrables</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Création d'images et vidéos IA</li>
+                <li><Check size={14} className="text-purple-400" />Logique de rendu professionnel</li>
+                <li><Check size={14} className="text-purple-400" />Cohérence visuelle</li>
+                <li><Check size={14} className="text-purple-400" />Simplicité et efficacité</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Premiers visuels exploitables, base de portfolio</span>
+              </div>
+            </div>
+
+            {/* Étape 3 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 3</div>
+              <div className="module-icon"><Monitor /></div>
+              <h3 className="module-title">Structuration du Portfolio</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Crédibilité auprès des prospects</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Sélection des bons visuels</li>
+                <li><Check size={14} className="text-purple-400" />Présentation claire</li>
+                <li><Check size={14} className="text-purple-400" />Logique de valeur</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Mini-portfolio clair et professionnel</span>
+              </div>
+            </div>
+
+            {/* Étape 4 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 4</div>
+              <div className="module-icon"><ShieldCheck /></div>
+              <h3 className="module-title">Construction de l'Offre</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Ne plus dire "je fais un peu de tout"</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Définition d'une offre simple</li>
+                <li><Check size={14} className="text-purple-400" />Clarification du service</li>
+                <li><Check size={14} className="text-purple-400" />Cadrage du prix</li>
+                <li><Check size={14} className="text-purple-400" />Message clair</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Offre compréhensible et discours clair</span>
+              </div>
+            </div>
+
+            {/* Étape 5 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 5</div>
+              <div className="module-icon"><Users /></div>
+              <h3 className="module-title">Prospection & Action</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Sortir de la théorie</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Choix des canaux adaptés</li>
+                <li><Check size={14} className="text-purple-400" />Messages simples</li>
+                <li><Check size={14} className="text-purple-400" />Posture professionnelle</li>
+                <li><Check size={14} className="text-purple-400" />Gestion des échanges</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Premières démarches et conversations réelles</span>
+              </div>
+            </div>
+
+            {/* Étape 6 */}
+            <div className="module-card-detailed group">
+              <div className="module-step-badge">ÉTAPE 6</div>
+              <div className="module-icon"><Star /></div>
+              <h3 className="module-title">Ajustements & Consolidation</h3>
+              <p className="module-objective"><Sparkles size={14} className="inline mr-1 text-purple-400" />Solidifier ce qui fonctionne</p>
+              <ul className="module-list">
+                <li><Check size={14} className="text-purple-400" />Analyse des retours</li>
+                <li><Check size={14} className="text-purple-400" />Ajustement de l'offre</li>
+                <li><Check size={14} className="text-purple-400" />Optimisation de la méthode</li>
+                <li><Check size={14} className="text-purple-400" />Projection sur la suite</li>
+              </ul>
+              <div className="module-deliverable">
+                <span className="deliverable-label">Livrable:</span>
+                <span>Système clair et autonomie renforcée</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -388,13 +491,13 @@ const GenesisLanding = () => {
                 <span className="price">499€</span>
               </div>
 
-              <div className="text-left space-y-4 mb-8" style={{ maxWidth: '320px', margin: '0 auto 30px' }}>
-                <li className="list-item"><Check size={20} color="#a855f7" /> +6H de formation vidéo</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> PDF Récapitulatif 32 pages</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Accès outils IA privés</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Workflow "Visuals by Genesis"</li>
-                <li className="list-item"><Check size={20} color="#a855f7" /> Support Communautaire</li>
-                <li className="list-item font-bold text-white"><ShieldCheck size={20} color="#22d3ee" /> On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!</li>
+              <div className="text-left space-y-4 mb-8 pricing-features-container">
+                <li className="list-item"><Check size={20} className="text-purple-500" /> +6H de formation vidéo</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> PDF Récapitulatif 32 pages</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Accès outils IA privés</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Workflow "Visuals by Genesis"</li>
+                <li className="list-item"><Check size={20} className="text-purple-500" /> Support Communautaire</li>
+                <li className="list-item font-bold text-white"><ShieldCheck size={20} className="text-cyan-400" /> On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!</li>
               </div>
 
               <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-join-main">
@@ -408,7 +511,7 @@ const GenesisLanding = () => {
 
       {/* Notion Embed Section (Responsive) */}
       <section className="section-padding">
-        <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div className="container container-narrow">
           <div className="bg-[#111] border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all">
             {/* Background Glow */}
             <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_70%)] pointer-events-none"></div>
@@ -437,7 +540,7 @@ const GenesisLanding = () => {
 
       {/* FAQ */}
       <section className="section-padding">
-        <div className="container" style={{ maxWidth: '800px' }}>
+        <div className="container container-narrow">
           <h2 className="section-title">FAQ</h2>
           <div className="space-y-4">
             <FaqItem
@@ -471,7 +574,7 @@ const GenesisLanding = () => {
       {/* Footer */}
       <footer className="py-12 bg-black border-t border-white/10 text-center">
         <div className="container">
-          <h2 style={{ fontFamily: 'var(--font-orbitron)', fontWeight: 900, fontSize: '1.5rem', marginBottom: '20px' }}>GENESIS</h2>
+          <h2 className="footer-title">GENESIS</h2>
           <div className="flex justify-center gap-6 mb-8">
             <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-purple-600 transition-colors">
               <Instagram size={24} />
@@ -483,7 +586,7 @@ const GenesisLanding = () => {
           <p className="text-muted text-sm mb-8">© 2024 Visuals by Genesis. All rights reserved.</p>
           <div className="flex-center gap-6 text-sm text-muted">
             <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">Mentions Légales</a>
-            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">CGV</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setIsCgvModalOpen(true); }}>CGV</a>
             <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">RGPD</a>
             <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }}>Contact</a>
           </div>
@@ -497,12 +600,12 @@ const GenesisLanding = () => {
             <div className="modal-content animate-fade-up">
               <button
                 onClick={() => setIsSecretModalOpen(false)}
-                style={{ position: 'absolute', top: '20px', right: '20px', color: '#666' }}
+                className="modal-close-btn"
               >
                 <X />
               </button>
-              <Lock size={48} color="#a855f7" style={{ margin: '0 auto 20px' }} />
-              <h3 style={{ fontFamily: 'var(--font-orbitron)', fontSize: '1.5rem', marginBottom: '10px' }}>ACCÈS MEMBRE</h3>
+              <Lock size={48} className="text-purple-500 lock-icon-centered" />
+              <h3 className="modal-title-orbitron">ACCÈS MEMBRE</h3>
               <p className="text-muted">Entrez votre code secret</p>
 
               <input
@@ -513,9 +616,9 @@ const GenesisLanding = () => {
                 onChange={(e) => setSecretCode(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && verifyCode()}
               />
-              {errorMsg && <p style={{ color: '#ef4444', fontSize: '0.8rem', marginBottom: '16px' }}>{errorMsg}</p>}
+              {errorMsg && <p className="error-text">{errorMsg}</p>}
 
-              <button onClick={verifyCode} className="btn-primary justify-center btn-unlock" style={{ width: '100%' }}>
+              <button onClick={verifyCode} className="btn-primary justify-center btn-unlock btn-full-width">
                 DÉVERROUILLER
               </button>
             </div>
@@ -525,11 +628,11 @@ const GenesisLanding = () => {
 
       {/* Tally Contact Modal */}
       {isContactModalOpen && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setIsContactModalOpen(false) }} style={{ alignItems: 'flex-start', paddingTop: '50px', overflowY: 'auto' }}>
-          <div className="modal-content animate-fade-up" style={{ maxWidth: '600px', width: '90%', height: '80vh', padding: '0 24px', background: '#1a1a1a', overflow: 'hidden', display: 'flex', flexDirection: 'col' }}>
+        <div className="modal-overlay modal-overlay-top" onClick={(e) => { if (e.target === e.currentTarget) setIsContactModalOpen(false) }}>
+          <div className="modal-content animate-fade-up modal-content-contact">
             <button
               onClick={() => setIsContactModalOpen(false)}
-              style={{ position: 'absolute', top: '15px', right: '15px', color: '#fff', zIndex: 10, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '5px' }}
+              className="modal-close-btn-white"
             >
               <X size={24} />
             </button>
@@ -539,7 +642,31 @@ const GenesisLanding = () => {
               height="100%"
               frameBorder="0"
               title="Contact Form"
-              style={{ background: 'transparent', margin: 0 }}
+              className="iframe-transparent"
+            ></iframe>
+          </div>
+        </div>
+      )}
+
+      {/* CGV Modal */}
+      {isCgvModalOpen && (
+        <div className="modal-overlay modal-overlay-top-sm" onClick={(e) => { if (e.target === e.currentTarget) setIsCgvModalOpen(false) }}>
+          <div className="modal-content animate-fade-up modal-content-cgv">
+            <div className="modal-header-cgv">
+              <h3 className="modal-title-sm">CONDITIONS GÉNÉRALES DE VENTE</h3>
+              <button
+                onClick={() => setIsCgvModalOpen(false)}
+                className="modal-close-btn-cgv"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <iframe
+              src="/docs/CONDITIONS_GENERALES_DE_VENTE_GENESIS.pdf"
+              width="100%"
+              height="100%"
+              className="iframe-flex"
+              title="Conditions Générales de Vente"
             ></iframe>
           </div>
         </div>
@@ -552,7 +679,7 @@ const GenesisLanding = () => {
 const ModuleCard = ({ icon, title, desc }) => (
   <div className="module-card">
     <div className="module-icon">{icon}</div>
-    <h3 style={{ fontFamily: 'var(--font-orbitron)', marginBottom: '10px' }}>{title}</h3>
+    <h3 className="module-card-title">{title}</h3>
     <p className="text-muted text-sm">{desc}</p>
   </div>
 );
@@ -564,7 +691,7 @@ const ReviewCard = ({ name, role, text }) => (
     </div>
     <p className="italic text-muted mb-6">"{text}"</p>
     <div className="flex items-center gap-4">
-      <div style={{ width: '40px', height: '40px', background: 'linear-gradient(to bottom right, #a855f7, #3b82f6)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+      <div className="review-avatar">
         {name.charAt(0)}
       </div>
       <div>
@@ -579,7 +706,7 @@ const FaqItem = ({ question, answer, isOpen, onClick }) => (
   <div className="faq-item">
     <button className="faq-question" onClick={onClick}>
       {question}
-      {isOpen ? <ChevronUp color="#a855f7" /> : <ChevronDown color="#666" />}
+      {isOpen ? <ChevronUp className="text-purple-500" /> : <ChevronDown className="text-gray-500" />}
     </button>
     <div className={`faq-answer ${isOpen ? 'open' : ''}`}>
       {answer}
@@ -660,39 +787,39 @@ const FlashOfferModal = ({ onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }} style={{ zIndex: 3000 }}>
+    <div className="modal-overlay modal-z-high" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       {/* Reusing pricing card style but in modal context */}
-      <div className="modal-content animate-fade-up" style={{ maxWidth: '90%', width: '400px', padding: '0', overflow: 'hidden', border: '1px solid #a855f7' }}>
+      <div className="modal-content animate-fade-up modal-content-flash">
         <button
           onClick={onClose}
-          style={{ position: 'absolute', top: '15px', right: '15px', color: '#fff', zIndex: 10, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '5px' }}
+          className="modal-close-btn-white"
         >
           <X size={24} />
         </button>
 
-        <div className="pricing-card" style={{ border: 'none', background: 'transparent', boxShadow: 'none', margin: 0, maxWidth: 'none' }}>
-          <div className="pricing-header" style={{ padding: '20px' }}>
+        <div className="pricing-card pricing-card-modal">
+          <div className="pricing-header pricing-header-compact">
             <div className="fomo-container">
-              <div className="fomo-label" style={{ fontSize: '0.7rem', padding: '4px 8px' }}>⚡ OFFRE DE LANCEMENT</div>
-              <div className="fomo-warning" style={{ fontSize: '0.8rem' }}>Le prix double ce soir à minuit !</div>
-              <div className="fomo-countdown" style={{ marginBottom: '10px' }}>
+              <div className="fomo-label fomo-label-sm">⚡ OFFRE DE LANCEMENT</div>
+              <div className="fomo-warning fomo-warning-sm">Le prix double ce soir à minuit !</div>
+              <div className="fomo-countdown fomo-countdown-mb">
                 <div className="countdown-item">
-                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.hours).padStart(2, '0')}</span>
-                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>H</span>
+                  <span className="countdown-number countdown-number-sm">{String(timeLeft.hours).padStart(2, '0')}</span>
+                  <span className="countdown-label countdown-label-xs">H</span>
                 </div>
-                <span className="countdown-sep" style={{ fontSize: '1.2rem' }}>:</span>
+                <span className="countdown-sep countdown-sep-sm">:</span>
                 <div className="countdown-item">
-                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.minutes).padStart(2, '0')}</span>
-                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>Min</span>
+                  <span className="countdown-number countdown-number-sm">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                  <span className="countdown-label countdown-label-xs">Min</span>
                 </div>
-                <span className="countdown-sep" style={{ fontSize: '1.2rem' }}>:</span>
+                <span className="countdown-sep countdown-sep-sm">:</span>
                 <div className="countdown-item">
-                  <span className="countdown-number" style={{ fontSize: '1.2rem' }}>{String(timeLeft.seconds).padStart(2, '0')}</span>
-                  <span className="countdown-label" style={{ fontSize: '0.6rem' }}>Sec</span>
+                  <span className="countdown-number countdown-number-sm">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                  <span className="countdown-label countdown-label-xs">Sec</span>
                 </div>
               </div>
             </div>
-            <div className="fomo-urgency-tag animate-pulse-fast" style={{ fontSize: '0.7rem', padding: '6px 12px', marginTop: '10px' }}>
+            <div className="fomo-urgency-tag animate-pulse-fast fomo-urgency-sm">
               ⚠️ PLUS QUE 5 PLACES !
             </div>
             <h3 className="font-orbitron font-bold text-lg mt-2">GENESIS ACADEMY</h3>
@@ -700,11 +827,11 @@ const FlashOfferModal = ({ onClose }) => {
           </div>
           <div className="p-6 text-center bg-black/50">
             <div className="flex-center mb-3">
-              <span className="old-price" style={{ fontSize: '1rem' }}>800€</span>
-              <span className="price" style={{ fontSize: '2rem' }}>499€</span>
+              <span className="old-price old-price-sm">800€</span>
+              <span className="price price-lg">499€</span>
             </div>
 
-            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main" style={{ width: '100%', minWidth: '100%' }}>
+            <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer" className="btn-join-main btn-join-full">
               CHOISIR <br /> MON MODULE
             </a>
             <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
