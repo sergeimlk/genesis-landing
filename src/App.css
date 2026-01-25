@@ -2144,3 +2144,18 @@ h2.section-title {
   width: 100%;
   min-width: 100%;
 }
+
+/* Shimmer Animation for Premium Button */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(12deg);
+  }
+
+  100% {
+    transform: translateX(150%) skewX(12deg);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}

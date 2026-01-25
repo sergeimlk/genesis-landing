@@ -38,8 +38,6 @@ const GenesisLanding = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
 
-
-
   const navigate = useNavigate();
 
   // Scroll Handler
@@ -122,7 +120,7 @@ const GenesisLanding = () => {
 
           <div className="hero-split-layout">
             {/* Left Actions */}
-            <div className="hero-left-col animate-fade-up delay-100">
+            <div className="text-base hero-left-col animate-fade-up delay-100">
               <p className="hero-desc">
                 Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium. Même sans compétences techniques. Un workflow de réalisateurs pensé pour créer des vidéos IA exploitables et vendables.
               </p>
@@ -207,9 +205,6 @@ const GenesisLanding = () => {
         </div>
       </section>
 
-
-
-      {/* AI PLAYGROUND SECTION (NEW) */}
       {/* AI PLAYGROUND SECTION (NEW) */}
       <section className="relative z-10 border-b border-white/5 bg-black/40">
         <PromptArchitect embedded={true} />
@@ -500,7 +495,7 @@ const GenesisLanding = () => {
                 <li className="list-item font-bold text-white"><ShieldCheck size={20} className="text-cyan-400" /> On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!</li>
               </div>
 
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsContactModalOpen(true); }} className="btn-join-main">
+              <a href="#contact-form" onClick={(e) => { e.preventDefault(); document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' }); }} className="btn-join-main">
                 CHOISIR MON MODULE
               </a>
               <p className="flex-center text-xs text-muted mt-4">Paiement sécurisé via Stripe/PayPal</p>
@@ -534,6 +529,23 @@ const GenesisLanding = () => {
               <span className="relative z-10 flex items-center gap-2">ACCÉDER AU NOTION <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact / Order Form Section */}
+      <section className="section-padding" id="contact-form">
+        <div className="container container-narrow">
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">REJOINDRE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'AVENTURE</span></h2>
+          <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <iframe
+              src="https://tally.so/r/pbr5G1?utm_source=ig&utm_medium=social&utm_content=link_in_bio&transparentBackground=1&hideTitle=1&hideFooter=1&alignLeft=1"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              title="Contact Form"
+              className="iframe-transparent bg-transparent"
+            ></iframe>
           </div>
         </div>
       </section>
