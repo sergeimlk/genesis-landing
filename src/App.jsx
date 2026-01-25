@@ -218,7 +218,7 @@ const GenesisLanding = () => {
       {/* Transformation Demo */}
       <section className="section-padding bg-black/50">
         <div className="container">
-          <h2 className="section-title">LA PUISSANCE DE <span className="text-gradient">L'IA</span></h2>
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">LA PUISSANCE DE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'IA</span></h2>
           <div className="max-w-4xl mx-auto mt-10">
             <BeforeAfter
               beforeImage="/img/eric2.png"
@@ -231,7 +231,7 @@ const GenesisLanding = () => {
       {/* Problem / Solution */}
       <section className="section-padding">
         <div className="container">
-          <h2 className="section-title">L'IA NE DOIT PAS ÊTRE <span className="text-gradient">COMPLIQUÉE</span></h2>
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">L'IA NE DOIT PAS ÊTRE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">COMPLIQUÉE</span></h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-center mb-12">
             Un workflow de réalisateurs pensé pour créer des vidéos IA exploitables et vendables
           </p>
@@ -270,7 +270,7 @@ const GenesisLanding = () => {
         <div className="container mx-auto px-6">
           <div className="bg-gradient-to-r from-neutral-900 to-black rounded-3xl p-8 md:p-12 border border-white/10 flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
-              <h2 className="font-orbitron text-3xl font-bold">CETTE FORMATION EST POUR VOUS SI...</h2>
+              <h2 className="text-center md:text-left mb-6 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">CETTE FORMATION EST POUR VOUS SI...</h2>
 
               <div className="space-y-4">
                 <div className="flex gap-4">
@@ -325,7 +325,7 @@ const GenesisLanding = () => {
       {/* Programme */}
       <section id="programme" className="section-padding bg-black/50">
         <div className="container">
-          <h2 className="section-title">LE <span className="text-gradient">PROGRAMME</span></h2>
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">LE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">PROGRAMME</span></h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-center mb-12">
             6 étapes concrètes pour passer de zéro à autonome dans la création et la vente de vidéos IA
           </p>
@@ -443,7 +443,7 @@ const GenesisLanding = () => {
       {/* Reviews */}
       <section id="reviews" className="section-padding">
         <div className="container">
-          <h2 className="section-title">CE QU'ILS EN <span className="text-gradient">PENSENT</span></h2>
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">CE QU'ILS EN <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">PENSENT</span></h2>
           <div className="modules-grid">
             <ReviewCard name="Sergeï" role="Créateur de Contenu" text="Grâce à Genesis, j'ai pu produire mes premiers contenus de valeur sur Instagram. Ça m'a permis de trouver mes premiers clients !" />
             <ReviewCard name="Eric" role="Artiste" text="J'ai rentabilisé la formation en 2 clips. Mes vues ont explosé et l'accompagnement est top." />
@@ -541,7 +541,7 @@ const GenesisLanding = () => {
       {/* FAQ */}
       <section className="section-padding">
         <div className="container container-narrow">
-          <h2 className="section-title">FAQ</h2>
+          <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">FAQ</h2>
           <div className="space-y-4">
             <FaqItem
               question="Faut-il un PC de gamer ?"

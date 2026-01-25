@@ -343,8 +343,8 @@ export default function PromptArchitect({ embedded = false }) {
             <main className={`relative z-10 container mx-auto px-6 ${embedded ? 'py-0' : 'pt-48 pb-24'} flex flex-col items-center min-h-[calc(100vh-80px)]`}>
 
                 {/* HERO HEADER */}
-                <div className="text-center mb-5 mt-36 space-y-4 animate-fade-in-up">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+                <div className="text-center mb-5 mt-32 space-y-4 animate-fade-in-up">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                         <Sparkles className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-bold font-orbitron text-purple-300 tracking-wider">PROMPT ARCHITECT Pro</span>
                     </div>
@@ -366,7 +366,7 @@ export default function PromptArchitect({ embedded = false }) {
                         <div className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-[30px] p-1 transition-all hover:border-purple-500/30 hover:shadow-[0_0_40px_rgba(139,92,246,0.15)]">
                             <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-5 h-full min-h-[100px] max-h-[450px] flex flex-col relative">
+                            <div className="bg-[#0a0a0a]/50 rounded-[28px] p-5 h-full min-h-[100px] max-h-auto flex flex-col relative">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3 text-gray-400">
                                         <Terminal className="w-5 h-5" />
@@ -436,20 +436,16 @@ export default function PromptArchitect({ embedded = false }) {
 
                                     {/* ROW 3: Modèle & Mood */}
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <div className="flex-1 min-w-[140px]">
-                                            <MoodSelect
-                                                value={state.lighting}
-                                                onChange={(v) => dispatch({ type: 'lighting', value: v })}
-                                            />
-                                        </div>
-                                        <div className="flex-[2] min-w-[200px]">
-                                            <ModelSelect
-                                                generationType={state.generationType}
-                                                value={state.aiModel}
-                                                onChange={(v) => dispatch({ type: 'aiModel', value: v })}
-                                                onTypeChange={(v) => dispatch({ type: 'generationType', value: v })}
-                                            />
-                                        </div>
+                                        <MoodSelect
+                                            value={state.lighting}
+                                            onChange={(v) => dispatch({ type: 'lighting', value: v })}
+                                        />
+                                        <ModelSelect
+                                            generationType={state.generationType}
+                                            value={state.aiModel}
+                                            onChange={(v) => dispatch({ type: 'aiModel', value: v })}
+                                            onTypeChange={(v) => dispatch({ type: 'generationType', value: v })}
+                                        />
                                     </div>
                                 </div>
 
@@ -629,10 +625,20 @@ const NavBar = ({ onProfileClick, unlocked, hasBanner }) => (
 
 const PillSelect = ({ icon: Icon, value, options, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-white/20 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -644,7 +650,8 @@ const PillSelect = ({ icon: Icon, value, options, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-auto min-w-full bg-[#111] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-auto md:min-w-full w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#111] shadow-2xl shadow-black/80 md:shadow-xl md:shadow-black/50 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-0`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1"></div>
                         <div className="max-h-60 overflow-y-auto genesis-scrollbar flex flex-col p-2">
                             {options.map(opt => (
                                 <button
@@ -680,6 +687,15 @@ const ASPECT_RATIOS = [
 const AspectRatioSelect = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentRatio = ASPECT_RATIOS.find(r => r.id === value) || ASPECT_RATIOS[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     // Calculate icon dimensions (max 20px)
     const getIconDimensions = (w, h) => {
@@ -695,6 +711,7 @@ const AspectRatioSelect = ({ value, onChange }) => {
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-white/20 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -709,7 +726,8 @@ const AspectRatioSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-xl shadow-black/50 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-80 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-xl md:shadow-black/50 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-0`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1"></div>
                         <div className="p-2">
                             <div className="grid grid-cols-2 gap-1.5">
                                 {ASPECT_RATIOS.map(ratio => {
@@ -744,10 +762,20 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const models = AI_MODELS[generationType] || [];
     const currentModel = models.find(m => m.id === value) || models[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -767,7 +795,8 @@ const ModelSelect = ({ generationType, value, onChange, onTypeChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-56 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-56 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-1 md:p-1`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-2"></div>
                         {/* Type Tabs */}
                         <div className="flex border-b border-white/5">
                             <button
@@ -819,10 +848,20 @@ const StyleSelect = ({ value, onChange }) => {
         return style ? style.name : 'Style';
     };
     const currentStyle = GEN_STYLES.find(s => s.id === value) || GEN_STYLES[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -840,7 +879,8 @@ const StyleSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-64 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-1 md:p-1`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-2"></div>
                         <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto genesis-scrollbar">
                             {GEN_STYLES.map(style => (
                                 <button
@@ -871,10 +911,20 @@ const StyleSelect = ({ value, onChange }) => {
 const MoodSelect = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentStyle = LIGHTING_STYLES.find(s => s.id === value) || LIGHTING_STYLES[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -892,7 +942,8 @@ const MoodSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-64 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] p-1 animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-64 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-1 md:p-1`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-2"></div>
                         <div className="p-3 grid grid-cols-2 gap-2 max-h-80 overflow-y-auto genesis-scrollbar">
                             {LIGHTING_STYLES.map(style => (
                                 <button
@@ -923,10 +974,20 @@ const MoodSelect = ({ value, onChange }) => {
 const MotionSelect = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentMove = CAMERA_MOVES.find(m => m.id === value) || CAMERA_MOVES[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -944,7 +1005,8 @@ const MotionSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-80 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-0`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1"></div>
                         <div className="max-h-80 overflow-y-auto genesis-scrollbar p-2">
                             <div className="grid grid-cols-3 gap-2">
                                 {CAMERA_MOVES.map(move => (
@@ -978,10 +1040,20 @@ const MotionSelect = ({ value, onChange }) => {
 const ShotTypeSelect = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentShot = SHOT_TYPES.find(s => s.id === value) || SHOT_TYPES[0];
+    const buttonRef = useRef(null);
+    const [align, setAlign] = useState('right');
+
+    useEffect(() => {
+        if (isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
+        }
+    }, [isOpen]);
 
     return (
         <div className="relative">
             <button
+                ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between gap-2 px-3 bg-black/40 hover:bg-black/60 border border-white/10 hover:border-purple-500/50 rounded-2xl transition-all text-sm font-medium text-gray-300 hover:text-white h-11 min-w-[140px]"
             >
@@ -1001,7 +1073,8 @@ const ShotTypeSelect = ({ value, onChange }) => {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
-                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`fixed bottom-0 left-0 right-0 md:absolute md:bottom-full md:top-auto ${align === 'left' ? 'md:left-0 md:right-auto' : 'md:right-0 md:left-auto'} md:w-80 w-full rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 mb-0 md:mb-2 pb-6 md:pb-0`}>
+                        <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-1"></div>
                         <div className="max-h-80 overflow-y-auto genesis-scrollbar p-2">
                             <div className="grid grid-cols-3 gap-2">
                                 {SHOT_TYPES.map(shot => (
