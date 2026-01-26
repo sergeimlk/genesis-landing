@@ -73,7 +73,7 @@ export const SmartSelect = ({
     const triggerContent = renderTrigger ? renderTrigger(selectedOption, isOpen) : defaultRenderTrigger();
 
     return (
-        <div className="relative">
+        <div className={`relative ${isOpen ? 'z-[9999]' : ''}`}>
             <button
                 ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
@@ -85,7 +85,7 @@ export const SmartSelect = ({
             {isOpen && (
                 <>
                     {/* Backdrop */}
-                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
+                    <div className="fixed inset-0 z-[9995]" onClick={() => setIsOpen(false)}></div>
 
                     {/* Dropdown / Bottom Sheet */}
                     <div className={`
@@ -95,7 +95,7 @@ export const SmartSelect = ({
                         ${widthClass} w-full 
                         rounded-t-2xl md:rounded-2xl border-t md:border border-white/10 
                         bg-[#0a0a0a] shadow-2xl shadow-black/80 md:shadow-2xl md:shadow-black/70 
-                        overflow-hidden z-[100] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 
+                        overflow-hidden z-[9999] animate-in slide-in-from-bottom md:zoom-in-95 fade-in duration-200 
                         mb-0 md:mb-2 pb-6 md:pb-1 md:p-1
                     `}>
                         {/* Mobile Handle */}
