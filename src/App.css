@@ -78,6 +78,7 @@
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .btn-cta-nav::before {
@@ -223,6 +224,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
   overflow: hidden;
   position: relative;
+  white-space: nowrap;
 }
 
 .btn-primary::after {
@@ -285,6 +287,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
 }
 
 .btn-join-main:hover {
@@ -2158,4 +2161,18 @@ h2.section-title {
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+/* Mobile Modal Adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 20px !important;
+    width: 95% !important;
+    max-width: 95% !important;
+  }
+
+  .modal-content-contact {
+    padding: 10px !important;
+    /* Even smaller for contact form to maximize space */
+  }
 }

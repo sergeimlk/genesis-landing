@@ -508,28 +508,15 @@ const GenesisLanding = () => {
       {/* Notion Embed Section (Responsive) */}
       <section className="section-padding">
         <div className="container container-narrow">
-          <div className="bg-[#111] border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group hover:border-white/20 transition-all">
-            {/* Background Glow */}
-            <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.15),transparent_70%)] pointer-events-none"></div>
-
-            <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/5 group-hover:border-purple-500/50 transition-all duration-500 relative z-10">
-              <svg viewBox="0 0 24 24" className="w-10 h-10 fill-white"><path d="M4.021 21.998L3 4.015l13.567-2.013 4.43 2.671v15.286l-4.463 2.039L4.021 21.998zm4.316-2.583v-12.8l-1.635.856v11.97l1.635-.026zm2.253-12.288l5.888-1.745v11.378l-5.888 2.724V7.127zm7.653 9.471l1.664-.784V5.7l-1.664-1.002v11.9z" /></svg>
-            </div>
-
-            <h3 className="text-2xl md:text-3xl font-bold font-orbitron mb-4 relative z-10">PROGRAMME DÉTAILLÉ</h3>
-            <p className="text-gray-400 mb-8 max-w-lg text-lg relative z-10">
-              Le contenu complet de la formation, module par module, est disponible sur notre Hub Notion public.
-            </p>
-
-            <a
-              href={CONTACT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative px-8 py-4 bg-white text-black font-bold font-orbitron rounded-xl hover:scale-105 transition-all flex items-center gap-3 overflow-hidden z-10"
-            >
-              <span className="relative z-10 flex items-center gap-2">ACCÉDER AU NOTION <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" /></span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            </a>
+          <div className="w-full h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative px-2 md:px-0">
+            <iframe
+              src="https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              className="iframe-transparent bg-white/5"
+              allowFullScreen
+            ></iframe>
           </div>
         </div>
       </section>
@@ -538,14 +525,15 @@ const GenesisLanding = () => {
       <section className="section-padding" id="contact-form">
         <div className="container container-narrow">
           <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">REJOINDRE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'AVENTURE</span></h2>
-          <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl mb-24">
+          <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl mb-24 px-4 md:px-12">
             <iframe
-              src="https://tally.so/r/pbr5G1?utm_source=ig&utm_medium=social&utm_content=link_in_bio&transparentBackground=1&hideTitle=1&hideFooter=1&alignLeft=1"
+              src="https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637"
               width="100%"
               height="100%"
               frameBorder="0"
               title="Contact Form"
-              className="iframe-transparent bg-transparent"
+              className="iframe-transparent bg-white/5"
+              allowFullScreen
             ></iframe>
           </div>
         </div>
@@ -596,7 +584,7 @@ const GenesisLanding = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tiktok"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
             </a>
           </div>
-          <p className="text-muted text-sm mb-8">© 2024 Visuals by Genesis. All rights reserved.</p>
+          <p className="text-muted text-sm mb-8">© 2026 Visuals by Genesis. All rights reserved.</p>
           <div className="flex-center gap-6 text-sm text-muted">
             <a href={CONTACT_LINK} target="_blank" rel="noopener noreferrer">Mentions Légales</a>
             <a href="#" onClick={(e) => { e.preventDefault(); setIsCgvModalOpen(true); }}>CGV</a>
@@ -650,12 +638,13 @@ const GenesisLanding = () => {
               <X size={24} />
             </button>
             <iframe
-              src="https://tally.so/r/pbr5G1?utm_source=ig&utm_medium=social&utm_content=link_in_bio&transparentBackground=1&hideTitle=1&hideFooter=1&alignLeft=1"
+              src="https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637"
               width="100%"
               height="100%"
               frameBorder="0"
               title="Contact Form"
-              className="iframe-transparent"
+              className="iframe-transparent bg-white/5"
+              allowFullScreen
             ></iframe>
           </div>
         </div>
@@ -767,7 +756,7 @@ const App = () => {
   );
 };
 
-const FlashOfferModal = ({ onClose }) => {
+export const FlashOfferModal = ({ onClose }) => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import { SmartSelect } from '../components/architect/SmartSelect';
 import { PromptNavBar } from '../components/architect/PromptNavBar';
 import { IntroOverlay, LoginModal, FomoBanner } from '../components/architect/ArchitectOverlays';
 import { usePromptGenerator } from '../hooks/usePromptGenerator';
+import { FlashOfferModal } from '../App';
 
 function reducer(state, action) {
     return { ...state, [action.type]: action.value };
@@ -37,6 +38,7 @@ export default function PromptArchitect({ embedded = false }) {
     const [copied, setCopied] = useState(false);
     const [showIntro, setShowIntro] = useState(!embedded);
     const [showFomoBanner, setShowFomoBanner] = useState(true);
+    const [showFlashOffer, setShowFlashOffer] = useState(false);
 
     // Persistence Logic
     useEffect(() => {
@@ -79,8 +81,9 @@ export default function PromptArchitect({ embedded = false }) {
 
             {/* OVERLAYS */}
             {showIntro && !embedded && <IntroOverlay onComplete={() => setShowIntro(false)} />}
-            {!embedded && showFomoBanner && <FomoBanner onClose={() => setShowFomoBanner(false)} />}
+            {!embedded && showFomoBanner && <FomoBanner onClose={() => setShowFomoBanner(false)} onClick={() => setShowFlashOffer(true)} />}
             {isLoginOpen && <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} unlocked={unlocked} />}
+            {showFlashOffer && <FlashOfferModal onClose={() => setShowFlashOffer(false)} />}
 
             {/* BACKGROUND */}
             {!embedded && (
@@ -126,7 +129,7 @@ export default function PromptArchitect({ embedded = false }) {
                                     {embedded && (
                                         <button
                                             onClick={() => navigate('/prompt')}
-                                            className="relative overflow-hidden group bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-black font-black font-orbitron text-[10px] tracking-wider px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95 transition-all border border-yellow-300/50 flex items-center gap-1.5"
+                                            className="relative overflow-hidden group bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-black font-black font-orbitron text-[10px] tracking-wider px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95 transition-all border border-yellow-300/50 flex items-center gap-1.5 whitespace-nowrap"
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent w-[50%] -translate-x-[150%] animate-shimmer skew-x-12"></div>
                                             <Sparkles size={12} className="fill-black/20 text-black relative z-10" />
@@ -160,27 +163,27 @@ export default function PromptArchitect({ embedded = false }) {
                                             value={state.aiModel}
                                             options={AI_MODELS[state.generationType]}
                                             onChange={(v) => dispatch({ type: 'aiModel', value: v })}
-                                            widthClass="w-64"
-                                            gridCols={1}
+                                            widthClass="w-full md:w-96"
+                                            gridCols={2}
                                             tabs={[
                                                 { id: 'video', label: 'VIDEO', onClick: () => dispatch({ type: 'generationType', value: 'video' }), isActive: state.generationType === 'video' },
                                                 { id: 'image', label: 'IMAGE', onClick: () => dispatch({ type: 'generationType', value: 'image' }), isActive: state.generationType === 'image' }
                                             ]}
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
-                                                    <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
+                                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
                                                         <img src={opt?.image} alt={opt?.name || 'Model'} className="w-full h-full object-cover" />
                                                     </div>
-                                                    <span className="hidden sm:inline">{opt?.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="hidden sm:inline font-bold">{opt?.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(model, isSelected) => (
-                                                <div className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isSelected ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
-                                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
+                                                <div className={`w-full flex flex-col gap-2 p-2 rounded-xl text-sm font-medium transition-all ${isSelected ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                                                    <div className="w-full aspect-video rounded-lg overflow-hidden bg-black/20 border border-white/5">
                                                         <img src={model.image} alt={model.name} className="w-full h-full object-cover" />
                                                     </div>
-                                                    <span>{model.name}</span>
+                                                    <span className="text-center font-bold text-xs">{model.name}</span>
                                                 </div>
                                             )}
                                         />
@@ -190,22 +193,22 @@ export default function PromptArchitect({ embedded = false }) {
                                             value={state.aspectRatio}
                                             options={ASPECT_RATIOS}
                                             onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
-                                            widthClass="w-80"
+                                            widthClass="w-full md:w-96"
                                             gridCols={2}
-                                            maxHeight="max-h-64"
+                                            maxHeight="max-h-80"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="border-2 border-purple-400 rounded-sm bg-purple-400/20" style={getRatioDims(opt.w, opt.h)} />
-                                                    <span>{opt.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="font-bold">{opt.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(ratio, isSelected) => (
-                                                <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${isSelected ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
-                                                    <div className={`border-2 rounded-sm flex-shrink-0 ${isSelected ? 'border-white bg-white/20' : 'border-gray-500 bg-gray-500/20'}`} style={getRatioDims(ratio.w, ratio.h)} />
-                                                    <div className="flex flex-col items-start">
-                                                        <span className="font-bold">{ratio.name}</span>
-                                                        <span className={`text-[9px] ${isSelected ? 'text-purple-200' : 'text-gray-500'}`}>{ratio.desc}</span>
+                                                <div className={`h-full flex flex-col items-center justify-center gap-2 p-3 rounded-xl text-xs font-medium transition-all border ${isSelected ? 'bg-purple-600 text-white border-purple-400' : 'text-gray-400 border-white/5 hover:bg-white/5 hover:text-white'}`}>
+                                                    <div className={`border-2 rounded-sm flex-shrink-0 mb-1 ${isSelected ? 'border-white bg-white/20' : 'border-gray-500 bg-gray-500/20'}`} style={{ ...getRatioDims(ratio.w, ratio.h), transform: 'scale(1.5)' }} />
+                                                    <div className="flex flex-col items-center text-center">
+                                                        <span className="font-bold text-sm block mb-0.5">{ratio.name}</span>
+                                                        <span className={`text-[10px] leading-tight ${isSelected ? 'text-purple-200' : 'text-gray-500'}`}>{ratio.desc}</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -216,25 +219,25 @@ export default function PromptArchitect({ embedded = false }) {
                                             value={state.shotType}
                                             options={SHOT_TYPES}
                                             onChange={(v) => dispatch({ type: 'shotType', value: v })}
-                                            widthClass="w-80"
+                                            widthClass="w-full md:w-96"
                                             gridCols={2}
-                                            maxHeight="max-h-64"
+                                            maxHeight="max-h-80"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
-                                                    <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+                                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
                                                         <img src="/ui/perso/animation/pngvaltop.png" alt="Shot" className="object-cover" style={{ transform: `scale(${opt.scale})` }} />
                                                     </div>
-                                                    <span className="hidden sm:inline">{opt.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="hidden sm:inline font-bold">{opt.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(shot, isSelected) => (
-                                                <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
+                                                <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500 bg-purple-900/20' : 'border-white/10 hover:border-white/30 bg-black/40'}`}>
                                                     <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
-                                                        <img src="/ui/perso/animation/pngvaltop.png" alt={shot.name} className="object-cover" style={{ transform: `scale(${shot.scale})` }} />
+                                                        <img src="/ui/perso/animation/pngvaltop.png" alt={shot.name} className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" style={{ transform: `scale(${shot.scale})` }} />
                                                     </div>
-                                                    <div className={`w-full py-1.5 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/70'}`}>
-                                                        <span className={`text-[9px] font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-400'}`}>{shot.name}</span>
+                                                    <div className={`w-full py-2 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/90'}`}>
+                                                        <span className={`text-[10px] uppercase font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-300'}`}>{shot.name}</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -245,9 +248,9 @@ export default function PromptArchitect({ embedded = false }) {
                                             value={state.cameraMovement}
                                             options={CAMERA_MOVES}
                                             onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
-                                            widthClass="w-80"
+                                            widthClass="w-full md:w-96"
                                             gridCols={2}
-                                            maxHeight="max-h-64"
+                                            maxHeight="max-h-80"
                                             idKey="id"
                                             labelKey="label"
                                             renderTrigger={(opt, isOpen) => (
@@ -255,24 +258,24 @@ export default function PromptArchitect({ embedded = false }) {
                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
                                                         <img src="/ui/perso/animation/pngvaltop.png" alt="Move" className={`w-full h-full object-cover ${opt.anim}`} />
                                                     </div>
-                                                    <span className="hidden sm:inline">{opt.label}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="hidden sm:inline font-bold">{opt.label}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(move, isSelected) => (
-                                                <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
+                                                <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500 bg-purple-900/20' : 'border-white/10 hover:border-white/30 bg-black/40'}`}>
                                                     <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
                                                         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:8px_8px]"></div>
                                                         <img src="/ui/perso/animation/pngvaltop.png" alt={move.label} className={`w-3/4 h-3/4 object-contain ${move.anim}`} />
                                                     </div>
-                                                    <div className={`w-full py-1.5 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/70'}`}>
-                                                        <span className={`text-[9px] font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-400'}`}>{move.label}</span>
+                                                    <div className={`w-full py-2 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/90'}`}>
+                                                        <span className={`text-[10px] uppercase font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-300'}`}>{move.label}</span>
                                                     </div>
                                                 </div>
                                             )}
                                         />
 
-                                        {/* 5. Camera FX */}
+                                        {/* 5. Camera FX
                                         <SmartSelect
                                             icon={Zap}
                                             value={state.cameraFX}
@@ -281,31 +284,31 @@ export default function PromptArchitect({ embedded = false }) {
                                             gridCols={2}
                                             maxHeight="max-h-64"
                                             widthClass="w-64"
-                                        />
+                                        /> */}
 
                                         {/* 6. Style */}
                                         <SmartSelect
                                             value={state.style}
                                             options={GEN_STYLES}
                                             onChange={(v) => dispatch({ type: 'style', value: v })}
-                                            widthClass="w-64"
+                                            widthClass="w-full md:w-96"
                                             gridCols={2}
-                                            maxHeight="max-h-64"
+                                            maxHeight="max-h-96"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
-                                                    <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
+                                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
                                                         <img src={opt.image} alt={opt.name} className="w-full h-full object-cover" />
                                                     </div>
-                                                    <span className="hidden sm:inline">{opt.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="hidden sm:inline font-bold">{opt.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(style, isSelected) => (
-                                                <div className={`relative group rounded-xl overflow-hidden border transition-all ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
-                                                    <div className="aspect-square w-full">
+                                                <div className={`relative group rounded-xl overflow-hidden border transition-all h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
+                                                    <div className="aspect-video w-full">
                                                         <img src={style.image} alt={style.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2">
-                                                            <span className="text-[10px] font-bold text-white truncate w-full text-center">{style.name}</span>
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2.5">
+                                                            <span className="text-xs font-bold text-white truncate w-full text-center drop-shadow-md">{style.name}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -317,24 +320,24 @@ export default function PromptArchitect({ embedded = false }) {
                                             value={state.lighting}
                                             options={LIGHTING_STYLES}
                                             onChange={(v) => dispatch({ type: 'lighting', value: v })}
-                                            widthClass="w-64"
+                                            widthClass="w-full md:w-96"
                                             gridCols={2}
-                                            maxHeight="max-h-64"
+                                            maxHeight="max-h-96"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
-                                                    <div className="w-6 h-6 rounded-full overflow-hidden gray-scale-0 bg-white/5 flex-shrink-0 border border-white/20">
+                                                    <div className="w-8 h-8 rounded-full overflow-hidden gray-scale-0 bg-white/5 flex-shrink-0 border border-white/20">
                                                         <img src={opt.image} alt={opt.name} className="w-full h-full object-cover" />
                                                     </div>
-                                                    <span className="hidden sm:inline">{opt.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                    <span className="hidden sm:inline font-bold">{opt.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                                                 </>
                                             )}
                                             renderOption={(style, isSelected) => (
-                                                <div className={`relative group rounded-xl overflow-hidden border transition-all ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
-                                                    <div className="aspect-square w-full relative">
+                                                <div className={`relative group rounded-xl overflow-hidden border transition-all h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500' : 'border-white/10 hover:border-white/30'}`}>
+                                                    <div className="aspect-video w-full relative">
                                                         <img src={style.image} alt={style.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2">
-                                                            <span className="text-[10px] font-bold text-white truncate w-full text-center">{style.name}</span>
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2.5">
+                                                            <span className="text-xs font-bold text-white truncate w-full text-center drop-shadow-md">{style.name}</span>
                                                         </div>
                                                     </div>
                                                 </div>

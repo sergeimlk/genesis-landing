@@ -102,7 +102,7 @@ export const SmartSelect = ({
                         <div className="md:hidden w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-2"></div>
 
                         {/* Content */}
-                        <div className={`p-2 overflow-y-auto genesis-scrollbar ${maxHeight}`}>
+                        <div className={`p-2 overflow-y-auto overflow-x-hidden genesis-scrollbar ${maxHeight}`}>
                             {/* Tabs Area */}
                             {tabs && (
                                 <div className="flex p-1 mb-2 bg-white/5 rounded-xl border border-white/10">
@@ -119,7 +119,7 @@ export const SmartSelect = ({
                             )}
 
                             <div
-                                className={gridCols > 1 ? 'grid gap-2' : 'flex flex-col gap-1'}
+                                className={gridCols > 1 ? 'grid grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-2' : 'flex flex-col gap-1'}
                                 style={gridCols > 1 ? { gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` } : {}}
                             >
                                 {options.map((opt) => {

@@ -115,7 +115,7 @@ export const LoginModal = ({ isOpen, onClose, unlocked }) => {
 };
 
 // --- FOMO BANNER ---
-export const FomoBanner = ({ onClose }) => {
+export const FomoBanner = ({ onClose, onClick }) => {
     const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
@@ -138,23 +138,39 @@ export const FomoBanner = ({ onClose }) => {
 
     return (
         <div
-            className="fixed top-0 inset-x-0 z-[60] bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 text-white py-2 px-4 flex items-center justify-center gap-3 text-sm font-medium cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={onClose}
+            className="fixed top-0 inset-x-0 z-[60] py-2 px-4 flex items-center justify-center gap-3 text-sm font-medium cursor-pointer transition-all hover:scale-[1.005] shadow-[0_5px_20px_rgba(147,51,234,0.3)] backdrop-blur-md"
+            style={{
+                background: "linear-gradient(90deg, #6b21a8 0%, #a855f7 50%, #6b21a8 100%)",
+                backgroundSize: "200% 100%",
+                animation: "gradient-shift 5s ease infinite"
+            }}
+            onClick={onClick}
         >
-            <span className="animate-pulse">🔥</span>
-            <span className="hidden sm:inline">OFFRE DE LANCEMENT :</span>
-            <span className="font-bold">-40% sur GENESIS</span>
-            <span className="hidden md:inline">·</span>
-            <div className="flex items-center gap-1 font-mono font-bold bg-black/20 px-2 py-0.5 rounded">
-                <span>{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="animate-pulse">:</span>
-                <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
-                <span className="animate-pulse">:</span>
-                <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
+            <div className="flex items-center gap-2 group">
+                <span className="animate-pulse text-lg">🔥</span>
+                <span className="hidden sm:inline font-bold text-white tracking-wide uppercase drop-shadow-md">OFFRE SPÉCIALE :</span>
+                <span className="font-extrabold text-yellow-300 drop-shadow-md bg-black/20 px-2 py-0.5 rounded border border-white/10">-40% SUR GENESIS</span>
+                <span className="hidden md:inline text-purple-200">·</span>
+                <div className="flex items-center gap-1 font-mono font-bold bg-black/30 text-white px-2 py-0.5 rounded border border-white/10 shadow-inner">
+                    <span>{String(timeLeft.hours).padStart(2, '0')}</span>
+                    <span className="animate-pulse text-purple-300">:</span>
+                    <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
+                    <span className="animate-pulse text-purple-300">:</span>
+                    <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
+                </div>
+                <span className="text-xs text-white/50 group-hover:text-white transition-colors ml-2 hidden sm:inline underline decoration-purple-400/50 underline-offset-2">(cliquer pour voir)</span>
             </div>
-            <span className="hidden lg:inline">avant fin de promo</span>
-            <span className="text-xs opacity-70 ml-2 hidden sm:inline">(clic pour fermer)</span>
-            <X size={16} className="ml-2 opacity-70 hover:opacity-100" />
+
+            <button
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClose();
+                }}
+                className="absolute right-4 p-1 rounded-full bg-black/20 hover:bg-black/40 text-white/70 hover:text-white transition-all hover:rotate-90"
+            >
+                <X size={16} />
+            </button>
         </div>
     );
 };

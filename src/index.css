@@ -99,53 +99,30 @@ button {
   }
 }
 
-/* --- CUSTOM SCROLLBARS --- */
-/* Base scrollbar reset */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-/* GENESIS PURPLE SCROLLBAR */
-.genesis-scrollbar::-webkit-scrollbar {
+/* --- GENESIS GLOBAL SCROLLBAR --- */
+::-webkit-scrollbar {
   width: 8px;
-  /* Un peu plus large pour la saisie */
   height: 8px;
 }
 
-.genesis-scrollbar::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: rgba(147, 51, 234, 0.05);
+  /* Very subtle purple tint */
   border-radius: 4px;
-  margin: 4px;
-  /* Un peu de marge */
 }
 
-.genesis-scrollbar::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: linear-gradient(to bottom, #9333ea, #db2777);
-  /* Gradient Purple to Pink */
+  /* Genesis Purple Gradient */
   border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  /* Contraste */
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-.genesis-scrollbar::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #a855f7, #ec4899);
 }
 
-.genesis-scrollbar::-webkit-scrollbar-corner {
+::-webkit-scrollbar-corner {
   background: transparent;
 }
 

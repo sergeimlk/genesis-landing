@@ -3,12 +3,8 @@ import { User } from 'lucide-react';
 
 export const PromptNavBar = ({ onProfileClick, unlocked, hasBanner }) => (
     <header className={`fixed ${hasBanner ? 'top-10' : 'top-0'} inset-x-0 z-50 h-20 flex items-center justify-between px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#050505]/50 transition-all duration-300`}>
-        <div className="flex items-center gap-4">
-            <div className="h-[70px] aspect-[9/16] rounded-[20px] overflow-hidden border border-white/10 shadow-lg shadow-purple-900/20">
-                <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                    <source src="/ui/perso/animation/1G.mp4" type="video/mp4" />
-                </video>
-            </div>
+        <div className="flex items-center gap-4 cursor-pointer" onClick={() => window.location.href = '/'}>
+            <img src="/img/Glogo.png" alt="Genesis Logo" className="t-logo rotate-0" style={{ width: '45px', height: '45px', borderRadius: '50%', border: '2px solid rgba(255, 255, 255, 0.1)' }} />
             <span className="font-orbitron font-bold text-xl tracking-wider">GENESIS <span className="text-purple-500 text-xs align-top">LABS</span></span>
         </div>
 

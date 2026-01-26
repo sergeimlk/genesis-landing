@@ -92,12 +92,12 @@ export const AI_MODELS = {
 export const GEN_STYLES = [
     { id: 'genesis-cinematic', name: 'Cinematic', image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200&auto=format&fit=crop' },
     { id: 'cyberpunk', name: 'Cyberpunk', image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200&auto=format&fit=crop' },
-    { id: 'simpsons', name: 'Simpsons', image: 'public/ui/perso/GenModels/image/simpsons.png' },
-    { id: 'minecraft', name: 'Minecraft', image: 'public/ui/perso/GenModels/image/minecraft.png' },
-    { id: 'disney-pixar', name: 'Disney Pixar', image: 'https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=200&auto=format&fit=crop' },
-    { id: 'studio-ghibli', name: 'Studio Ghibli', image: 'public/ui/perso/GenModels/image/ghibli.png' },
-    { id: 'vaporwave', name: 'Vaporwave', image: 'public/ui/perso/GenModels/image/vaporwave.png' },
-    { id: 'realistic', name: 'Realistic Photo', image: 'https://images.unsplash.com/photo-1554048612-387768052bf7?q=80&w=200&auto=format&fit=crop' },
+    { id: 'simpsons', name: 'Simpsons', image: '/ui/perso/GenModels/styles/simpsons.png' },
+    { id: 'minecraft', name: 'Minecraft', image: '/ui/perso/GenModels/styles/minecraft.png' },
+    { id: 'disney-pixar', name: 'Disney Pixar', image: '/ui/perso/GenModels/styles/pixar.png' },
+    { id: 'studio-ghibli', name: 'Studio Ghibli', image: '/ui/perso/GenModels/styles/ghibli.png' },
+    { id: 'vaporwave', name: 'Vaporwave', image: '/ui/perso/GenModels/styles/vaporwave.png' },
+    { id: 'realistic', name: 'Realistic Photo', image: '/ui/perso/GenModels/styles/realistic.png' },
     { id: 'anime', name: 'Anime Shinkai', image: 'https://images.unsplash.com/photo-1560972550-aba3456b5564?q=80&w=200&auto=format&fit=crop' },
     { id: 'oil-painting', name: 'Van Gogh Oil', image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=200&auto=format&fit=crop' },
 ];
