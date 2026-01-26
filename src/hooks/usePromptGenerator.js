@@ -4,8 +4,7 @@ import { FREE_MODELS, AI_MODELS } from '../data/promptData';
 
 export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLoginOpen }) => {
     const [generating, setGenerating] = useState(false);
-    const [result, setResult] = useState(null);
-    const [countdown, setCountdown] = useState(0);
+    const [error, setError] = useState(null);
 
     // Countdown logic
     useEffect(() => {
@@ -53,13 +52,14 @@ export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLogin
     };
 
     const handleGenerate = async () => {
+        setError(null);
         if (!unlocked && uses >= 3) {
             setIsLoginOpen(true);
             return;
         }
 
         if (!state.subject.trim()) {
-            alert("Veuillez décrire votre scène.");
+            setError("Veuillez décrire votre scène.");
             return;
         }
 
@@ -174,11 +174,12 @@ export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLogin
 
         if (!success) {
             console.error("Tous les modèles ont échoué.", lastError);
-            alert(`Tous les modèles gratuits sont surchargés. Veuillez réessayer dans un instant.\nDernière erreur: ${lastError?.message}`);
+            setError(`Service surchargé. Essayez plus tard. (${lastError?.message || 'Erreur inconnue'})`);
         }
 
         setGenerating(false);
     };
 
-    return { generating, result, countdown, handleGenerate };
+    return { generating, result, countdown, handleGenerate, error };
 };
+

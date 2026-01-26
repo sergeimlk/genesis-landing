@@ -1,16 +1,136 @@
-# React + Vite
+# Genesis Academy - Landing Page
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> 🚀 Formation IA pour créer des visuels de niveau cinéma en 7 jours
 
-Currently, two official plugins are available:
+## 📁 Structure du Projet
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+genesis-web/
+├── public/
+│   ├── assets/                    # Assets statiques réorganisés
+│   │   ├── documents/             # PDF, CGV, etc.
+│   │   ├── icons/                 # Favicons et icônes PWA
+│   │   ├── images/
+│   │   │   ├── logo/              # Logos Genesis
+│   │   │   ├── examples/          # Images avant/après
+│   │   │   ├── hero/              # Images du hero
+│   │   │   └── og/                # Images Open Graph
+│   │   ├── screenshots/           # Screenshots PWA
+│   │   └── ui/
+│   │       ├── animation/         # Assets d'animation
+│   │       ├── lighting/          # Icônes d'éclairage
+│   │       └── models/            # Logos des modèles IA
+│   │           ├── video/
+│   │           ├── image/
+│   │           └── styles/
+│   ├── manifest.json              # PWA Manifest
+│   └── sw.js                      # Service Worker
+│
+├── src/
+│   ├── components/
+│   │   ├── common/                # Composants réutilisables
+│   │   │   ├── Button.jsx
+│   │   │   ├── Modal.jsx
+│   │   │   └── index.js
+│   │   ├── landing/               # Composants de la landing page
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Hero.jsx
+│   │   │   ├── TrustSection.jsx
+│   │   │   ├── ComparisonSection.jsx
+│   │   │   ├── TargetAudienceSection.jsx
+│   │   │   ├── ProgrammeSection.jsx
+│   │   │   ├── ReviewsSection.jsx
+│   │   │   ├── PricingSection.jsx
+│   │   │   ├── FAQSection.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Modals.jsx
+│   │   │   └── index.js
+│   │   ├── architect/             # Composants Prompt Architect
+│   │   └── BeforeAfter.jsx
+│   │
+│   ├── constants/
+│   │   └── paths.js               # Chemins et URLs centralisés
+│   │
+│   ├── data/
+│   │   ├── promptData.js          # Données du Prompt Architect
+│   │   └── modelLimits.json
+│   │
+│   ├── hooks/
+│   │   ├── useCountdown.js        # Hook compte à rebours
+│   │   ├── useScrollState.js      # Hook détection scroll
+│   │   ├── usePromptGenerator.js  # Hook génération prompts
+│   │   └── index.js
+│   │
+│   ├── pages/
+│   │   ├── GenesisLanding.jsx     # Page landing principale
+│   │   ├── PromptArchitect.jsx    # Outil Prompt Architect
+│   │   └── GeneGym.jsx            # App GeneGym (protégée)
+│   │
+│   ├── App.jsx                    # Point d'entrée + routing
+│   ├── App.css                    # Styles principaux
+│   ├── index.css                  # Styles globaux + Tailwind
+│   └── main.jsx                   # Bootstrap React
+```
 
-## React Compiler
+## 🛠️ Technologies
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - Framework UI
+- **Vite 7** - Build tool
+- **TailwindCSS 3** - Styling utilitaire
+- **React Router 7** - Navigation
+- **Lucide React** - Icônes
 
-## Expanding the ESLint configuration
+## 🚀 Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
+npm run dev
+
+# Build production
+npm run build
+```
+
+## 📱 PWA (Progressive Web App)
+
+L'application supporte l'installation sur l'écran d'accueil :
+
+1. **Desktop** : Icône "Installer" dans la barre d'adresse
+2. **Mobile iOS** : Safari → Partager → "Sur l'écran d'accueil"
+3. **Mobile Android** : Popup automatique ou menu → "Installer l'application"
+
+### Fonctionnalités PWA
+
+- ✅ Manifest.json configuré
+- ✅ Service Worker avec cache offline
+- ✅ Icons multiples tailles
+- ✅ Theme color configuré
+- ✅ Orientation any (portrait/landscape)
+
+## 🎨 Architecture des Composants
+
+Chaque composant suit le principe de **Responsabilité Unique** :
+
+| Composant | Responsabilité |
+|-----------|----------------|
+| `Navbar` | Navigation + branding |
+| `Hero` | Section héro + vidéo |
+| `TrustSection` | Marquee partenaires |
+| `ComparisonSection` | Avec/Sans Genesis |
+| `TargetAudienceSection` | Profils cibles |
+| `ProgrammeSection` | 6 modules formation |
+| `ReviewsSection` | Témoignages |
+| `PricingSection` | Tarification + FOMO |
+| `FAQSection` | Questions fréquentes |
+| `Footer` | Pied de page + légal |
+
+## 🔗 Liens Importants
+
+- **Instagram**: [@visuals.by.genesis](https://www.instagram.com/visuals.by.genesis/)
+- **TikTok**: [@visuals.by.genesis](https://www.tiktok.com/@visuals.by.genesis)
+
+## 📄 License
+
+© 2026 Visuals by Genesis. All rights reserved.

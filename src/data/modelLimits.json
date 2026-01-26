@@ -1,0 +1,74 @@
+{
+    "image": {
+        "midjourney": {
+            "max_chars": 6000,
+            "notes": [
+                "Hard limit UI",
+                "Soft limit ~60 mots utiles"
+            ]
+        },
+        "dalle_3": {
+            "max_chars": 4000,
+            "notes": [
+                "Limite officielle OpenAI API"
+            ]
+        },
+        "flux_1": {
+            "max_tokens": 512,
+            "approx_chars": "1500-2000",
+            "notes": [
+                "Encodeur T5",
+                "Troncature au-delà de 512 tokens"
+            ]
+        },
+        "kling_image": {
+            "max_chars": 500,
+            "negative_prompt_max": 200,
+            "notes": [
+                "Limite AppyPie API"
+            ]
+        },
+        "higgsfield": {
+            "max_chars": "1000-1500",
+            "notes": [
+                "Aucune limite officielle publiée",
+                "Valeur pratique observée"
+            ]
+        }
+    },
+    "video": {
+        "runway_gen3": {
+            "max_chars": 1000,
+            "notes": [
+                "Limite officielle Runway"
+            ]
+        },
+        "kling_video_2_5": {
+            "max_chars": 2500,
+            "notes": [
+                "Limite observée pour Kling 2.5 Turbo"
+            ]
+        },
+        "sora_2": {
+            "max_chars": 2000,
+            "notes": [
+                "Limite effective",
+                "Infos clés recommandées dans les 500 premiers caractères"
+            ]
+        },
+        "veo_3_1_google": {
+            "max_tokens": 1200,
+            "approx_chars": 4800,
+            "notes": [
+                "Limite côté Google/Vertex AI",
+                "Tokens plutôt que caractères"
+            ]
+        },
+        "veo_integrators": {
+            "max_chars": 1000,
+            "notes": [
+                "Limite imposée par intégrateurs (ex: UlazAI)"
+            ]
+        }
+    }
+}

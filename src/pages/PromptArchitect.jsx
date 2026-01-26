@@ -2,15 +2,14 @@
 import { useState, useReducer, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Sparkles, Terminal, Copy, Check, ChevronDown, Play, Zap,
-    Image, Film, Aperture, Sun, Eye
+    Sparkles, Terminal, Copy, Check, ChevronDown, Eye
 } from 'lucide-react';
 
 // --- IMPORTS ARCHITECTURE ---
 import { STORAGE_KEY, INITIAL_STATE, AI_MODELS, GEN_STYLES, SHOT_TYPES, CAMERA_MOVES, CAMERA_FX, LIGHTING_STYLES, ASPECT_RATIOS, FOCAL_LENGTHS } from '../data/promptData';
 import { SmartSelect } from '../components/architect/SmartSelect';
 import { PromptNavBar } from '../components/architect/PromptNavBar';
-import { IntroOverlay, LoginModal, FomoBanner } from '../components/architect/ArchitectOverlays';
+import { IntroOverlay, LoginModal } from '../components/architect/ArchitectOverlays';
 import { FeedbackModal } from '../components/architect/FeedbackModal';
 import { usePromptGenerator } from '../hooks/usePromptGenerator';
 import { FlashOfferModal } from '../App';
@@ -45,7 +44,7 @@ export default function PromptArchitect({ embedded = false }) {
     const [showFomoBanner, setShowFomoBanner] = useState(true);
     const [showFlashOffer, setShowFlashOffer] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
-    const [viewMode, setViewMode] = useState('json'); // 'json' or 'text'
+    const [viewMode, setViewMode] = useState('json'); // 'json' or 'txt'
 
     // Persistence Logic
     useEffect(() => {
@@ -69,7 +68,7 @@ export default function PromptArchitect({ embedded = false }) {
     };
 
     // Generation Logic Hook
-    const { generating, result, countdown, handleGenerate } = usePromptGenerator({
+    const { generating, result, countdown, handleGenerate, error } = usePromptGenerator({
         state, uses, saveUses, unlocked, setIsLoginOpen
     });
 
@@ -162,6 +161,7 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                     {embedded && (
                                         <button
                                             onClick={() => navigate('/prompt')}
+                                            aria-label="Accéder à la version Pro"
                                             className="relative overflow-hidden group bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 text-black font-black font-orbitron text-[10px] tracking-wider px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95 transition-all border border-yellow-300/50 flex items-center gap-1.5 whitespace-nowrap"
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent w-[50%] -translate-x-[150%] animate-shimmer skew-x-12"></div>
@@ -172,6 +172,7 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                 </div>
 
                                 <textarea
+                                    aria-label="Description de la scène"
                                     value={state.subject}
                                     onChange={(e) => {
                                         const currentModel = AI_MODELS[state.generationType].find(m => m.id === state.aiModel);
@@ -287,7 +288,7 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
-                                                        <img src="/ui/perso/animation/pngvaltop.png" alt="Shot" className="object-cover" style={{ transform: `scale(${opt.scale})` }} />
+                                                        <img src="/assets/ui/animation/pngvaltop.png" alt="Shot" className="object-cover" style={{ transform: `scale(${opt.scale})` }} />
                                                     </div>
                                                     <span className="hidden sm:inline font-bold">{opt.name}</span>
                                                     <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -296,7 +297,7 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                             renderOption={(shot, isSelected) => (
                                                 <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500 bg-purple-900/20' : 'border-white/10 hover:border-white/30 bg-black/40'}`}>
                                                     <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
-                                                        <img src="/ui/perso/animation/pngvaltop.png" alt={shot.name} className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" style={{ transform: `scale(${shot.scale})` }} />
+                                                        <img src="/assets/ui/animation/pngvaltop.png" alt={shot.name} className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" style={{ transform: `scale(${shot.scale})` }} />
                                                     </div>
                                                     <div className={`w-full py-2 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/90'}`}>
                                                         <span className={`text-[10px] uppercase font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-300'}`}>{shot.name}</span>
@@ -313,12 +314,13 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                             widthClass="w-full md:w-96"
                                             gridCols={2}
                                             maxHeight="max-h-80"
+                                            forceAlign="left"
                                             idKey="id"
                                             labelKey="label"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
-                                                        <img src="/ui/perso/animation/pngvaltop.png" alt="Move" className={`w-full h-full object-cover ${opt.anim}`} />
+                                                        <img src="/assets/ui/animation/pngvaltop.png" alt="Move" className={`w-full h-full object-cover ${opt.anim}`} />
                                                     </div>
                                                     <span className="hidden sm:inline font-bold">{opt.label}</span>
                                                     <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -328,7 +330,7 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                                 <div className={`relative group rounded-xl border transition-all flex flex-col items-center overflow-hidden h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500 bg-purple-900/20' : 'border-white/10 hover:border-white/30 bg-black/40'}`}>
                                                     <div className="aspect-square w-full bg-black/50 flex items-center justify-center relative overflow-hidden">
                                                         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:8px_8px]"></div>
-                                                        <img src="/ui/perso/animation/pngvaltop.png" alt={move.label} className={`w-3/4 h-3/4 object-contain ${move.anim}`} />
+                                                        <img src="/assets/ui/animation/pngvaltop.png" alt={move.label} className={`w-3/4 h-3/4 object-contain ${move.anim}`} />
                                                     </div>
                                                     <div className={`w-full py-2 px-1 text-center ${isSelected ? 'bg-purple-600' : 'bg-black/90'}`}>
                                                         <span className={`text-[10px] uppercase font-bold truncate block ${isSelected ? 'text-white' : 'text-gray-300'}`}>{move.label}</span>
@@ -408,6 +410,13 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                     </div>
                                 </div>
 
+                                {/* ERROR MESSAGE */}
+                                {error && (
+                                    <div className="absolute bottom-20 right-6 z-10 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg backdrop-blur-md border border-red-400/50 shadow-xl animate-fade-in-up max-w-sm">
+                                        ⚠️ {error}
+                                    </div>
+                                )}
+
                                 {/* GENERATE BTN */}
                                 <div className="absolute bottom-6 right-6 z-10">
                                     <button
@@ -451,19 +460,25 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                                     <div className="bg-white/5 rounded-lg p-1 flex items-center border border-white/10">
                                         <button
                                             onClick={() => setViewMode('json')}
+                                            aria-label="Afficher en JSON"
                                             className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${viewMode === 'json' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
                                         >
                                             JSON
                                         </button>
                                         <button
-                                            onClick={() => setViewMode('text')}
-                                            className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${viewMode === 'text' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+                                            onClick={() => setViewMode('txt')}
+                                            aria-label="Afficher en Texte"
+                                            className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${viewMode === 'txt' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
                                         >
-                                            TEXT
+                                            TXT
                                         </button>
                                     </div>
 
-                                    <button onClick={handleCopy} className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white group-hover:text-white">
+                                    <button
+                                        onClick={handleCopy}
+                                        aria-label={copied ? "Copié" : "Copier le prompt"}
+                                        className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white group-hover:text-white"
+                                    >
                                         {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
                                     </button>
                                 </div>
@@ -481,13 +496,6 @@ Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRat
                     </div>
                 </div>
             </main>
-            <style>{`
-            .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-            .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-            .animate-pulse-slower { animation: pulse 7s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-            `}</style>
         </div>
     );
 }

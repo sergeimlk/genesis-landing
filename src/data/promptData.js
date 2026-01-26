@@ -1,8 +1,27 @@
+/**
+ * Prompt Architect Data
+ * Données de configuration pour le générateur de prompts
+ * 
+ * Structure:
+ * - AI_MODELS: Modèles de génération vidéo/image disponibles
+ * - GEN_STYLES: Styles visuels disponibles
+ * - SHOT_TYPES: Types de plans caméra
+ * - CAMERA_MOVES: Mouvements de caméra
+ * - LIGHTING_STYLES: Styles d'éclairage
+ * - FOCAL_LENGTHS: Focales disponibles
+ * - ASPECT_RATIOS: Formats d'image
+ */
 
 import { Play, Zap } from 'lucide-react';
 
+// ==============================
+// STORAGE KEY
+// ==============================
 export const STORAGE_KEY = 'promptArchitect';
 
+// ==============================
+// FREE AI MODELS (for API fallback)
+// ==============================
 export const FREE_MODELS = [
     "nousresearch/deephermes-3-llama-3-8b-preview:free",
     "deepseek/deepseek-r1-distill-llama-70b:free",
@@ -11,69 +30,71 @@ export const FREE_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free"
 ];
 
-// --- AI GENERATION MODELS ---
+// ==============================
+// AI GENERATION MODELS
+// ==============================
 export const AI_MODELS = {
     video: [
         {
             id: 'veo3',
             name: 'Google Veo 3',
-            image: '/ui/perso/GenModels/video/Google-Veo-3.jpg',
+            image: '/assets/ui/models/video/Google-Veo-3.jpg',
             maxChars: 1000,
             specs: "Focus on cinematic vocabulary (e.g., 'wide shot', 'dolly in', 'golden hour'). Veo 3 excels at photorealistic textures and consistent lighting. Mention camera movements clearly."
         },
         {
             id: 'sora',
             name: 'OpenAI Sora',
-            image: '/ui/perso/GenModels/video/openai_sora_logo.png',
+            image: '/assets/ui/models/video/openai_sora_logo.png',
             maxChars: 1000,
             specs: "Sora understands complex physical interactions and long prompts. Describe the physics, textures, and temporal changes in detail. Supports multi-scene descriptions."
         },
         {
             id: 'kling',
             name: 'Kling AI',
-            image: '/ui/perso/GenModels/video/kling_ai_logo.png',
+            image: '/assets/ui/models/video/kling_ai_logo.png',
             maxChars: 500,
             specs: "Kling requires concise prompts. Focus on the main action and subject. Avoid complex negative prompts. Good for character consistency."
         },
         {
             id: 'runway',
             name: 'Runway Gen-3',
-            image: '/ui/perso/GenModels/video/runway_gen3_logo.png',
+            image: '/assets/ui/models/video/runway_gen3_logo.png',
             maxChars: 500,
             specs: "Runway Gen-3 specific syntax: use 'Camera Motion: <move>' for camera control. Structural breakdown: [Camera Movement] + [Subject/Action] + [Environment] + [Lighting/Style]."
         },
         {
             id: 'wan2.5',
             name: 'Wan 2.5',
-            image: '/ui/perso/GenModels/video/wan_logo.png',
+            image: '/assets/ui/models/video/wan_logo.png',
             maxChars: 1000,
             specs: "Wan 2.5 is a powerful open model. Focus on fluid motion and transformation descriptions. Good at handling complex scene transitions."
         },
         {
             id: 'minimax',
             name: 'Minimax / Hailuo',
-            image: '/ui/perso/GenModels/video/minimax_logo.png',
+            image: '/assets/ui/models/video/minimax_logo.png',
             maxChars: 800,
             specs: "Minimax excels at hyper-realistic human movement and high temporal consistency. Describe micro-expressions and subtle gestures."
         },
         {
             id: 'luma',
             name: 'Luma Dream Machine',
-            image: '/ui/perso/GenModels/video/luma_logo.png',
+            image: '/assets/ui/models/video/luma_logo.png',
             maxChars: 800,
             specs: "Luma Dream Machine is physics-aware. Describe the start and end states of the motion clearly."
         },
         {
             id: 'pika',
             name: 'Pika Art',
-            image: '/ui/perso/GenModels/video/pika_logo.png',
+            image: '/assets/ui/models/video/pika_logo.png',
             maxChars: 500,
             specs: "Pika fits anime and stylized content well. Use specific Pika parameters like -camera_zoom, -camera_pan if applicable."
         },
         {
             id: 'higgsfield',
             name: 'Higgsfield Cinema',
-            image: '/ui/perso/GenModels/video/higgsfield_logo.png',
+            image: '/assets/ui/models/video/higgsfield_logo.png',
             maxChars: 1000,
             specs: "Specialized in consistent character animation and specific camera moves. Good for detailed cinematic shots."
         },
@@ -82,68 +103,74 @@ export const AI_MODELS = {
         {
             id: 'midjourney',
             name: 'Midjourney',
-            image: '/ui/perso/GenModels/image/midjourney_logo.png',
+            image: '/assets/ui/models/image/midjourney_logo.png',
             maxChars: 6000,
             specs: "Midjourney parameters: --ar <w:h> (aspect ratio), --v 6.0 (version), --stylize <0-1000> (artistic strength), --weird <0-3000>, --chaos <0-100>. Use comma-separated stylistic keywords."
         },
         {
             id: 'dalle3',
             name: 'DALL-E 3',
-            image: '/ui/perso/GenModels/image/dalle_3_logo.png',
+            image: '/assets/ui/models/image/dalle_3_logo.png',
             maxChars: 4000,
             specs: "DALL-E 3 prefers natural conversational language over keyword soup. Describe the scene as if talking to a human artist. Mention specific details about placement and interactions."
         },
         {
             id: 'flux',
             name: 'Flux AI',
-            image: '/ui/perso/GenModels/image/flux_ai_logo.png',
+            image: '/assets/ui/models/image/flux_ai_logo.png',
             maxChars: 1000,
             specs: "Flux excels at text rendering and complex compositions. Be specific about text visibility if needed."
         },
         {
             id: 'recraft',
             name: 'Recraft',
-            image: '/ui/perso/GenModels/image/recraft_logo.png',
+            image: '/assets/ui/models/image/recraft_logo.png',
             maxChars: 1000,
             specs: "Recraft is vector-capable and style-consistent. Specify 'icon', 'vector art', or 'illustration' for best results."
         },
         {
             id: 'ideogram',
             name: 'Ideogram',
-            image: '/ui/perso/GenModels/image/ideogram_logo.png',
+            image: '/assets/ui/models/image/ideogram_logo.png',
             maxChars: 1000,
             specs: "Ideogram is the king of typography. If you need text, specify exactly: text 'YOUR TEXT' in <font style>."
         },
         {
             id: 'seedream',
             name: 'Seedream',
-            image: '/ui/perso/GenModels/image/seedream_logo.jpg',
+            image: '/assets/ui/models/image/seedream_logo.jpg',
             maxChars: 1000,
             specs: "General Stable Diffusion based model. Use standard artstation keywords."
         },
         {
             id: 'nanobanana',
             name: 'Nano Banana',
-            image: '/ui/perso/GenModels/image/nano_banana_logo.png',
+            image: '/assets/ui/models/image/nano_banana_logo.png',
             maxChars: 1000,
             specs: "Responsive and fast model. Keep prompts punchy and direct."
         },
     ]
 };
 
+// ==============================
+// GENERATION STYLES
+// ==============================
 export const GEN_STYLES = [
     { id: 'genesis-cinematic', name: 'Cinematic', image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=200&auto=format&fit=crop' },
     { id: 'cyberpunk', name: 'Cyberpunk', image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200&auto=format&fit=crop' },
-    { id: 'simpsons', name: 'Simpsons', image: '/ui/perso/GenModels/styles/simpsons.png' },
-    { id: 'minecraft', name: 'Minecraft', image: '/ui/perso/GenModels/styles/minecraft.png' },
-    { id: 'disney-pixar', name: 'Disney Pixar', image: '/ui/perso/GenModels/styles/pixar.png' },
-    { id: 'studio-ghibli', name: 'Studio Ghibli', image: '/ui/perso/GenModels/styles/ghibli.png' },
-    { id: 'vaporwave', name: 'Vaporwave', image: '/ui/perso/GenModels/styles/vaporwave.png' },
-    { id: 'realistic', name: 'Realistic Photo', image: '/ui/perso/GenModels/styles/realistic.png' },
+    { id: 'simpsons', name: 'Simpsons', image: '/assets/ui/models/styles/simpsons.png' },
+    { id: 'minecraft', name: 'Minecraft', image: '/assets/ui/models/styles/minecraft.png' },
+    { id: 'disney-pixar', name: 'Disney Pixar', image: '/assets/ui/models/styles/pixar.png' },
+    { id: 'studio-ghibli', name: 'Studio Ghibli', image: '/assets/ui/models/styles/ghibli.png' },
+    { id: 'vaporwave', name: 'Vaporwave', image: '/assets/ui/models/styles/vaporwave.png' },
+    { id: 'realistic', name: 'Realistic Photo', image: '/assets/ui/models/styles/realistic.png' },
     { id: 'anime', name: 'Anime Shinkai', image: 'https://images.unsplash.com/photo-1560972550-aba3456b5564?q=80&w=200&auto=format&fit=crop' },
     { id: 'oil-painting', name: 'Van Gogh Oil', image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=200&auto=format&fit=crop' },
 ];
 
+// ==============================
+// ASPECT RATIOS
+// ==============================
 export const ASPECT_RATIOS = [
     { id: '16:9', name: '16:9', w: 16, h: 9, desc: 'Widescreen' },
     { id: '9:16', name: '9:16', w: 9, h: 16, desc: 'Vertical' },
@@ -157,6 +184,9 @@ export const ASPECT_RATIOS = [
     { id: '4:5', name: '4:5', w: 4, h: 5, desc: 'Instagram' },
 ];
 
+// ==============================
+// SHOT TYPES
+// ==============================
 export const SHOT_TYPES = [
     { id: 'extreme-close-up', name: 'Extreme Close-up', desc: 'ECU', scale: 4 },
     { id: 'close-up', name: 'Close-up', desc: 'CU', scale: 3 },
@@ -176,6 +206,9 @@ export const SHOT_TYPES = [
     { id: 'drone-view', name: 'Drone View', desc: 'Aerial', scale: 0.5 },
 ];
 
+// ==============================
+// CAMERA MOVEMENTS
+// ==============================
 export const CAMERA_MOVES = [
     { id: 'Static', label: 'Static', anim: '' },
     { id: 'Dolly In', label: 'Dolly In', anim: 'anim-dolly-in' },
@@ -199,25 +232,34 @@ export const CAMERA_MOVES = [
     { id: 'Whip Pan', label: 'Whip Pan', anim: 'anim-pan-left duration-75' },
 ];
 
+// ==============================
+// CAMERA FX
+// ==============================
 export const CAMERA_FX = [
     'None', 'Motion Blur', 'Chromatic Aberration', 'Film Grain', 'Light Leaks',
     'Lens Flare', 'Vignette', 'Bokeh', 'Double Exposure', 'Glitch Effect',
     'VHS Distortion', 'Bloom Neon', 'Camera Shockwave'
 ];
 
+// ==============================
+// LIGHTING STYLES
+// ==============================
 export const LIGHTING_STYLES = [
-    { id: 'natural', name: 'Natural', image: '/ui/icons/lighting/natural.png' },
-    { id: 'cinematic', name: 'Cinematic', image: '/ui/icons/lighting/cinematic.png' },
-    { id: 'studio', name: 'Studio', image: '/ui/icons/lighting/studio.png' },
-    { id: 'neon-noir', name: 'Neon Noir', image: '/ui/icons/lighting/neon_noir.png' },
-    { id: 'golden-hour', name: 'Golden Hour', image: '/ui/icons/lighting/golden_hour.png' },
-    { id: 'blue-hour', name: 'Blue Hour', image: '/ui/icons/lighting/blue_hour.png' },
-    { id: 'rembrandt', name: 'Rembrandt', image: '/ui/icons/lighting/rembrandt.png' },
-    { id: 'volumetric-fog', name: 'Volumetric Fog', image: '/ui/icons/lighting/volumetric_fog.png' },
-    { id: 'bioluminescent', name: 'Bioluminescent', image: '/ui/icons/lighting/bioluminescent.png' },
-    { id: 'cyberpunk-neon', name: 'Cyberpunk Neon', image: '/ui/icons/lighting/cyberpunk_neon.png' },
+    { id: 'natural', name: 'Natural', image: '/assets/ui/lighting/natural.png' },
+    { id: 'cinematic', name: 'Cinematic', image: '/assets/ui/lighting/cinematic.png' },
+    { id: 'studio', name: 'Studio', image: '/assets/ui/lighting/studio.png' },
+    { id: 'neon-noir', name: 'Neon Noir', image: '/assets/ui/lighting/neon_noir.png' },
+    { id: 'golden-hour', name: 'Golden Hour', image: '/assets/ui/lighting/golden_hour.png' },
+    { id: 'blue-hour', name: 'Blue Hour', image: '/assets/ui/lighting/blue_hour.png' },
+    { id: 'rembrandt', name: 'Rembrandt', image: '/assets/ui/lighting/rembrandt.png' },
+    { id: 'volumetric-fog', name: 'Volumetric Fog', image: '/assets/ui/lighting/volumetric_fog.png' },
+    { id: 'bioluminescent', name: 'Bioluminescent', image: '/assets/ui/lighting/bioluminescent.png' },
+    { id: 'cyberpunk-neon', name: 'Cyberpunk Neon', image: '/assets/ui/lighting/cyberpunk_neon.png' },
 ];
 
+// ==============================
+// FOCAL LENGTHS
+// ==============================
 export const FOCAL_LENGTHS = [
     { id: '8mm', name: '8mm', desc: 'Fish-eye', icon: 'Eye' },
     { id: '16mm', name: '16mm', desc: 'Ultra Wide', icon: 'Eye' },
@@ -229,6 +271,9 @@ export const FOCAL_LENGTHS = [
     { id: '200mm', name: '200mm', desc: 'Super Zoom', icon: 'Eye' },
 ];
 
+// ==============================
+// INITIAL STATE
+// ==============================
 export const INITIAL_STATE = {
     generationType: 'video',
     aiModel: 'veo3',
