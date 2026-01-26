@@ -62,65 +62,67 @@ export const FlashOfferModal = ({ isOpen, onClose }) => {
       aria-modal="true"
       aria-labelledby="flash-offer-title"
     >
-      <div className="modal-content animate-fade-up modal-content-flash">
+      <div className="relative w-full max-w-[400px] mx-auto animate-fade-up">
         <button
           onClick={onClose}
-          className="modal-close-btn-white"
+          className="absolute -top-12 -right-2 text-white/80 hover:text-white p-2 transition-colors z-50"
           aria-label="Fermer"
         >
-          <X size={24} />
+          <X size={28} />
         </button>
 
-        <div className="pricing-card pricing-card-modal">
-          <div className="pricing-header pricing-header-compact">
-            <div className="fomo-container">
-              <div className="fomo-label fomo-label-sm">⚡ OFFRE DE LANCEMENT</div>
-              <div className="fomo-warning fomo-warning-sm">Le prix double ce soir à minuit !</div>
+        <div className="modal-content modal-content-flash">
+          <div className="pricing-card pricing-card-modal">
+            <div className="pricing-header pricing-header-compact">
+              <div className="fomo-container">
+                <div className="fomo-label fomo-label-sm">⚡ OFFRE DE LANCEMENT</div>
+                <div className="fomo-warning fomo-warning-sm">Le prix double ce soir à minuit !</div>
 
-              <div className="fomo-countdown fomo-countdown-mb" role="timer" aria-label="Temps restant">
-                <div className="countdown-item">
-                  <span className="countdown-number countdown-number-sm">{String(timeLeft.hours).padStart(2, '0')}</span>
-                  <span className="countdown-label countdown-label-xs">H</span>
-                </div>
-                <span className="countdown-sep countdown-sep-sm" aria-hidden="true">:</span>
-                <div className="countdown-item">
-                  <span className="countdown-number countdown-number-sm">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                  <span className="countdown-label countdown-label-xs">Min</span>
-                </div>
-                <span className="countdown-sep countdown-sep-sm" aria-hidden="true">:</span>
-                <div className="countdown-item">
-                  <span className="countdown-number countdown-number-sm">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                  <span className="countdown-label countdown-label-xs">Sec</span>
+                <div className="fomo-countdown fomo-countdown-mb" role="timer" aria-label="Temps restant">
+                  <div className="countdown-item">
+                    <span className="countdown-number countdown-number-sm">{String(timeLeft.hours).padStart(2, '0')}</span>
+                    <span className="countdown-label countdown-label-xs">H</span>
+                  </div>
+                  <span className="countdown-sep countdown-sep-sm" aria-hidden="true">:</span>
+                  <div className="countdown-item">
+                    <span className="countdown-number countdown-number-sm">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                    <span className="countdown-label countdown-label-xs">Min</span>
+                  </div>
+                  <span className="countdown-sep countdown-sep-sm" aria-hidden="true">:</span>
+                  <div className="countdown-item">
+                    <span className="countdown-number countdown-number-sm">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                    <span className="countdown-label countdown-label-xs">Sec</span>
+                  </div>
                 </div>
               </div>
+
+              <div className="fomo-urgency-tag animate-pulse-fast fomo-urgency-sm">
+                ⚠️ PLUS QUE 5 PLACES !
+              </div>
+
+              <h3 id="flash-offer-title" className="font-orbitron font-bold text-lg mt-2">GENESIS ACADEMY</h3>
+              <p className="text-muted text-xs">Accès illimité à vie + Mises à jour</p>
             </div>
 
-            <div className="fomo-urgency-tag animate-pulse-fast fomo-urgency-sm">
-              ⚠️ PLUS QUE 5 PLACES !
+            <div className="p-6 text-center bg-black/50">
+              <div className="flex-center mb-3">
+                <span className="old-price old-price-sm">800€</span>
+                <span className="price price-lg">499€</span>
+              </div>
+
+              <a
+                href={EXTERNAL_LINKS.CONTACT_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-join-main btn-join-full"
+              >
+                CHOISIR <br /> MON MODULE
+              </a>
+
+              <p className="flex-center text-xs text-muted mt-4">
+                Paiement sécurisé via Stripe/PayPal
+              </p>
             </div>
-
-            <h3 id="flash-offer-title" className="font-orbitron font-bold text-lg mt-2">GENESIS ACADEMY</h3>
-            <p className="text-muted text-xs">Accès illimité à vie + Mises à jour</p>
-          </div>
-
-          <div className="p-6 text-center bg-black/50">
-            <div className="flex-center mb-3">
-              <span className="old-price old-price-sm">800€</span>
-              <span className="price price-lg">499€</span>
-            </div>
-
-            <a
-              href={EXTERNAL_LINKS.CONTACT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-join-main btn-join-full"
-            >
-              CHOISIR <br /> MON MODULE
-            </a>
-
-            <p className="flex-center text-xs text-muted mt-4">
-              Paiement sécurisé via Stripe/PayPal
-            </p>
           </div>
         </div>
       </div>

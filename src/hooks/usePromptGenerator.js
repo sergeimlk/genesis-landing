@@ -5,6 +5,8 @@ import { FREE_MODELS, AI_MODELS } from '../data/promptData';
 export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLoginOpen }) => {
     const [generating, setGenerating] = useState(false);
     const [error, setError] = useState(null);
+    const [countdown, setCountdown] = useState(0);
+    const [result, setResult] = useState(null);
 
     // Countdown logic
     useEffect(() => {
