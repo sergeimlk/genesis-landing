@@ -17,6 +17,15 @@ function reducer(state, action) {
     return { ...state, [action.type]: action.value };
 }
 
+// Aspect Ratio Icon Helper
+const getRatioDims = (w, h) => {
+    const maxSize = 18;
+    const r = w / h;
+    return r >= 1
+        ? { width: maxSize, height: maxSize / r }
+        : { width: maxSize * r, height: maxSize };
+};
+
 export default function PromptArchitect({ embedded = false }) {
     const navigate = useNavigate();
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -63,14 +72,7 @@ export default function PromptArchitect({ embedded = false }) {
 
     // --- CUSTOM RENDERERS FOR SMART SELECTS ---
 
-    // Aspect Ratio Icon Helper
-    const getRatioDims = (w, h) => {
-        const maxSize = 18;
-        const r = w / h;
-        return r >= 1
-            ? { width: maxSize, height: maxSize / r }
-            : { width: maxSize * r, height: maxSize };
-    };
+
 
     return (
         <div className={embedded ? "w-full text-white font-sans relative" : "min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden overflow-y-auto relative"}>
@@ -135,24 +137,62 @@ export default function PromptArchitect({ embedded = false }) {
 
                                 <textarea
                                     value={state.subject}
-                                    onChange={(e) => dispatch({ type: 'subject', value: e.target.value })}
+                                    onChange={(e) => {
+                                        const currentModel = AI_MODELS[state.generationType].find(m => m.id === state.aiModel);
+                                        const max = currentModel?.maxChars || 2000;
+                                        if (e.target.value.length <= max) {
+                                            dispatch({ type: 'subject', value: e.target.value });
+                                        }
+                                    }}
                                     placeholder="Décrivez votre scène: Un samouraï cyberpunk marchant sous la pluie à néo-tokyo..."
                                     className="w-full flex-1 bg-transparent border-none outline-none text-2xl md:text-3xl font-medium text-white placeholder-white/20 resize-none font-sans leading-relaxed pb-24 genesis-scrollbar"
                                 />
-                                <div className="text-xs text-gray-500 font-mono text-right mt-2">{state.subject.length} chars</div>
+                                <div className="text-xs text-gray-500 font-mono text-right mt-2">
+                                    {state.subject.length} / {AI_MODELS[state.generationType].find(m => m.id === state.aiModel)?.maxChars || 2000} chars
+                                </div>
 
                                 {/* TOOLBAR */}
                                 <div className="mt-4 flex flex-col gap-3 pt-4 border-t border-white/5 pb-16">
 
-                                    {/* ROW 1 */}
                                     <div className="flex flex-wrap items-center gap-2">
-                                        {/* Aspect Ratio */}
+                                        {/* 1. Model */}
+                                        <SmartSelect
+                                            value={state.aiModel}
+                                            options={AI_MODELS[state.generationType]}
+                                            onChange={(v) => dispatch({ type: 'aiModel', value: v })}
+                                            widthClass="w-64"
+                                            gridCols={1}
+                                            tabs={[
+                                                { id: 'video', label: 'VIDEO', onClick: () => dispatch({ type: 'generationType', value: 'video' }), isActive: state.generationType === 'video' },
+                                                { id: 'image', label: 'IMAGE', onClick: () => dispatch({ type: 'generationType', value: 'image' }), isActive: state.generationType === 'image' }
+                                            ]}
+                                            renderTrigger={(opt, isOpen) => (
+                                                <>
+                                                    <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
+                                                        <img src={opt?.image} alt={opt?.name || 'Model'} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <span className="hidden sm:inline">{opt?.name}</span>
+                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                </>
+                                            )}
+                                            renderOption={(model, isSelected) => (
+                                                <div className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isSelected ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
+                                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
+                                                        <img src={model.image} alt={model.name} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <span>{model.name}</span>
+                                                </div>
+                                            )}
+                                        />
+
+                                        {/* 2. Aspect Ratio */}
                                         <SmartSelect
                                             value={state.aspectRatio}
                                             options={ASPECT_RATIOS}
                                             onChange={(v) => dispatch({ type: 'aspectRatio', value: v })}
                                             widthClass="w-80"
                                             gridCols={2}
+                                            maxHeight="max-h-64"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="border-2 border-purple-400 rounded-sm bg-purple-400/20" style={getRatioDims(opt.w, opt.h)} />
@@ -171,19 +211,14 @@ export default function PromptArchitect({ embedded = false }) {
                                             )}
                                         />
 
-                                        <SmartSelect icon={Play} value={state.duration} onChange={(v) => dispatch({ type: 'duration', value: v })} options={['5s', '10s', '15s']} />
-                                        <SmartSelect icon={Zap} value={state.cameraFX} onChange={(v) => dispatch({ type: 'cameraFX', value: v })} options={CAMERA_FX} />
-                                    </div>
-
-                                    {/* ROW 2 */}
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {/* Shot Type */}
+                                        {/* 3. Shot Type */}
                                         <SmartSelect
                                             value={state.shotType}
                                             options={SHOT_TYPES}
                                             onChange={(v) => dispatch({ type: 'shotType', value: v })}
                                             widthClass="w-80"
-                                            gridCols={3}
+                                            gridCols={2}
+                                            maxHeight="max-h-64"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
@@ -205,13 +240,14 @@ export default function PromptArchitect({ embedded = false }) {
                                             )}
                                         />
 
-                                        {/* Motion */}
+                                        {/* 4. Motion */}
                                         <SmartSelect
                                             value={state.cameraMovement}
                                             options={CAMERA_MOVES}
                                             onChange={(v) => dispatch({ type: 'cameraMovement', value: v })}
                                             widthClass="w-80"
-                                            gridCols={3}
+                                            gridCols={2}
+                                            maxHeight="max-h-64"
                                             idKey="id"
                                             labelKey="label"
                                             renderTrigger={(opt, isOpen) => (
@@ -236,13 +272,25 @@ export default function PromptArchitect({ embedded = false }) {
                                             )}
                                         />
 
-                                        {/* Style */}
+                                        {/* 5. Camera FX */}
+                                        <SmartSelect
+                                            icon={Zap}
+                                            value={state.cameraFX}
+                                            onChange={(v) => dispatch({ type: 'cameraFX', value: v })}
+                                            options={CAMERA_FX}
+                                            gridCols={2}
+                                            maxHeight="max-h-64"
+                                            widthClass="w-64"
+                                        />
+
+                                        {/* 6. Style */}
                                         <SmartSelect
                                             value={state.style}
                                             options={GEN_STYLES}
                                             onChange={(v) => dispatch({ type: 'style', value: v })}
                                             widthClass="w-64"
                                             gridCols={2}
+                                            maxHeight="max-h-64"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
@@ -263,17 +311,15 @@ export default function PromptArchitect({ embedded = false }) {
                                                 </div>
                                             )}
                                         />
-                                    </div>
 
-                                    {/* ROW 3 */}
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {/* Mood */}
+                                        {/* 7. Lighting */}
                                         <SmartSelect
                                             value={state.lighting}
                                             options={LIGHTING_STYLES}
                                             onChange={(v) => dispatch({ type: 'lighting', value: v })}
                                             widthClass="w-64"
                                             gridCols={2}
+                                            maxHeight="max-h-64"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-6 h-6 rounded-full overflow-hidden gray-scale-0 bg-white/5 flex-shrink-0 border border-white/20">
@@ -294,32 +340,6 @@ export default function PromptArchitect({ embedded = false }) {
                                                 </div>
                                             )}
                                         />
-
-                                        {/* Model */}
-                                        <SmartSelect
-                                            value={state.aiModel}
-                                            options={AI_MODELS[state.generationType]}
-                                            onChange={(v) => dispatch({ type: 'aiModel', value: v })}
-                                            widthClass="w-56"
-                                            renderTrigger={(opt, isOpen) => (
-                                                <>
-                                                    <div className="w-6 h-6 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
-                                                        <img src={opt?.image} alt={opt?.name || 'Model'} className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <span className="hidden sm:inline">{opt?.name}</span>
-                                                    <ChevronDown size={12} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                                                </>
-                                            )}
-                                            renderOption={(model, isSelected) => (
-                                                <div className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isSelected ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
-                                                    <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
-                                                        <img src={model.image} alt={model.name} className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <span>{model.name}</span>
-                                                </div>
-                                            )}
-                                        />
-                                        {/* Generation Type Toggle (embedded in row if needed or separate) -> Usually ModelSelect had tabs inside, but here we can just add a separate toggle or keep it simple. The user didn't ask for the complex tab logic inside ModelSelect to be refactored, but I simplified ModelSelect to just list models. If type switching is needed, it should be a separate control or added above using SmartSelect as well? For now keeping it simple as per "clean code". */}
                                     </div>
                                 </div>
 

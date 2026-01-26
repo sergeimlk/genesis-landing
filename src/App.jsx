@@ -86,7 +86,8 @@ const GenesisLanding = () => {
         <div className="container nav-container">
           <div className="logo-container" onClick={() => setIsSecretModalOpen(true)}>
             <img src="/img/Glogo.png" alt="Genesis Logo" className="t-logo" />
-            <img src="/img/GENESIS.png" alt="GENESIS" className="logo-brand-img" />
+            {/* <img src="/img/GENESIS.png" alt="GENESIS" className="logo-brand-img" /> */}
+            <h2 className="footer-title ml-2 mt-5" >GENESIS</h2>
           </div>
           <div className="nav-links-group">
             <a href="#programme" className="link-nav nav-link-item" onClick={(e) => { e.preventDefault(); document.getElementById('programme').scrollIntoView({ behavior: 'smooth' }); }}>Programme</a>
@@ -537,7 +538,7 @@ const GenesisLanding = () => {
       <section className="section-padding" id="contact-form">
         <div className="container container-narrow">
           <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">REJOINDRE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'AVENTURE</span></h2>
-          <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+          <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl mb-24">
             <iframe
               src="https://tally.so/r/pbr5G1?utm_source=ig&utm_medium=social&utm_content=link_in_bio&transparentBackground=1&hideTitle=1&hideFooter=1&alignLeft=1"
               width="100%"

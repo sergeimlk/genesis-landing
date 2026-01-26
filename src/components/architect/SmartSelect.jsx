@@ -27,7 +27,8 @@ export const SmartSelect = ({
     // Icon (optional default trigger)
     icon: Icon,
     labelKey = 'name',  // Key to display if no custom render
-    idKey = 'id'        // Key for ID
+    idKey = 'id',       // Key for ID
+    tabs = null         // Tabs configuration
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const buttonRef = useRef(null);
@@ -41,6 +42,17 @@ export const SmartSelect = ({
             const rect = buttonRef.current.getBoundingClientRect();
             setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
         }
+    }, [isOpen]);
+
+    // Close on Escape Key
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') setIsOpen(false);
+        };
+        if (isOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isOpen]);
 
     // Default Renderers
@@ -91,7 +103,25 @@ export const SmartSelect = ({
 
                         {/* Content */}
                         <div className={`p-2 overflow-y-auto genesis-scrollbar ${maxHeight}`}>
-                            <div className={gridCols > 1 ? `grid grid-cols-${gridCols} gap-2` : 'flex flex-col gap-1'}>
+                            {/* Tabs Area */}
+                            {tabs && (
+                                <div className="flex p-1 mb-2 bg-white/5 rounded-xl border border-white/10">
+                                    {tabs.map(tab => (
+                                        <button
+                                            key={tab.id}
+                                            onClick={tab.onClick}
+                                            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${tab.isActive ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                                        >
+                                            {tab.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div
+                                className={gridCols > 1 ? 'grid gap-2' : 'flex flex-col gap-1'}
+                                style={gridCols > 1 ? { gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` } : {}}
+                            >
                                 {options.map((opt) => {
                                     const optId = opt[idKey] || opt;
                                     const isSelected = value === optId;

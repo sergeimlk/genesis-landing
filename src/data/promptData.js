@@ -14,17 +14,78 @@ export const FREE_MODELS = [
 // --- AI GENERATION MODELS ---
 export const AI_MODELS = {
     video: [
-        { id: 'veo3', name: 'Google Veo 3', image: '/ui/perso/GenModels/video/Google-Veo-3.jpg' },
-        { id: 'kling', name: 'Kling AI', image: '/ui/perso/GenModels/video/kling_ai_logo.png' },
-        { id: 'runway', name: 'Runway Gen-3', image: '/ui/perso/GenModels/video/runway_gen3_logo.png' },
-        { id: 'sora', name: 'OpenAI Sora', image: '/ui/perso/GenModels/video/openai_sora_logo.png' },
+        {
+            id: 'veo3',
+            name: 'Google Veo 3',
+            image: '/ui/perso/GenModels/video/Google-Veo-3.jpg',
+            maxChars: 1000,
+            specs: "Focus on cinematic vocabulary (e.g., 'wide shot', 'dolly in', 'golden hour'). Veo 3 excels at photorealistic textures and consistent lighting. Mention camera movements clearly."
+        },
+        {
+            id: 'kling',
+            name: 'Kling AI',
+            image: '/ui/perso/GenModels/video/kling_ai_logo.png',
+            maxChars: 500,
+            specs: "Kling requires concise prompts. Focus on the main action and subject. Avoid complex negative prompts. Good for character consistency."
+        },
+        {
+            id: 'runway',
+            name: 'Runway Gen-3',
+            image: '/ui/perso/GenModels/video/runway_gen3_logo.png',
+            maxChars: 500,
+            specs: "Runway Gen-3 specific syntax: use 'Camera Motion: <move>' for camera control. Structural breakdown: [Camera Movement] + [Subject/Action] + [Environment] + [Lighting/Style]."
+        },
+        {
+            id: 'sora',
+            name: 'OpenAI Sora',
+            image: '/ui/perso/GenModels/video/openai_sora_logo.png',
+            maxChars: 1000,
+            specs: "Sora understands complex physical interactions and long prompts. Describe the physics, textures, and temporal changes in detail. Supports multi-scene descriptions."
+        },
+        {
+            id: 'higgsfield',
+            name: 'Higgsfield Cinema',
+            image: '/ui/perso/GenModels/video/higgsfield_logo.png',
+            maxChars: 1000,
+            specs: "Specialized in consistent character animation and specific camera moves. Good for detailed cinematic shots."
+        },
     ],
     image: [
-        { id: 'midjourney', name: 'Midjourney', image: '/ui/perso/GenModels/image/midjourney_logo.png' },
-        { id: 'dalle3', name: 'DALL-E 3', image: '/ui/perso/GenModels/image/dalle_3_logo.png' },
-        { id: 'flux', name: 'Flux AI', image: '/ui/perso/GenModels/image/flux_ai_logo.png' },
-        { id: 'seedream', name: 'Seedream', image: '/ui/perso/GenModels/image/seedream_logo.jpg' },
-        { id: 'nanobanana', name: 'Nano Banana', image: '/ui/perso/GenModels/image/nano_banana_logo.png' },
+        {
+            id: 'midjourney',
+            name: 'Midjourney',
+            image: '/ui/perso/GenModels/image/midjourney_logo.png',
+            maxChars: 6000,
+            specs: "Midjourney parameters: --ar <w:h> (aspect ratio), --v 6.0 (version), --stylize <0-1000> (artistic strength), --weird <0-3000>, --chaos <0-100>. Use comma-separated stylistic keywords."
+        },
+        {
+            id: 'dalle3',
+            name: 'DALL-E 3',
+            image: '/ui/perso/GenModels/image/dalle_3_logo.png',
+            maxChars: 4000,
+            specs: "DALL-E 3 prefers natural conversational language over keyword soup. Describe the scene as if talking to a human artist. Mention specific details about placement and interactions."
+        },
+        {
+            id: 'flux',
+            name: 'Flux AI',
+            image: '/ui/perso/GenModels/image/flux_ai_logo.png',
+            maxChars: 1000,
+            specs: "Flux excels at text rendering and complex compositions. Be specific about text visibility if needed."
+        },
+        {
+            id: 'seedream',
+            name: 'Seedream',
+            image: '/ui/perso/GenModels/image/seedream_logo.jpg',
+            maxChars: 1000,
+            specs: "General Stable Diffusion based model. Use standard artstation keywords."
+        },
+        {
+            id: 'nanobanana',
+            name: 'Nano Banana',
+            image: '/ui/perso/GenModels/image/nano_banana_logo.png',
+            maxChars: 1000,
+            specs: "Responsive and fast model. Keep prompts punchy and direct."
+        },
     ]
 };
 

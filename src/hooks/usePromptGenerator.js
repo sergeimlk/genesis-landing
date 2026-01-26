@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { FREE_MODELS } from '../data/promptData';
+import { FREE_MODELS, AI_MODELS } from '../data/promptData';
 
 export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLoginOpen }) => {
     const [generating, setGenerating] = useState(false);
@@ -75,6 +75,7 @@ export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLogin
                                 PARAMÈTRES ACTUELS :
                                 - Type: ${state.generationType}
                                 - Modèle: ${state.aiModel}
+                                - Specs Modèle: ${AI_MODELS[state.generationType].find(m => m.id === state.aiModel)?.specs || "Standard model"}
                                 - Style: ${state.style} (Utilise ce style visuel !)
                                 - Cadrage: ${state.shotType}
                                 - Durée: ${state.duration}
