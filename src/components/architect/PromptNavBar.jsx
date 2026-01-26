@@ -1,17 +1,17 @@
 
 import { User } from 'lucide-react';
 
-export const PromptNavBar = ({ onProfileClick, unlocked, hasBanner }) => (
-    <header className={`fixed ${hasBanner ? 'top-10' : 'top-0'} inset-x-0 z-50 h-20 flex items-center justify-between px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#050505]/50 transition-all duration-300`}>
+export const PromptNavBar = ({ onProfileClick, unlocked }) => (
+    <header className="fixed top-0 inset-x-0 z-50 h-20 flex items-center justify-between px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#050505]/50 transition-all duration-300">
         <div className="flex items-center gap-4 cursor-pointer" onClick={() => window.location.href = '/'}>
             <img src="/img/Glogo.png" alt="Genesis Logo" className="t-logo rotate-0" style={{ width: '45px', height: '45px', borderRadius: '50%', border: '2px solid rgba(255, 255, 255, 0.1)' }} />
             <span className="font-orbitron font-bold text-xl tracking-wider">GENESIS <span className="text-purple-500 text-xs align-top">LABS</span></span>
         </div>
 
         <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-1 px-4 py-2 bg-white/5 rounded-full border border-white/5 text-xs font-bold text-gray-400">
-                <div className={`w-2 h-2 rounded-full ${unlocked ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
-                {unlocked ? 'PRO MEMBER' : 'FREE TIER'}
+            <div className={`hidden md:flex items-center justify-center gap-2 px-4 py-2 rounded-full border text-xs font-bold uppercase tracking-wide transition-all ${unlocked ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border-yellow-400/60 text-yellow-300' : 'bg-white/5 border-white/5 text-gray-400'}`}>
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${unlocked ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]' : 'bg-orange-500 animate-pulse'}`}></div>
+                <span>{unlocked ? 'PRO MEMBER' : 'FREE TIER'}</span>
             </div>
 
             <button

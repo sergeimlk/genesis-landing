@@ -3,14 +3,15 @@ import { useState, useReducer, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Sparkles, Terminal, Copy, Check, ChevronDown, Play, Zap,
-    Image, Film, Aperture, Sun
+    Image, Film, Aperture, Sun, Eye
 } from 'lucide-react';
 
 // --- IMPORTS ARCHITECTURE ---
-import { STORAGE_KEY, INITIAL_STATE, AI_MODELS, GEN_STYLES, SHOT_TYPES, CAMERA_MOVES, CAMERA_FX, LIGHTING_STYLES, ASPECT_RATIOS } from '../data/promptData';
+import { STORAGE_KEY, INITIAL_STATE, AI_MODELS, GEN_STYLES, SHOT_TYPES, CAMERA_MOVES, CAMERA_FX, LIGHTING_STYLES, ASPECT_RATIOS, FOCAL_LENGTHS } from '../data/promptData';
 import { SmartSelect } from '../components/architect/SmartSelect';
 import { PromptNavBar } from '../components/architect/PromptNavBar';
 import { IntroOverlay, LoginModal, FomoBanner } from '../components/architect/ArchitectOverlays';
+import { FeedbackModal } from '../components/architect/FeedbackModal';
 import { usePromptGenerator } from '../hooks/usePromptGenerator';
 import { FlashOfferModal } from '../App';
 
@@ -33,12 +34,18 @@ export default function PromptArchitect({ embedded = false }) {
 
     // UI States
     const [uses, setUses] = useState(0);
-    const [unlocked, setUnlocked] = useState(false);
+    const [unlocked, setUnlocked] = useState(() => localStorage.getItem('genesis_pro_unlocked') === 'true');
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [copied, setCopied] = useState(false);
-    const [showIntro, setShowIntro] = useState(!embedded);
+    const [showIntro, setShowIntro] = useState(() => {
+        // Only show intro if not embedded AND not already shown this session
+        if (embedded) return false;
+        return !sessionStorage.getItem('genesis_intro_shown');
+    });
     const [showFomoBanner, setShowFomoBanner] = useState(true);
     const [showFlashOffer, setShowFlashOffer] = useState(false);
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [viewMode, setViewMode] = useState('json'); // 'json' or 'text'
 
     // Persistence Logic
     useEffect(() => {
@@ -66,8 +73,34 @@ export default function PromptArchitect({ embedded = false }) {
         state, uses, saveUses, unlocked, setIsLoginOpen
     });
 
+    const formatPromptText = (data) => {
+        // Check if this is an API result (has video_prompt/image_prompt) or state object
+        if (data?.video_prompt || data?.image_prompt) {
+            // API result format - display the prompts directly
+            let text = '';
+            if (data.video_prompt) text += `VIDEO PROMPT:\n${data.video_prompt}\n\n`;
+            if (data.image_prompt) text += `IMAGE PROMPT:\n${data.image_prompt}\n\n`;
+            if (data.technical_details) text += `TECHNICAL DETAILS:\n${data.technical_details}`;
+            return text.trim();
+        }
+
+        // State format - display parameters
+        const { subject, generationType, aiModel, style, lighting, cameraMovement, shotType, aspectRatio, focalLength } = data || {};
+        return `Subject: ${subject || 'N/A'}
+Type: ${(generationType || 'video').toUpperCase()}
+Model: ${aiModel || 'N/A'}
+Style: ${style || 'N/A'}
+Lighting: ${lighting || 'N/A'}
+Camera: ${cameraMovement || 'Static'} (${focalLength || '35mm'}), ${shotType || 'wide-shot'}
+Aspect Ratio: ${ASPECT_RATIOS.find(r => r.id === aspectRatio)?.name || aspectRatio || '16:9'}`;
+    };
+
     const handleCopy = () => {
-        navigator.clipboard.writeText(JSON.stringify(result || state, null, 2));
+        const content = viewMode === 'json'
+            ? JSON.stringify(result || state, null, 2)
+            : formatPromptText(result || state);
+
+        navigator.clipboard.writeText(content);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -79,11 +112,11 @@ export default function PromptArchitect({ embedded = false }) {
     return (
         <div className={embedded ? "w-full text-white font-sans relative" : "min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden overflow-y-auto relative"}>
 
-            {/* OVERLAYS */}
-            {showIntro && !embedded && <IntroOverlay onComplete={() => setShowIntro(false)} />}
-            {!embedded && showFomoBanner && <FomoBanner onClose={() => setShowFomoBanner(false)} onClick={() => setShowFlashOffer(true)} />}
-            {isLoginOpen && <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} unlocked={unlocked} />}
-            {showFlashOffer && <FlashOfferModal onClose={() => setShowFlashOffer(false)} />}
+            {/* Overlays */}
+            <IntroOverlay isOpen={showIntro} onClose={() => setShowIntro(false)} />
+            <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onUnlock={() => setUnlocked(true)} />
+            <FlashOfferModal isOpen={showFlashOffer} onClose={() => setShowFlashOffer(false)} />
+            <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
 
             {/* BACKGROUND */}
             {!embedded && (
@@ -214,6 +247,34 @@ export default function PromptArchitect({ embedded = false }) {
                                             )}
                                         />
 
+                                        {/* 3. Focal Length */}
+                                        <SmartSelect
+                                            value={state.focalLength}
+                                            options={FOCAL_LENGTHS}
+                                            onChange={(v) => dispatch({ type: 'focalLength', value: v })}
+                                            widthClass="w-full md:w-96"
+                                            gridCols={2}
+                                            maxHeight="max-h-80"
+                                            renderTrigger={(opt, isOpen) => (
+                                                <>
+                                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+                                                        <Eye size={16} className="text-purple-300" />
+                                                    </div>
+                                                    <span className="font-bold">{opt.name}</span>
+                                                    <ChevronDown size={14} className={`text-gray-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                                                </>
+                                            )}
+                                            renderOption={(focal, isSelected) => (
+                                                <div className={`relative group rounded-xl border transition-all flex flex-col items-center justify-center gap-2 p-3 h-full ${isSelected ? 'border-purple-500 ring-1 ring-purple-500 bg-purple-900/20' : 'border-white/10 hover:border-white/30 bg-black/40'}`}>
+                                                    <Eye size={24} className={isSelected ? 'text-white' : 'text-gray-500'} />
+                                                    <div className="text-center">
+                                                        <span className={`text-sm font-bold block ${isSelected ? 'text-white' : 'text-gray-300'}`}>{focal.name}</span>
+                                                        <span className={`text-[10px] ${isSelected ? 'text-purple-200' : 'text-gray-500'}`}>{focal.desc}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        />
+
                                         {/* 3. Shot Type */}
                                         <SmartSelect
                                             value={state.shotType}
@@ -222,6 +283,7 @@ export default function PromptArchitect({ embedded = false }) {
                                             widthClass="w-full md:w-96"
                                             gridCols={2}
                                             maxHeight="max-h-80"
+                                            forceAlign="left"
                                             renderTrigger={(opt, isOpen) => (
                                                 <>
                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
@@ -367,7 +429,7 @@ export default function PromptArchitect({ embedded = false }) {
                     </div>
 
                     {/* JSON PREVIEW */}
-                    <div className="lg:col-span-4">
+                    <div className="lg:col-span-4 relative z-0">
                         <div className="h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[30px] p-6 flex flex-col relative overflow-hidden group">
                             {generating && (
                                 <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
@@ -382,14 +444,37 @@ export default function PromptArchitect({ embedded = false }) {
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/80"></div><div className="w-3 h-3 rounded-full bg-yellow-500/80"></div><div className="w-3 h-3 rounded-full bg-green-500/80"></div></div>
-                                    <span className="text-xs font-mono text-gray-500 ml-2">prompt.json</span>
+                                    <span className="text-xs font-mono text-gray-500 ml-2">prompt.{viewMode}</span>
                                 </div>
-                                <button onClick={handleCopy} className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white">
-                                    {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    {/* Format Toggle */}
+                                    <div className="bg-white/5 rounded-lg p-1 flex items-center border border-white/10">
+                                        <button
+                                            onClick={() => setViewMode('json')}
+                                            className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${viewMode === 'json' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+                                        >
+                                            JSON
+                                        </button>
+                                        <button
+                                            onClick={() => setViewMode('text')}
+                                            className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${viewMode === 'text' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+                                        >
+                                            TEXT
+                                        </button>
+                                    </div>
+
+                                    <button onClick={handleCopy} className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white group-hover:text-white">
+                                        {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                                    </button>
+                                </div>
                             </div>
                             <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar font-mono text-xs md:text-sm text-purple-200/90 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">
-                                <pre className="whitespace-pre-wrap break-words">{JSON.stringify(result || state, null, 2)}</pre>
+                                <pre className="whitespace-pre-wrap break-words">
+                                    {viewMode === 'json'
+                                        ? JSON.stringify(result || state, null, 2)
+                                        : formatPromptText(result || state)
+                                    }
+                                </pre>
                             </div>
                             <div className="absolute bottom-0 right-0 p-32 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
                         </div>

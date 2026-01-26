@@ -22,6 +22,13 @@ export const AI_MODELS = {
             specs: "Focus on cinematic vocabulary (e.g., 'wide shot', 'dolly in', 'golden hour'). Veo 3 excels at photorealistic textures and consistent lighting. Mention camera movements clearly."
         },
         {
+            id: 'sora',
+            name: 'OpenAI Sora',
+            image: '/ui/perso/GenModels/video/openai_sora_logo.png',
+            maxChars: 1000,
+            specs: "Sora understands complex physical interactions and long prompts. Describe the physics, textures, and temporal changes in detail. Supports multi-scene descriptions."
+        },
+        {
             id: 'kling',
             name: 'Kling AI',
             image: '/ui/perso/GenModels/video/kling_ai_logo.png',
@@ -36,11 +43,32 @@ export const AI_MODELS = {
             specs: "Runway Gen-3 specific syntax: use 'Camera Motion: <move>' for camera control. Structural breakdown: [Camera Movement] + [Subject/Action] + [Environment] + [Lighting/Style]."
         },
         {
-            id: 'sora',
-            name: 'OpenAI Sora',
-            image: '/ui/perso/GenModels/video/openai_sora_logo.png',
+            id: 'wan2.5',
+            name: 'Wan 2.5',
+            image: '/ui/perso/GenModels/video/wan_logo.png',
             maxChars: 1000,
-            specs: "Sora understands complex physical interactions and long prompts. Describe the physics, textures, and temporal changes in detail. Supports multi-scene descriptions."
+            specs: "Wan 2.5 is a powerful open model. Focus on fluid motion and transformation descriptions. Good at handling complex scene transitions."
+        },
+        {
+            id: 'minimax',
+            name: 'Minimax / Hailuo',
+            image: '/ui/perso/GenModels/video/minimax_logo.png',
+            maxChars: 800,
+            specs: "Minimax excels at hyper-realistic human movement and high temporal consistency. Describe micro-expressions and subtle gestures."
+        },
+        {
+            id: 'luma',
+            name: 'Luma Dream Machine',
+            image: '/ui/perso/GenModels/video/luma_logo.png',
+            maxChars: 800,
+            specs: "Luma Dream Machine is physics-aware. Describe the start and end states of the motion clearly."
+        },
+        {
+            id: 'pika',
+            name: 'Pika Art',
+            image: '/ui/perso/GenModels/video/pika_logo.png',
+            maxChars: 500,
+            specs: "Pika fits anime and stylized content well. Use specific Pika parameters like -camera_zoom, -camera_pan if applicable."
         },
         {
             id: 'higgsfield',
@@ -71,6 +99,20 @@ export const AI_MODELS = {
             image: '/ui/perso/GenModels/image/flux_ai_logo.png',
             maxChars: 1000,
             specs: "Flux excels at text rendering and complex compositions. Be specific about text visibility if needed."
+        },
+        {
+            id: 'recraft',
+            name: 'Recraft',
+            image: '/ui/perso/GenModels/image/recraft_logo.png',
+            maxChars: 1000,
+            specs: "Recraft is vector-capable and style-consistent. Specify 'icon', 'vector art', or 'illustration' for best results."
+        },
+        {
+            id: 'ideogram',
+            name: 'Ideogram',
+            image: '/ui/perso/GenModels/image/ideogram_logo.png',
+            maxChars: 1000,
+            specs: "Ideogram is the king of typography. If you need text, specify exactly: text 'YOUR TEXT' in <font style>."
         },
         {
             id: 'seedream',
@@ -176,6 +218,17 @@ export const LIGHTING_STYLES = [
     { id: 'cyberpunk-neon', name: 'Cyberpunk Neon', image: '/ui/icons/lighting/cyberpunk_neon.png' },
 ];
 
+export const FOCAL_LENGTHS = [
+    { id: '8mm', name: '8mm', desc: 'Fish-eye', icon: 'Eye' },
+    { id: '16mm', name: '16mm', desc: 'Ultra Wide', icon: 'Eye' },
+    { id: '24mm', name: '24mm', desc: 'Wide', icon: 'Eye' },
+    { id: '35mm', name: '35mm', desc: 'Standard', icon: 'Eye' },
+    { id: '50mm', name: '50mm', desc: 'Portrait', icon: 'Eye' },
+    { id: '85mm', name: '85mm', desc: 'Telephoto', icon: 'Eye' },
+    { id: '135mm', name: '135mm', desc: 'Zoom', icon: 'Eye' },
+    { id: '200mm', name: '200mm', desc: 'Super Zoom', icon: 'Eye' },
+];
+
 export const INITIAL_STATE = {
     generationType: 'video',
     aiModel: 'veo3',
@@ -184,8 +237,9 @@ export const INITIAL_STATE = {
     duration: '5s',
     aspectRatio: '16:9',
     cameraMovement: 'Static',
+    focalLength: '35mm',
     cameraFX: 'None',
     lighting: 'cinematic',
     subject: '',
-    fps: '24'
+    fps: '60'
 };

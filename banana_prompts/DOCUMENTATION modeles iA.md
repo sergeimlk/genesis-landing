@@ -168,7 +168,12 @@ partie des 5 modèles top intégrés (avec Sora 2, Veo 3.1, WAN, Kling). Article
 \[47\]   
 → https://higgsfield.ai/blog/Testing-Top-5-AI-Video-Generator-Models 
 
-Pour Minimax / Hailuo, les docs API officielles sont sur le portail dev Minimax (non listé explicitement dans les résultats ci‑dessus, donc je ne te mets pas d’URL approximative pour éviter les fake‑links). 
+Pour Minimax / Hailuo, le portail officiel pour la génération vidéo est Hailuo AI.
+172: 
+173: | Modèle  | Lien |
+174: | ----- | ----- |
+175: | Hailuo AI (Minimax Video) | https://hailuoai.com/video[95] |
+176: | Minimax API Platform | https://platform.minimaxi.com/[96] | 
 
 4\. Modèles externes majeurs – IMAGE (hors Higgsfield ou pas forcément intégrés)
 

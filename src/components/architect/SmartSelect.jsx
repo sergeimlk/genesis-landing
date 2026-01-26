@@ -23,6 +23,7 @@ export const SmartSelect = ({
     gridCols = 1,
     minWidth = "min-w-[140px]",
     maxHeight = "max-h-80",
+    forceAlign = null,  // 'left' | 'right' | null (auto)
 
     // Icon (optional default trigger)
     icon: Icon,
@@ -38,11 +39,13 @@ export const SmartSelect = ({
 
     // Smart Align Logic
     useEffect(() => {
-        if (isOpen && buttonRef.current) {
+        if (forceAlign) {
+            setAlign(forceAlign);
+        } else if (isOpen && buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
             setAlign(rect.left < window.innerWidth / 2 ? 'left' : 'right');
         }
-    }, [isOpen]);
+    }, [isOpen, forceAlign]);
 
     // Close on Escape Key
     useEffect(() => {

@@ -18,6 +18,40 @@ export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLogin
         return () => clearInterval(timer);
     }, [generating, countdown]);
 
+    // Smart Constraints Logic
+    const getSmartConstraints = (s) => {
+        let constraints = [];
+
+        // Drone / FPV Rules
+        if (s.cameraMovement.includes('FPV') || s.shotType === 'drone-view') {
+            constraints.push("CRITICAL: The camera IS the drone. Do NOT show a drone in the shot. Represent the view FROM the drone.");
+            constraints.push("Focus on speed, banking, and fluid motion characteristic of FPV flight.");
+        }
+
+        // POV Rules
+        if (s.shotType === 'pov') {
+            constraints.push("CRITICAL: First Person View. Show what the subject sees, possibly including their hands/arms interacting with the environment, but NEVER the subject's face/body from outside.");
+        }
+
+        // Vintage / Camera FX Rules
+        if (s.cameraFX === 'VHS Distortion' || s.cameraFX === 'Film Grain') {
+            constraints.push("Aesthetic: Add authentic analog artifacts, slight color bleeding, and tape noise. Low fidelity charm.");
+        }
+        if (s.cameraFX === 'Glitch Effect') {
+            constraints.push("Aesthetic: Digital datamosh, compression artifacts, and RGB splitting.");
+        }
+
+        // Focal Length Rules
+        if (s.focalLength === '8mm' || s.focalLength === 'Fish-eye') {
+            constraints.push("Lens: Strong barrel distortion, vignetting, ultra-wide field of view.");
+        }
+        if (s.focalLength === '200mm') {
+            constraints.push("Lens: High compression of depth, creamy bokeh background, subject isolation.");
+        }
+
+        return constraints.map(c => `- ${c}`).join('\n');
+    };
+
     const handleGenerate = async () => {
         if (!unlocked && uses >= 3) {
             setIsLoginOpen(true);
@@ -76,12 +110,17 @@ export const usePromptGenerator = ({ state, uses, saveUses, unlocked, setIsLogin
                                 - Type: ${state.generationType}
                                 - Modèle: ${state.aiModel}
                                 - Specs Modèle: ${AI_MODELS[state.generationType].find(m => m.id === state.aiModel)?.specs || "Standard model"}
+                                - Documentation Technique: Pour le modèle ${state.aiModel}, utilise tes connaissances approfondies des paramètres spécifiques (ex: --ar pour MJ, camera_motion pour Runway, etc.) afin d'exploiter 100% de ses capacités.
                                 - Style: ${state.style} (Utilise ce style visuel !)
                                 - Cadrage: ${state.shotType}
+                                - Focale: ${state.focalLength}
                                 - Durée: ${state.duration}
                                 - Mouvement: ${state.cameraMovement}
                                 - Effets: ${state.cameraFX}
                                 - Ambiance (Mood): ${state.lighting}
+
+                                RÈGLES SPÉCIALES (SMART CONSTRAINTS):
+                                ${getSmartConstraints(state)}
 
                                 RÈGLES CRITIQUES :
                                 1. Réponds UNIQUEMENT le JSON pur. Pas de markdown, pas de texte avant/après.

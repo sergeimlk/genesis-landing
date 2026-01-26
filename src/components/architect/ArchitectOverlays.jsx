@@ -3,20 +3,33 @@ import { useEffect, useState, useRef } from 'react';
 import { X, Lock, User } from 'lucide-react';
 
 // --- INTRO OVERLAY ---
-export const IntroOverlay = ({ onComplete }) => {
+export const IntroOverlay = ({ isOpen, onClose }) => {
     const videoRef = useRef(null);
     const [fading, setFading] = useState(false);
 
     useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.playbackRate = 2.0;
+        if (videoRef.current && isOpen) {
+            videoRef.current.playbackRate = 4.0;
         }
-    }, []);
+        // Auto-close after 1 second
+        if (isOpen) {
+            const timer = setTimeout(() => {
+                setFading(true);
+                sessionStorage.setItem('genesis_intro_shown', 'true');
+                setTimeout(onClose, 300);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen, onClose]);
 
     const handleEnd = () => {
         setFading(true);
-        setTimeout(onComplete, 800);
+        // Mark as shown in sessionStorage (so it won't show again during this session)
+        sessionStorage.setItem('genesis_intro_shown', 'true');
+        setTimeout(onClose, 800);
     };
+
+    if (!isOpen) return null;
 
     return (
         <div className={`fixed inset-0 z-[100] bg-black flex items-center justify-center transition-opacity duration-1000 ${fading ? 'opacity-0' : 'opacity-100'}`}>
@@ -35,8 +48,9 @@ export const IntroOverlay = ({ onComplete }) => {
 };
 
 // --- LOGIN MODAL ---
-export const LoginModal = ({ isOpen, onClose, unlocked }) => {
+export const LoginModal = ({ isOpen, onClose, onUnlock }) => {
     const [code, setCode] = useState('');
+    const [error, setError] = useState('');
 
     // Close on ESC
     useEffect(() => {
@@ -50,8 +64,15 @@ export const LoginModal = ({ isOpen, onClose, unlocked }) => {
     if (!isOpen) return null;
 
     const handleUnlock = () => {
-        console.log("Unlocking with code:", code);
-        onClose();
+        if (code.toUpperCase() === 'VALEX') {
+            // Save to localStorage for persistence
+            localStorage.setItem('genesis_pro_unlocked', 'true');
+            onUnlock?.();
+            onClose();
+        } else {
+            setError('Code invalide. Demandez le code à Genesis.');
+            setCode('');
+        }
     };
 
     return (
@@ -77,16 +98,18 @@ export const LoginModal = ({ isOpen, onClose, unlocked }) => {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-1 focus-within:border-purple-500/50 transition-colors">
+                    <div className={`bg-white/5 border rounded-2xl p-1 transition-colors ${error ? 'border-red-500' : 'border-white/10 focus-within:border-purple-500/50'}`}>
                         <input
                             type="password"
                             placeholder="CODE PRO"
                             className="w-full bg-transparent border-none outline-none text-center font-mono tracking-[0.5em] text-white h-12 placeholder-white/20"
                             value={code}
-                            onChange={(e) => setCode(e.target.value)}
+                            onChange={(e) => { setCode(e.target.value); setError(''); }}
                             onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
                         />
                     </div>
+
+                    {error && <p className="text-red-400 text-xs text-center">{error}</p>}
 
                     <button
                         onClick={handleUnlock}

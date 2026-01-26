@@ -751,12 +751,12 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {showFlashOffer && <FlashOfferModal onClose={() => setShowFlashOffer(false)} />}
+      <FlashOfferModal isOpen={showFlashOffer} onClose={() => setShowFlashOffer(false)} />
     </Router>
   );
 };
 
-export const FlashOfferModal = ({ onClose }) => {
+export const FlashOfferModal = ({ isOpen, onClose }) => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
@@ -781,12 +781,15 @@ export const FlashOfferModal = ({ onClose }) => {
 
   // Close on ESC
   useEffect(() => {
+    if (!isOpen) return;
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay modal-z-high" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
