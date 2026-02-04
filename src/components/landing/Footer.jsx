@@ -39,14 +39,14 @@ const Footer = ({ onCgvClick, onContactClick }) => {
 
                 {/* Legal Links */}
                 <nav className="flex-center gap-6 text-sm text-muted" aria-label="Liens légaux">
-                    <a href={EXTERNAL_LINKS.CONTACT_LINK} target="_blank" rel="noopener noreferrer">
+                    <a href={EXTERNAL_LINKS.LEGAL_NOTICE_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                         Mentions Légales
                     </a>
-                    <button onClick={onCgvClick} className="hover:text-white transition-colors">
-                        CGV
-                    </button>
-                    <a href={EXTERNAL_LINKS.CONTACT_LINK} target="_blank" rel="noopener noreferrer">
-                        RGPD
+                    <a href={EXTERNAL_LINKS.CGU_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        CGU
+                    </a>
+                    <a href={EXTERNAL_LINKS.PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        Confidentialité
                     </a>
                     <button onClick={onContactClick} className="hover:text-white transition-colors">
                         Contact

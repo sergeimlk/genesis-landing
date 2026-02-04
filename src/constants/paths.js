@@ -15,6 +15,11 @@ export const EXTERNAL_LINKS = {
     // Contact & Forms
     CONTACT_LINK: 'https://boiled-gondola-ea5.notion.site/2837b3ecdb188150bacef0d0c737d637',
     CONTACT_FORM_URL: 'https://boiled-gondola-ea5.notion.site/ebd//2837b3ecdb188150bacef0d0c737d637',
+
+    // Legal
+    PRIVACY_URL: 'https://boiled-gondola-ea5.notion.site/Politique-de-confidentialit-RGPD-2f97b3ecdb1880d2b4b4e25c5339fb0f',
+    LEGAL_NOTICE_URL: 'https://boiled-gondola-ea5.notion.site/MENTIONS-L-GALES-GENESIS-2f97b3ecdb18800891d1d4dd41e5d8a5',
+    CGU_URL: 'https://boiled-gondola-ea5.notion.site/CONDITIONS-G-N-RALES-D-UTILISATION-CGU-GENESIS-2f97b3ecdb1880ad85a0f514260376af',
 };
 
 // ==============================

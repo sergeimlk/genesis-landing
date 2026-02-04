@@ -72,10 +72,20 @@ const GenesisLanding = () => {
             {/* Trust Marquee */}
             <TrustSection />
 
-            {/* AI Playground (Prompt Architect Embed) */}
-            <section className="relative z-10 border-b border-white/5 bg-black/40">
-                <PromptArchitect embedded={true} />
-            </section>
+            {/* Reviews */}
+            <ReviewsSection />
+
+            {/* Programme Modules */}
+            <ProgrammeSection />
+
+            {/* Pricing */}
+            <PricingSection timeLeft={timeLeft} />
+
+            {/* Target Audience */}
+            <TargetAudienceSection />
+
+            {/* Comparison: Old vs New Way */}
+            <ComparisonSection />
 
             {/* Before/After Transformation Demo */}
             <section className="section-padding bg-black/50">
@@ -92,20 +102,6 @@ const GenesisLanding = () => {
                 </div>
             </section>
 
-            {/* Comparison: Old vs New Way */}
-            <ComparisonSection />
-
-            {/* Target Audience */}
-            <TargetAudienceSection />
-
-            {/* Programme Modules */}
-            <ProgrammeSection />
-
-            {/* Reviews */}
-            <ReviewsSection />
-
-            {/* Pricing */}
-            <PricingSection timeLeft={timeLeft} />
             {/* Contact Form Section */}
             <section className="section-padding" id="contact-form">
                 <div className="container container-narrow">
@@ -152,7 +148,7 @@ const GenesisLanding = () => {
                 isOpen={isCgvModalOpen}
                 onClose={() => setIsCgvModalOpen(false)}
             />
-        </div >
+        </div>
     );
 };
 
