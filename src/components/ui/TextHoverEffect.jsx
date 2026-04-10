@@ -1,7 +1,7 @@
 /**
- * TextHoverEffect — Aceternity-style SVG text with animated gradient outline on hover
- * Inspired by x.ai branding. Mouse position drives a radial gradient mask that
- * reveals a rainbow-to-brand-purple gradient stroke on the text.
+ * TextHoverEffect — Aceternity/x.ai style SVG text with animated gradient outline on hover.
+ * Uses SVG-unit font sizing so the text scales proportionally at ALL screen sizes.
+ * Mouse position drives a radial gradient mask revealing a purple→pink gradient stroke.
  */
 import React, { useRef, useState, useEffect } from 'react';
 
@@ -24,11 +24,19 @@ const TextHoverEffect = ({ text, duration = 0.4 }) => {
     }, [cursor]);
 
     return (
+        /*
+         * viewBox "0 0 800 230":
+         *   - 800 units wide, 230 tall
+         *   - Text at y="50%" = 115 units from top
+         *   - fontSize 138 → cap-height ≈ 96 units → ~48 units margin top & bottom
+         *   - letterSpacing 0.12em ≈ 16.5 units/char → "GENESIS" fills ~86% of width
+         */
         <svg
             ref={svgRef}
             width="100%"
             height="100%"
-            viewBox="0 0 800 200"
+            viewBox="0 0 800 230"
+            preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -38,32 +46,31 @@ const TextHoverEffect = ({ text, duration = 0.4 }) => {
             role="img"
         >
             <defs>
-                {/* Animated gradient that rotates around the text */}
+                {/* Purple → pink → violet gradient for the stroke */}
                 <linearGradient
                     id="textGradient"
                     gradientUnits="userSpaceOnUse"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
+                    x1="0"
+                    y1="0"
+                    x2="800"
+                    y2="0"
                 >
-                    <stop offset="0%" stopColor="#9333ea" />
-                    <stop offset="20%" stopColor="#ec4899" />
-                    <stop offset="40%" stopColor="#8b5cf6" />
-                    <stop offset="60%" stopColor="#a855f7" />
-                    <stop offset="80%" stopColor="#db2777" />
-                    <stop offset="100%" stopColor="#9333ea" />
+                    <stop offset="0%"   stopColor="#7c3aed" />
+                    <stop offset="25%"  stopColor="#9333ea" />
+                    <stop offset="50%"  stopColor="#ec4899" />
+                    <stop offset="75%"  stopColor="#a855f7" />
+                    <stop offset="100%" stopColor="#7c3aed" />
                 </linearGradient>
 
-                {/* Radial gradient mask that follows mouse — reveals the gradient text */}
+                {/* Radial reveal mask — follows cursor */}
                 <radialGradient
                     id="revealMask"
                     gradientUnits="userSpaceOnUse"
-                    r="25%"
+                    r="200"
                     cx={maskPosition.cx}
                     cy={maskPosition.cy}
                 >
-                    <stop offset="0%" stopColor="white" />
+                    <stop offset="0%"   stopColor="white" />
                     <stop offset="100%" stopColor="black" />
                 </radialGradient>
 
@@ -71,54 +78,53 @@ const TextHoverEffect = ({ text, duration = 0.4 }) => {
                     <rect
                         x="0"
                         y="0"
-                        width="100%"
-                        height="100%"
+                        width="800"
+                        height="230"
                         fill="url(#revealMask)"
-                        style={{
-                            transition: `all ${duration}s ease`,
-                        }}
+                        style={{ transition: `all ${duration}s ease` }}
                     />
                 </mask>
             </defs>
 
-            {/* Layer 1: Always-visible dim outline (base state) */}
+            {/* Layer 1: Always-visible faint outline (base state) */}
             <text
-                x="50%"
-                y="50%"
+                x="400"
+                y="115"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
+                stroke="rgba(255,255,255,0.18)"
+                strokeWidth="0.8"
                 style={{
                     fontFamily: 'Orbitron, monospace',
                     fontWeight: 900,
-                    fontSize: 'clamp(3rem, 12vw, 9rem)',
-                    opacity: hovered ? 0.1 : 0.15,
-                    color: 'rgba(255,255,255,0.3)',
+                    fontSize: '138px',
+                    letterSpacing: '16px',
+                    opacity: hovered ? 0.1 : 0.18,
                     transition: `opacity ${duration}s ease`,
-                    letterSpacing: '0.15em',
                 }}
             >
                 {text}
             </text>
 
-            {/* Layer 2: Gradient outline — only visible through cursor mask */}
+            {/* Layer 2: Gradient stroke — revealed only under cursor mask */}
             <text
-                x="50%"
-                y="50%"
+                x="400"
+                y="115"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="none"
                 stroke="url(#textGradient)"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 mask="url(#textMask)"
                 style={{
                     fontFamily: 'Orbitron, monospace',
                     fontWeight: 900,
-                    fontSize: 'clamp(3rem, 12vw, 9rem)',
-                    letterSpacing: '0.15em',
-                    filter: hovered ? 'drop-shadow(0 0 8px rgba(168,85,247,0.6))' : 'none',
+                    fontSize: '138px',
+                    letterSpacing: '16px',
+                    filter: hovered
+                        ? 'drop-shadow(0 0 12px rgba(168,85,247,0.7))'
+                        : 'none',
                     transition: `filter ${duration}s ease`,
                 }}
             >

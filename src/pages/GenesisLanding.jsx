@@ -25,7 +25,6 @@ import {
 import { BeforeAfter } from '../components/BeforeAfter';
 import PromptArchitect from './PromptArchitect';
 import { ASSETS, EXTERNAL_LINKS } from '../constants/paths';
-import TextHoverEffect from '../components/ui/TextHoverEffect';
 
 // Custom Hooks
 import { useCountdown } from '../hooks/useCountdown';
@@ -128,25 +127,6 @@ const GenesisLanding = () => {
 
             {/* FAQ */}
             <FAQSection activeFaq={activeFaq} setActiveFaq={setActiveFaq} />
-
-            {/* Genesis Text Hover */}
-            <section
-                className="relative overflow-hidden bg-black border-t border-white/5"
-                aria-hidden="true"
-                style={{ height: '18rem' }}
-            >
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div
-                        className="absolute inset-0 pointer-events-none"
-                        style={{
-                            background: 'radial-gradient(ellipse at 50% 100%, rgba(147,51,234,0.12) 0%, transparent 70%)',
-                        }}
-                    />
-                </div>
-                <div className="w-full h-full" style={{ pointerEvents: 'auto' }}>
-                    <TextHoverEffect text="GENESIS" />
-                </div>
-            </section>
 
             {/* Footer */}
             <Footer

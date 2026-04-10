@@ -65,7 +65,7 @@ const PricingSection = ({ timeLeft }) => {
                         </ul>
 
                         <a href="#contact-form" onClick={scrollToContact} className="btn-join-main">
-                            JE REJOINS GENESIS ACADEMY
+                            REJOINS GENESIS
                         </a>
 
                         <p className="flex-center text-xs text-muted mt-4">

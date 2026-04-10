@@ -5,6 +5,7 @@
 import React from 'react';
 import YouTube from 'react-youtube';
 import { Play, ArrowRight, ChevronRight } from 'lucide-react';
+import HoverBorderGradient from '../ui/HoverBorderGradient';
 
 const VIDEOS = ["mVfM2ogLpwc", "piJ78nUKtgI"];
 
@@ -50,13 +51,17 @@ const Hero = ({
                             <button onClick={onContactClick} className="btn-primary">
                                 Rejoindre l'Élite <ArrowRight size={20} aria-hidden="true" />
                             </button>
-                            <a
+                            <HoverBorderGradient
+                                as="a"
                                 href="#programme"
-                                className="btn-secondary"
                                 onClick={(e) => scrollToSection(e, 'programme')}
+                                containerClassName="rounded-2xl"
+                                className="btn-secondary"
+                                innerBackground="#050505"
+                                duration={1.4}
                             >
                                 <Play size={20} fill="white" aria-hidden="true" /> Découvrir
-                            </a>
+                            </HoverBorderGradient>
                         </div>
 
                         {/* Social Proof */}
