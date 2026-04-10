@@ -7,12 +7,13 @@ import { Check, ShieldCheck } from 'lucide-react';
 import CountdownDisplay from '../common/CountdownDisplay';
 
 const FEATURES = [
-    { text: '+6H de formation vidéo', icon: Check },
-    { text: 'PDF Récapitulatif 32 pages', icon: Check },
-    { text: 'Accès outils IA privés', icon: Check },
-    { text: 'Workflow "Visuals by Genesis"', icon: Check },
-    { text: 'Support Communautaire', icon: Check },
-    { text: "On ne te lachera pas tant que tu n'auras pas atteint tes objectifs!", icon: ShieldCheck, highlight: true }
+    { text: '+6H de formation vidéo dense & actionnable', icon: Check },
+    { text: 'PDF Récapitulatif 32 pages (workflow complet)', icon: Check },
+    { text: 'Accès aux outils IA privés exclusifs', icon: Check },
+    { text: 'Workflow "Visuals by Genesis" (méthode complète)', icon: Check },
+    { text: 'Communauté privée + support direct', icon: Check },
+    { text: 'Mises à jour à vie incluses', icon: Check },
+    { text: "Accompagnement jusqu'à tes premiers résultats — on ne te lâche pas.", icon: ShieldCheck, highlight: true }
 ];
 
 const PricingSection = ({ timeLeft }) => {
@@ -43,7 +44,7 @@ const PricingSection = ({ timeLeft }) => {
                         </div>
 
                         <h3 className="font-orbitron font-bold text-2xl mt-4">GENESIS ACADEMY</h3>
-                        <p className="text-muted text-sm">Accès illimité à vie + Mises à jour</p>
+                        <p className="text-muted text-sm">Accès illimité à vie · Mises à jour incluses · Garantie 14j</p>
                     </header>
 
                     {/* Pricing Content */}
@@ -64,11 +65,11 @@ const PricingSection = ({ timeLeft }) => {
                         </ul>
 
                         <a href="#contact-form" onClick={scrollToContact} className="btn-join-main">
-                            CHOISIR MON MODULE
+                            JE REJOINS GENESIS ACADEMY
                         </a>
 
                         <p className="flex-center text-xs text-muted mt-4">
-                            Paiement sécurisé via Stripe/PayPal
+                            🔒 Paiement 100% sécurisé via Stripe · Remboursement garanti 14 jours
                         </p>
                     </div>
                 </article>

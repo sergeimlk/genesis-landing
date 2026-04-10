@@ -93,7 +93,7 @@ const ProgrammeSection = () => {
                     LE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">PROGRAMME</span>
                 </h2>
                 <p className="text-gray-400 max-w-2xl mx-auto text-center mb-12">
-                    6 étapes concrètes pour passer de zéro à autonome dans la création et la vente de vidéos IA
+                    6 modules concrets pour passer de zéro à créateur autonome — avec votre premier client en ligne de mire
                 </p>
 
                 <div className="modules-grid">

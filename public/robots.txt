@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /genegym
+Disallow: /prompt
+
+Sitemap: https://genesis-academy.io/sitemap.xml

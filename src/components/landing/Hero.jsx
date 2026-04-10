@@ -31,10 +31,10 @@ const Hero = ({
                 <div className="hero-top-header animate-fade-up">
                     <div className="hero-tag mb-6">
                         <span className="dot" aria-hidden="true"></span>
-                        Formation Disponible • Accès exclusif
+                        Formation Disponible • Places Limitées
                     </div>
                     <h1 className="hero-title-main">
-                        CRÉEZ DES <span className="text-gradient">VISUELS</span><br />
+                        CRÉEZ DES <span className="text-gradient">VIDÉOS IA</span><br />
                         DE NIVEAU <span className="text-gradient">CINÉMA</span> EN 7 JOURS
                     </h1>
                 </div>
@@ -43,7 +43,7 @@ const Hero = ({
                     {/* Left Actions */}
                     <div className="text-base hero-left-col animate-fade-up delay-100">
                         <p className="hero-desc">
-                            Le workflow secret utilisé par les réalisateurs pour générer des revenus passifs et signer des clients premium. Même sans compétences techniques. Un workflow de réalisateurs pensé pour créer des vidéos IA exploitables et vendables.
+                            Le workflow exact utilisé par des réalisateurs professionnels pour créer des vidéos IA cinématographiques, signer des clients premium et générer des revenus — même si vous partez de zéro et n'avez aucune compétence technique.
                         </p>
 
                         <div className="hero-actions">
@@ -130,7 +130,7 @@ const SocialProof = ({ onClick }) => (
         </div>
         <p className="text-sm ml-6">
             Rejoint par <strong>500+ créateurs</strong><br />
-            dont <span className="text-purple-500">KOZI, ERON...</span>
+            dont <span className="text-purple-500">KOZI, ERON, GUY2BEZBAR...</span>
         </p>
     </div>
 );

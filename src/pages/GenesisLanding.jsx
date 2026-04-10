@@ -25,6 +25,7 @@ import {
 import { BeforeAfter } from '../components/BeforeAfter';
 import PromptArchitect from './PromptArchitect';
 import { ASSETS, EXTERNAL_LINKS } from '../constants/paths';
+import TextHoverEffect from '../components/ui/TextHoverEffect';
 
 // Custom Hooks
 import { useCountdown } from '../hooks/useCountdown';
@@ -90,9 +91,10 @@ const GenesisLanding = () => {
             {/* Before/After Transformation Demo */}
             <section className="section-padding bg-black/50">
                 <div className="container">
-                    <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
-                        LA PUISSANCE DE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'IA</span>
+                    <h2 className="text-center mb-4 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
+                        AVANT / APRÈS — LA PUISSANCE DE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'IA</span>
                     </h2>
+                    <p className="text-center text-gray-400 mb-10">Glissez le curseur pour voir la transformation</p>
                     <div className="max-w-4xl mx-auto mt-10">
                         <BeforeAfter
                             beforeImage={ASSETS.IMAGES.ERIC_BEFORE}
@@ -105,9 +107,10 @@ const GenesisLanding = () => {
             {/* Contact Form Section */}
             <section className="section-padding" id="contact-form">
                 <div className="container container-narrow">
-                    <h2 className="text-center mb-10 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
-                        REJOINDRE <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">L'AVENTURE</span>
+                    <h2 className="text-center mb-4 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
+                        PRÊT À <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">CRÉER & MONÉTISER</span> ?
                     </h2>
+                    <p className="text-center text-gray-400 mb-10">Remplis le formulaire — on te recontacte sous 24h</p>
                     <div className="w-full h-[600px] md:h-[800px] bg-[#1a1a1a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl mb-24 px-4 md:px-12">
                         <iframe
                             src={EXTERNAL_LINKS.CONTACT_FORM_URL}
@@ -125,6 +128,25 @@ const GenesisLanding = () => {
 
             {/* FAQ */}
             <FAQSection activeFaq={activeFaq} setActiveFaq={setActiveFaq} />
+
+            {/* Genesis Text Hover */}
+            <section
+                className="relative overflow-hidden bg-black border-t border-white/5"
+                aria-hidden="true"
+                style={{ height: '18rem' }}
+            >
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                            background: 'radial-gradient(ellipse at 50% 100%, rgba(147,51,234,0.12) 0%, transparent 70%)',
+                        }}
+                    />
+                </div>
+                <div className="w-full h-full" style={{ pointerEvents: 'auto' }}>
+                    <TextHoverEffect text="GENESIS" />
+                </div>
+            </section>
 
             {/* Footer */}
             <Footer

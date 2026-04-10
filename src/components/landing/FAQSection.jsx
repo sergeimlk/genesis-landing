@@ -7,20 +7,24 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const FAQ_ITEMS = [
     {
-        question: 'Faut-il un PC de gamer ?',
-        answer: "Non ! Nous montrons des méthodes Cloud qui tournent sur n'importe quel ordinateur, même un Mac. Pour la partie locale (optimale), une carte NVIDIA est recommandée mais pas obligatoire."
+        question: 'Faut-il un PC puissant pour créer des vidéos IA ?',
+        answer: "Non. Nos méthodes Cloud fonctionnent sur n'importe quel ordinateur — PC ou Mac, même les modèles d'entrée de gamme. La majorité de nos 500+ membres utilisent des méthodes 100% Cloud sans aucune installation. Pour l'option locale (avancée), une carte NVIDIA est un plus mais reste totalement facultative."
     },
     {
-        question: 'Est-ce adapté aux débutants ?',
-        answer: 'Absolument. Nous partons de zéro. Le module 1 est dédié à la prise en main des outils. Vous créerez votre première image en 10 minutes.'
+        question: 'Cette formation est-elle adaptée aux débutants complets ?',
+        answer: "Absolument. Aucun prérequis technique. Vous partez de zéro et le Module 1 vous prend en main étape par étape. La plupart de nos membres créent leur premier visuel exploitable en moins de 10 minutes. Nos méthodes « Zéro-Tech » ont été conçues spécifiquement pour les non-techniciens."
     },
     {
-        question: 'Combien de temps dure la formation ?',
-        answer: "C'est une formation dense et concise pour aller droit au but. Comptez environ 6 heures de vidéo, plus le temps de pratique."
+        question: 'Combien de temps pour voir des résultats concrets ?',
+        answer: "La formation contient plus de 6 heures de vidéo dense, actionnables immédiatement. Nos membres les plus rapides décrochent leur premier client en 2 à 3 semaines. Vous avez un accès à vie et toutes les futures mises à jour incluses — le contenu évolue avec les outils IA."
     },
     {
-        question: 'Y a-t-il une garantie ?',
-        answer: "Oui. Essayez la méthode pendant 14 jours. Si vous n'êtes pas satisfait, nous vous remboursons intégralement. Aucun risque."
+        question: 'Y a-t-il une garantie de remboursement ?',
+        answer: "Oui, garantie satisfait ou remboursé pendant 14 jours. Appliquez la méthode. Si après 14 jours vous n'avez pas créé de visuels de niveau professionnel, nous vous remboursons intégralement sur simple demande. Aucune question posée. Zéro risque de votre côté."
+    },
+    {
+        question: 'Quels outils IA vais-je apprendre à utiliser ?',
+        answer: "Midjourney, Runway Gen-3, Sora, Kling AI, Veo-3, ComfyUI, Stable Diffusion et nos outils IA privés exclusifs. Vous maîtriserez le workflow complet de la génération d'image à la vidéo cinématographique finalisée — les mêmes outils utilisés dans des productions professionnelles."
     }
 ];
 

@@ -7,20 +7,20 @@ import React from 'react';
 const AUDIENCE_PROFILES = [
     {
         number: '01',
-        title: 'Vous êtes débutant',
-        description: 'Vous voulez créer des visuels bluffants sans avoir de connaissances techniques préalables.',
+        title: 'Vous êtes débutant complet',
+        description: 'Zéro compétence technique ? Parfait. Nos méthodes Zéro-Tech vous permettent de créer des visuels professionnels dès votre première session.',
         colorClass: 'purple'
     },
     {
         number: '02',
-        title: 'Vous êtes créatif / vidéaste',
-        description: "Vous voulez intégrer l'IA dans votre workflow pour proposer des effets impossibles à filmer.",
+        title: 'Vous êtes créatif ou vidéaste',
+        description: "Vous filmez déjà ? L'IA va multiplier votre créativité par 10. Proposez des effets impossibles à filmer et doublez vos tarifs.",
         colorClass: 'pink'
     },
     {
         number: '03',
-        title: 'Vous voulez monétiser',
-        description: 'Vous cherchez une compétence rare et demandée pour vendre des visuels bluffants.',
+        title: 'Vous voulez une activité rentable',
+        description: 'La vidéo IA cinématographique est une compétence rare et très demandée. Nos membres signent leurs premiers clients en 2 à 3 semaines.',
         colorClass: 'blue'
     }
 ];
@@ -33,9 +33,10 @@ const TargetAudienceSection = () => {
 
                     {/* Left Content */}
                     <div className="flex-1 space-y-6">
-                        <h2 className="text-center md:text-left mb-6 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
-                            CETTE FORMATION EST POUR VOUS SI...
+                        <h2 className="text-center md:text-left mb-2 text-2xl sm:text-2xl md:text-4xl font-black font-orbitron tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-2xl">
+                            CETTE FORMATION EST FAITE POUR VOUS SI...
                         </h2>
+                        <p className="text-gray-400 text-sm mb-6">Peu importe votre niveau — si vous avez la motivation, Genesis vous donne le reste.</p>
 
                         <div className="space-y-4">
                             {AUDIENCE_PROFILES.map((profile, idx) => (
@@ -54,8 +55,8 @@ const TargetAudienceSection = () => {
                                 loading="lazy"
                             />
                             <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black to-transparent">
-                                <p className="font-orbitron text-white text-center">"J'ai rentabilisé la formation en 2 clips."</p>
-                                <p className="text-center text-purple-400 text-sm mt-2">- Thomas D., Freelance</p>
+                                <p className="font-orbitron text-white text-center">"Rentabilisé en 2 clips. +80K vues sur ma première vidéo."</p>
+                                <p className="text-center text-purple-400 text-sm mt-2">— Eric, Artiste & Vidéaste</p>
                             </div>
                         </div>
                     </div>
